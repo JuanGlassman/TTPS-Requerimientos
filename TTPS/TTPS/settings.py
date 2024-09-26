@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'inicio_sesion',
+    'lab_admin',
+    'medicos',
+    'pacientes',
+    'system_admin',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +60,7 @@ ROOT_URLCONF = 'TTPS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'Templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,7 +121,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+MEDIA_URL = '/media/' #esto es para que las fotos vayan a esta carpeta
+MEDIA_ROOT = os.path.join(BASE_DIR,'static','media')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'inicio_sesion/static'),
+    os.path.join(BASE_DIR, 'lab_admin/static'),
+    os.path.join(BASE_DIR, 'medicos/static'),
+    os.path.join(BASE_DIR, 'pacientes/static'),
+    os.path.join(BASE_DIR, 'system_admin/static'),
+    ]
+
+
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
