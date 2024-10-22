@@ -8,6 +8,11 @@ class Genero(models.TextChoices):
     FEMENINO = 'F', 'Femenino'
     OTRO = 'O', 'Otro'
 
+class Sexo(models.TextChoices):
+    MASCULINO = 'M', 'Masculino'
+    FEMENINO = 'F', 'Femenino'
+    OTRO = 'O', 'Otro'
+
 class EstadoEstudio(models.TextChoices):
     INICIADO = 'IN', 'Iniciado'
     PRESUPUESTADO = 'PR', 'Presupuestado'
