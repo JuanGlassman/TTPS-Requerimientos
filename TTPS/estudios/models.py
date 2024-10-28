@@ -14,7 +14,6 @@ class SampleSet(models.Model):
     class Meta:
         db_table = 'sample_sets'
 
-# Create your models here.
 class Enfermedad(models.Model):
     id_enfermedad = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50) 

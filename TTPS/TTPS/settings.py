@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'estudios',
     'lab_admin',
     'medicos',
     'pacientes',
@@ -85,6 +86,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'system_admin.Usuario'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -125,7 +127,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'static','media')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'i/static'),
+    os.path.join(BASE_DIR, 'estudios/static'),
     os.path.join(BASE_DIR, 'lab_admin/static'),
     os.path.join(BASE_DIR, 'medicos/static'),
     os.path.join(BASE_DIR, 'pacientes/static'),

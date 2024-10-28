@@ -1,7 +1,5 @@
 from django.db import models
 from system_admin.models import Usuario
-from estudios.models import Estudio
-from django.core.validators import MinValueValidator
 
 # Create your models here.
 
@@ -13,19 +11,6 @@ class Paciente(models.Model):
 
     def __str__(self):
         return f"{self.usuario.first_name} {self.usuario.apellido}"
-
-    class Meta:
-        db_table = 'pacientes'
-
-class Turno(models.Model):
-    id_turno = models.AutoField(primary_key=True)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    estudio = models.ForeignKey(Estudio, on_delete=models.CASCADE)
-    fecha = models.DateField(null=True, blank=True)
-    numero = models.IntegerField(validators=[MinValueValidator(1)])
-
-    def __str__(self):
-        return f"Turno: {self.numero}"
 
     class Meta:
         db_table = 'pacientes'

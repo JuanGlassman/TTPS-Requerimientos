@@ -1,10 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group
-
-def create_roles():
-    roles = ['Médico derivante', 'Administrador del sistema', 'Administrador de laboratorio', 'Paciente']
-    for role in roles:
-        Group.objects.get_or_create(name=role)
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class Rol(models.Model):
     id_rol = models.AutoField(primary_key=True)
