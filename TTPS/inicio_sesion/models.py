@@ -19,13 +19,15 @@ class Sexo(models.TextChoices):
     
 class Usuario(AbstractUser):
     id_usuario = models.AutoField(primary_key=True)
-    dni = models.IntegerField()
-    fecha_nacimiento = models.DateField()
+    dni = models.IntegerField(null=True, blank=True)  # Permitir valores NULL
+    fecha_nacimiento = models.DateField(null=True, blank=True)
     genero = models.CharField(
         max_length=1,
-        choices=Sexo.choices,
+        choices=[('M', 'Masculino'), ('F', 'Femenino')],
+        null=True,
+        blank=True
     )
-    rol = models.ForeignKey(Rol, on_delete=models.PROTECT)
+    rol = models.ForeignKey(Rol, on_delete=models.PROTECT, null=True, blank=True)
 
     # Heredados de AbstractUser: username, first_name, email, password
     

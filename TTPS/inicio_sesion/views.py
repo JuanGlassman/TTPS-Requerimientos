@@ -1,9 +1,7 @@
-# views.py
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Usuario
 from django.core.exceptions import PermissionDenied
 
 def role_required(allowed_roles=[]):
@@ -32,7 +30,7 @@ def login_view(request):
             messages.error(request, "Usuario o contraseña incorrectos")
         return redirect('login')
 
-    return render(request, 'auth/login.html')
+    return render(request, 'login.html')
 
 @login_required
 def logout_view(request):
