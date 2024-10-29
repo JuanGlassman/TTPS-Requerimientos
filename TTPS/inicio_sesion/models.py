@@ -27,7 +27,7 @@ class Usuario(AbstractUser):
     )
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT)
 
-    # Heredados de AbstractUser: username, first_name, email, password
+    # Heredados de AbstractUser: username, first_name, last_name, email, password
     
     class Meta:
         db_table = 'usuarios'
