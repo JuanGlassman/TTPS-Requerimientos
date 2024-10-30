@@ -4,7 +4,7 @@ from inicio_sesion.models import Usuario
 
 class ListaUsuariosView(ListView):
     model = Usuario
-    template_name = 'system_admin/lista_usuarios.html'
+    template_name = 'lista_usuarios.html'
 
 class CrearUsuarioView(CreateView):
     model = Usuario
