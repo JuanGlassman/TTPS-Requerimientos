@@ -8,22 +8,16 @@
     <link rel="icon" href="{% static 'images/favicon.ico'%}" type="image/x-icon">
     <title>Página Base </title>
     <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
-    <style>
-        /* Color violeta para el navbar */
-        .navbar-custom {
-            background-color: #6a0dad;
-        }
-    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     {% load static %}
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
+    <nav class="navbar navbar-expand-lg navbar-custom" style="background-color: #6a0dad;">
         <div class="container-fluid">
             <!-- Imagen en el navbar -->
-            <a class="navbar-brand ms-4" href="{% url 'inicio_sesion:login' %}">
-                <img src="{% static 'images/logo.jpg'%}" alt="Logo" style="height: 50px;">
+            <a class="navbar-brand ms-4" href="{% url 'base' %}">
+                <img src="{% static 'images/logo.png'%}" alt="Logo" style="height: 50px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -43,9 +37,24 @@
                         <a class="nav-link text-white" href="#">Pacientes</a>
                     </li>
                 </ul>
+                {% if user.is_authenticated %}
+                    <div class="dropdown ">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> {{user.first_name}}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a href="{% url 'inicio_sesion:logout' %}" class="dropdown-item">Mi Perfil</a></li> 
+                            <li><a href="{% url 'inicio_sesion:cambiar_contrasena' %}" class="dropdown-item">Cambiar Contraseña</a></li>
+                            <li><a href="{% url 'inicio_sesion:logout' %}" class="dropdown-item">Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'inicio_sesion:login' %}" class="btn btn-outline-light">Iniciar Sesión</a>
+                {% endif %}
             </div>
         </div>
     </nav>
+    
 
     <div id="container" class="container mt-4 p-4 bg-light rounded shadow-sm flex-grow-1">
         {% block content %}
@@ -53,7 +62,7 @@
     </div>
 
     {% block footer %}
-    <footer class="footer text-white text-center mt-4 py-3"style="background-color: #2b5ea2;">
+    <footer class="footer text-white text-center mt-4 py-3" style="background-color: #6a0dad;">
         <div class="container">
             <p>© 2024 UNLP. Todos los derechos reservados.</p>
         </div>

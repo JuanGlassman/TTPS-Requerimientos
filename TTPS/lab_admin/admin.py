@@ -1,3 +1,7 @@
 from django.contrib import admin
+from . import models
 
-# Register your models here.
+admin.site.register(models.Presupuesto)
+admin.site.register(models.Turno)
+admin.site.register(models.Centro)
+admin.site.register(models.LabAdmin)
