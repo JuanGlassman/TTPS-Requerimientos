@@ -82,7 +82,9 @@ target/
 *.log
 *.pot
 *.pyc
-__pycache__/
+**/__pycache__/
+**/migrations/
+**/migrations/*
 local_settings.py
 
 .env
