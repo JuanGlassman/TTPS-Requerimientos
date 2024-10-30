@@ -1,5 +1,5 @@
 from django.db import models
-from system_admin.models import Usuario 
+from inicio_sesion.models import Usuario 
 
 # Create your models here.
 class Medico(models.Model):

@@ -1,18 +1,18 @@
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView
-from inicio_sesion.models import Usuario
+from medicos.models import Medico
 
-class ListaUsuariosView(ListView):
-    model = Usuario
-    template_name = 'lista_usuarios.html'
+class ListaMedicosView(ListView):
+    model = Medico
+    template_name = 'lista_medicos.html'
 
 class CrearUsuarioView(CreateView):
-    model = Usuario
+    model = Medico
     template_name = 'system_admin/formulario_usuario.html'
     fields = ['username', 'first_name', 'last_name', 'fecha_nacimiento', 'email', 'rol']
 
 class EditarUsuarioView(UpdateView):
-    model = Usuario
+    model = Medico
     template_name = 'system_admin/formulario_usuario.html'
     fields = ['username', 'first_name', 'last_name', 'fecha_nacimiento', 'email', 'rol']
 
