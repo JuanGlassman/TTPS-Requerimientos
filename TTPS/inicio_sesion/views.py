@@ -3,6 +3,17 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import AnonymousUser
+
+# Usado para mostrar el rol del usuario en cualquier momento
+# como contex_processors en settings.py TEMPLATES
+def user_role(request):
+    # Verifica si el usuario está autenticado y tiene un rol
+    if isinstance(request.user, AnonymousUser):
+        return {'user_role': None}
+    elif hasattr(request.user, 'rol') and request.user.rol:
+        return {'user_role': request.user.rol.nombre}
+    return {'user_role': None}
 
 def role_required(allowed_roles=[]):
     def decorator(view_func):
@@ -13,24 +24,24 @@ def role_required(allowed_roles=[]):
         return _wrapped_view
     return decorator
 
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, username=email, password=password)
-
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                messages.success(request, "La sesión se inició correctamente")
-                return redirect('home')
-            else:
-                messages.error(request, "Usuario bloqueado o eliminado.")
-        else:
-            messages.error(request, "Usuario o contraseña incorrectos")
-        return redirect('login')
-
-    return render(request, 'login.html')
+#def login_view(request):
+#    if request.method == 'POST':
+#        email = request.POST['email']
+#        password = request.POST['password']
+#        user = authenticate(request, username=email, password=password)
+#
+#        if user is not None:
+#            if user.is_active:
+#                login(request, user)
+#                messages.success(request, "La sesión se inició correctamente")
+#                return redirect('home')
+#            else:
+#                messages.error(request, "Usuario bloqueado o eliminado.")
+#        else:
+#            messages.error(request, "Usuario o contraseña incorrectos")
+#        return redirect('login')
+#
+#    return render(request, 'login.html')
 
 def login_view(request):
     if request.method == 'POST':

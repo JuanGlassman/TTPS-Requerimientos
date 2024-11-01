@@ -24,8 +24,8 @@
                 <td>{{ usuario.email }}</td>
                 <td>{{ usuario.rol }}</td>
                 <td>
-                    <a href="{% url 'editar_usuario' usuario.pk %}">Editar</a> |
-                    <a href="{% url 'eliminar_usuario' usuario.pk %}" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
+                    <a href="{% url 'system_admin:editar_usuario' usuario.pk %}">Editar</a> |
+                    <a href="{% url 'system_admin:eliminar_usuario' usuario.pk %}" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
                 </td>
             </tr>
             {% empty %}
@@ -36,5 +36,5 @@
         </tbody>
     </table>
 
-    <a href="{% url 'crear_usuario' %}">Agregar nuevo usuario</a>
+    <a href="{% url 'system_admin:crear_usuario' %}">Agregar nuevo usuario</a>
 {% endblock %}

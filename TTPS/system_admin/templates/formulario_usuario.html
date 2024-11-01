@@ -13,5 +13,5 @@
         <button type="submit">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
     </form>
 
-    <a href="{% url 'lista_usuarios' %}">Volver a la lista de usuarios</a>
+    <a href="{% url 'system_admin:lista_usuarios' %}">Volver a la lista de usuarios</a>
 {% endblock %}
