@@ -30,11 +30,13 @@ class EstadoEstudio(models.TextChoices):
     INICIADO = 'IN', 'Iniciado'
     PRESUPUESTADO = 'PR', 'Presupuestado'
     PAGADO = 'PA', 'Pagado'
+    AUTORIZADO = "AT", 'Autorizado'
     TURNO_CONFIRMADO = 'TC', 'Turno Confirmado'
     REALIZADA = 'RE', 'Realizada'
     CENTRALIZADA = 'CE', 'Centralizada'
     ENVIADA_EXTERIOR = 'EE', 'Enviada al Exterior'
     FINALIZADO = 'FI', 'Finalizado'
+    CANCELADO = 'CA', 'Cancelado'
     
 class Estudio(models.Model):
     id_estudio = models.AutoField(primary_key=True)
