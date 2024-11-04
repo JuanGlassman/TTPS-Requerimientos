@@ -9,7 +9,7 @@ class Medico(models.Model):
     matricula = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"Dr. {self.usuario.first_name} {self.usuario.apellido}"
+        return f"Dr. {self.usuario.first_name} {self.usuario.last_name}"
 
     class Meta:
         db_table = 'medicos'
