@@ -24,17 +24,19 @@ class Enfermedad(models.Model):
     class Meta:
         db_table = 'enfermedad'
 
-
 # Create your models here.
 class EstadoEstudio(models.TextChoices):
     INICIADO = 'IN', 'Iniciado'
     PRESUPUESTADO = 'PR', 'Presupuestado'
     PAGADO = 'PA', 'Pagado'
+    AUTORIZADO = 'AT', "Autorizado"
     TURNO_CONFIRMADO = 'TC', 'Turno Confirmado'
     REALIZADA = 'RE', 'Realizada'
     CENTRALIZADA = 'CE', 'Centralizada'
     ENVIADA_EXTERIOR = 'EE', 'Enviada al Exterior'
     FINALIZADO = 'FI', 'Finalizado'
+    CANCELADO = 'CA', 'Cancelado'
+
     
 class Estudio(models.Model):
     id_estudio = models.AutoField(primary_key=True)
@@ -50,6 +52,8 @@ class Estudio(models.Model):
     )
     sample_set = models.ForeignKey(SampleSet, on_delete=models.PROTECT, null=True, blank=True)
     patologia = models.CharField(max_length=200)
+
+    estado_actual = EstadoEstudio
 
     def __str__(self):
         return f"{self.id_interno} - {self.paciente}"
