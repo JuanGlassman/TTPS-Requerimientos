@@ -1,10 +1,11 @@
-# views.py
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash, authenticate, login
 from .forms import LoginForm
 from django.contrib.auth import get_user_model
-
+from .models import Rol
 
 def authenticate(request, dni=None, password=None):
     User = get_user_model()
@@ -28,10 +29,91 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, "Inicio de sesión exitoso.")
-                return redirect('inicio')  # Cambia 'inicio' por la vista de inicio de tu aplicación
+                return redirect('home') 
             else:
                 messages.error(request, "DNI o contraseña incorrectos.")
     else:
         form = LoginForm()
     
     return render(request, 'login.html', {'form': form})
+
+
+@login_required
+def perfil_view(request):
+    return render(request, 'profile.html')
+
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.info(request, "La sesión se cerró correctamente")
+    return redirect('home')
+
+
+
+@login_required
+def cambiar_contrasena_view(request):
+    if request.method == 'POST':
+        password1 = request.POST.get("current_password")
+        password2 = request.POST.get("new_password")
+        password3 = request.POST.get("new_password_again")
+        
+        # Verificar que todos los campos estén llenos
+        if not password1 or not password2 or not password3:
+            messages.warning(request, "Todos los campos son obligatorios.")
+            return render(request, 'change_password.html')
+        
+        # Verificar la contraseña actual
+        if not request.user.check_password(password1):
+            messages.error(request, "La contraseña actual es incorrecta.")
+            return render(request, 'change_password.html')
+
+        # Verificar que las contraseñas nuevas coincidan
+        if password2 != password3:
+            messages.error(request, "Las nuevas contraseñas no coinciden.")
+            return render(request, 'change_password.html')
+        
+        # Cambiar la contraseña
+        try:
+            request.user.set_password(password2)
+            request.user.save()
+            update_session_auth_hash(request, request.user)  # Mantener la sesión iniciada
+            messages.success(request, "Contraseña cambiada exitosamente.")
+            return redirect('home')  # Redirigir a la página de inicio o a otra vista
+        except Exception as e:
+            messages.error(request, f"Error al cambiar la contraseña: {str(e)}")
+        
+    return render(request, 'change_password.html')
+
+
+@login_required
+def editar_perfil(request):
+    user = request.user  # Obtiene el usuario autenticado
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        fecha_nacimiento = request.POST.get('fecha_nacimiento')
+        genero = request.POST.get('genero')
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.fecha_nacimiento = fecha_nacimiento
+        user.genero = genero
+
+
+        user.save()
+
+        messages.success(request, "Perfil actualizado correctamente.")
+        return redirect('inicio_sesion:perfil')  # Redirige a la vista de perfil
+
+    else:
+        # Obtener todos los roles para el select
+        roles = Rol.objects.all()
+
+        context = {
+            'user': user,
+            'roles': roles,
+        }
+        return render(request, 'edit_profile.html', context)
