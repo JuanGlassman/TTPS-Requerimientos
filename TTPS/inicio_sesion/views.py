@@ -1,57 +1,65 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth import update_session_auth_hash
+from .models import Usuario
+from django.contrib.auth.hashers import check_password
 
-def role_required(allowed_roles=[]):
-    def decorator(view_func):
-        def _wrapped_view(request, *args, **kwargs):
-            if request.user.is_authenticated and request.user.rol.nombre in allowed_roles:
-                return view_func(request, *args, **kwargs)
-            raise PermissionDenied
-        return _wrapped_view
-    return decorator
+def find_user_by_dni(dni):
+    """Busca un usuario por su dni"""
+    return Usuario.objects.filter(dni=dni).first()
 
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, username=email, password=password)
+def user_deleted(user):
+    return user.is_deleted == True
 
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                messages.success(request, "La sesión se inició correctamente")
-                return redirect('home')
-            else:
-                messages.error(request, "Usuario bloqueado o eliminado.")
-        else:
-            messages.error(request, "Usuario o contraseña incorrectos")
-        return redirect('login')
+def check_user(dni, password):
+    """Verifica las credenciales del usuario"""
+    user = find_user_by_dni(dni)
 
-    return render(request, 'login.html')
+    if user and check_password(password, user.password):
+        print(f"Usuario autenticado: {user.email}, id: {user.id}")
+        return user
+    
+    return None
+
+
+def authenticate(request, dni, password):
+    user = check_user(dni, password)
+
+    if not user:
+        messages.error(request, "Usuario o contraseña incorrectos")
+        return False
+    
+    if user_deleted(user):
+        messages.error(request, "Usuario eliminado")
+        return False
+    
+    
+    
+    messages.success(request, "La sesión se inició correctamente")
+    return user 
 
 def login_view(request):
     if request.method == 'POST':
         dni = request.POST['dni']
         password = request.POST['password']
-        user = authenticate(request, username=dni, password=password)
-        print(user)
-        if user is not None:
-            print("1")
+        user = authenticate(request, dni, password)
+        if user:
             if user.is_active:
-                print("2")
                 login(request, user)
-                print("3")
                 messages.success(request, "La sesión se inició correctamente")
+                return redirect('inicio_sesion:perfil')
             else:
                 messages.error(request, "Usuario bloqueado o eliminado.")
-        else:
-            messages.error(request, "Usuario o contraseña incorrectos")
         return redirect('inicio_sesion:login')
 
     return render(request, 'login.html')
+
+@login_required
+def perfil_view(request):
+    return render(request, 'change_password.html')
+
 
 
 @login_required
@@ -60,11 +68,7 @@ def logout_view(request):
     messages.info(request, "La sesión se cerró correctamente")
     return redirect('home')
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.models import User
+
 
 @login_required
 def cambiar_contrasena_view(request):
