@@ -1,5 +1,6 @@
 from django.db import models
 from pacientes.models import Paciente
+from medicos.models import Medico
 from django.core.validators import MinValueValidator
 
 class SampleSet(models.Model):
@@ -41,6 +42,7 @@ class Estudio(models.Model):
     id_estudio = models.AutoField(primary_key=True)
     id_interno = models.CharField(max_length=50)  # Formato: "1234_APE_NOM"
     paciente = models.ForeignKey(Paciente, on_delete=models.PROTECT)
+    medico = models.ForeignKey(Medico, on_delete=models.PROTECT)
     fecha = models.DateField()
     tipo_estudio = models.CharField(max_length=100)
     resultado = models.TextField(null=True)

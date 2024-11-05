@@ -8,7 +8,7 @@ class Paciente(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     antecedentes = models.CharField(max_length=150, blank=True, null=True)
     historial_medico = models.CharField(max_length=150, blank=True, null=True)
-
+    
     def __str__(self):
         return f"{self.usuario.first_name} {self.usuario.last_name}"
 

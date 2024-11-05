@@ -84,4 +84,4 @@ def estudio_cancelado(estudio):
 
 def estudio(request, estudio_id):
     estudio = get_object_or_404(Estudio, id_estudio=estudio_id)
-    return render(request, "estudios/estudio.html", {"estudio": estudio})
+    return render(request, "estudio.html", {"estudio": estudio})

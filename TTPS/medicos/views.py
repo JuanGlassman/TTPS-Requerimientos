@@ -6,18 +6,13 @@ from estudios.models import Estudio
 from pacientes.models import Paciente
 from datetime import date
 
-# Create your views here.
-def estudios(request):
-    estudios = Estudio.objects.order_by("fecha")
-    return render(request, "medicos/estudios.html", { "estudios": estudios })
-
 def pacientes(request):
     pacientes = Paciente.objects.order_by("id_paciente")
-    return render(request, "medicos/pacientes.html", {"pacientes": pacientes})
+    return render(request, "pacientes.html", {"pacientes": pacientes})
 
 def iniciar_estudio_paciente(request, paciente_id):        
     paciente = get_object_or_404(Paciente, id_paciente=paciente_id)    
-    return render(request, "medicos/iniciar_estudio.html", {"paciente": paciente})
+    return render(request, "iniciar_estudio.html", {"paciente": paciente})
 
 def iniciar_estudio(request):
 

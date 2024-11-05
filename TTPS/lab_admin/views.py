@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from estudios.models import Estudio, EstadoEstudio
 
-# Create your views here.
+def estudios(request):
+    estudios = Estudio.objects.order_by("fecha")
+    return render(request, "estudios.html", { "estudios": estudios, "estados": EstadoEstudio })
