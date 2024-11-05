@@ -20,7 +20,7 @@ class Sexo(models.TextChoices):
     
 class Usuario(AbstractUser):
     id_usuario = models.AutoField(primary_key=True)
-    dni = models.IntegerField(unique=True)
+    dni = models.IntegerField(unique=True, null=True)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)

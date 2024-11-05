@@ -10,7 +10,7 @@ class Paciente(models.Model):
     historial_medico = models.CharField(max_length=150, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.usuario.first_name} {self.usuario.apellido}"
+        return f"{self.usuario.first_name} {self.usuario.last_name}"
 
     class Meta:
         db_table = 'pacientes'

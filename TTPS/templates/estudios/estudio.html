@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load static %}
+
+<h1>Estudio {{ estudio.id_interno}} </h1>
+<dl class="row row-gap-3 row-gap-lg-2">
+    <dt class="col-5 fw-medium">Tipo de estudio</dt>
+    <dd class="col-7 fw-light">{{estudio.tipo_estudio}}</dd>
+
+    <dt class="col-5 fw-medium">Tipo de sospecha</dt>
+    <dd class="col-7 fw-light">{{ estudio.tipo_sospecha }}</dd>
+
+    <dt class="col-5 fw-medium">Sintomas</dt>
+    <dd class="col-7 fw-light">-</dd>
+
+    <dt class="col-5 fw-medium">Estado</dt>
+    <dd class="col-7 fw-light">
+        <span class="badge rounded-pill text-bg-success" alt>{{ estudio.estado }}</span>
+    </dd>
+
+    <dt class="col-5 fw-medium">Hallazgos secundarios</dt>
+    <dd class="col-7 fw-light">-</dd>
+</dl>
+
+{% endblock %}
+
+

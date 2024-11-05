@@ -1,8 +1,6 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
-from models import EstadoEstudio
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from estudios.models import Estudio, EstadoEstudio
 
 def estudio_terminado(estudio):
     return estudio.estado in [EstadoEstudio.CANCELADO, EstadoEstudio.FINALIZADO]
@@ -83,3 +81,7 @@ def estudio_cancelado(estudio):
         return False, estudio
     estudio.estado = EstadoEstudio.CANCELADO
     return True, estudio
+
+def estudio(request, estudio_id):
+    estudio = get_object_or_404(Estudio, id_estudio=estudio_id)
+    return render(request, "estudios/estudio.html", {"estudio": estudio})

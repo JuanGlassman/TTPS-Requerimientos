@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load static %}
+
+<h2>Paciente: {{paciente.usuario.first_name}} {{ paciente.usuario.last_name }}</h2>
+
+<form action="{% url 'iniciar_estudio' %}" method="POST">
+    {% csrf_token %}
+
+    <input hidden value="{{ paciente.id_paciente}}" name="id_paciente" />
+    <div>
+        <label class="form-label">Patología a estudiar</label>
+        <select class="form-select" name="patologia">
+           
+                <option value="patologia1">Patologia 1</option>
+                <option value="patologia2">Patologia 2</option>
+        </select>
+    </div> 
+    <div>
+        <label class="form-label">Tipo de sospecha</label>
+        <select class="form-select" name="sospecha">
+            <option value="0">Sospecha puntual</option>
+            <option value="1">Sospecha familiar</option>
+        </select>
+    </div>
+    <div>
+        <label class="form-label">Tipo de estudio</label>
+        <input class="form-control" name="tipo_estudio"/>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="hallazgo-check" name="hallazgo">
+        <label class="form-check-label" for="hallazgo-check">
+            Hallazgos secundarios
+        </label>
+
+    </div>
+    <button type="submit" class="btn btn-primary">Iniciar Estudio</button>
+</form>
+{% endblock %}

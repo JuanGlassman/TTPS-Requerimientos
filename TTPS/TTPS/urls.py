@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from medicos import views as medico_view
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
@@ -27,4 +28,5 @@ urlpatterns = [
     path("pacientes/", include("pacientes.urls")),
     path("system_admin/", include("system_admin.urls")),
     path("inicio_sesion/", include("inicio_sesion.urls")),
+    path("estudios/", include('estudios.urls'))
 ]
