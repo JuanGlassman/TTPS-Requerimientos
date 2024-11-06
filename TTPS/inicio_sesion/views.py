@@ -6,6 +6,27 @@ from django.contrib.auth import update_session_auth_hash, authenticate, login
 from .forms import LoginForm
 from django.contrib.auth import get_user_model
 from .models import Rol
+from django.core.exceptions import PermissionDenied
+from functools import wraps
+from .utils import PERMISOS_POR_ROL
+
+def permission_required(permiso_requerido):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                raise PermissionDenied  # O redirigir al login si no está autenticado
+
+            rol_usuario = request.user.rol.nombre  # Obtiene el rol del usuario
+
+            # Verifica si el rol del usuario tiene el permiso requerido
+            if rol_usuario in PERMISOS_POR_ROL and permiso_requerido in PERMISOS_POR_ROL[rol_usuario]:
+                return view_func(request, *args, **kwargs)
+            else:
+                raise PermissionDenied  # O redirigir a una página de acceso denegado
+        return _wrapped_view
+    return decorator
+
 
 def authenticate(request, dni=None, password=None):
     User = get_user_model()
@@ -41,8 +62,6 @@ def login_view(request):
 @login_required
 def perfil_view(request):
     return render(request, 'profile.html')
-
-
 
 @login_required
 def logout_view(request):
@@ -117,3 +136,4 @@ def editar_perfil(request):
             'roles': roles,
         }
         return render(request, 'edit_profile.html', context)
+
