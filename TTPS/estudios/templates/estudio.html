@@ -4,10 +4,31 @@
 {% block content %}
 {% load static %}
 
-<h1>Estudio {{ estudio.id_interno}} </h1>
+<div class="d-flex justify-space-between">
+    <h1 class="mb-2">Estudio {{ estudio.id_interno}} </h1>    
+    <div>  
+        {% if estudio.estado == estados.INICIADO %}
+        <a class="btn btn-primary btn-sm" href="{% url 'lab_admin:form_presupuesto' estudio.id_estudio %}">Editar Presupuesto</a>
+        {% elif estudio.estado == estados.PRESUPUESTADO %}
+        <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-primary btn-sm" type="submit">Pagado</button>
+        </form>
+    {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
+        <a class="btn btn-primary btn-sm">Muestra realizada</a>
+        {% elif estudio.estado == estados.REALIZADA %}
+        <a class="btn btn-primary btn-sm">Enviar al Centro</a>
+        {% elif estudio.estado == estados.CENTRALIZADA %}
+        <a class="btn btn-primary btn-sm">Enviar al exterior</a>
+        {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
+        <a class="btn btn-primary btn-sm">Cargar resultados</a>
+        {% endif %}
+    </div>
+</div>
+
 <dl class="row row-gap-3 row-gap-lg-2">
     <dt class="col-5 fw-medium">Tipo de estudio</dt>
-    <dd class="col-7 fw-light">{{estudio.tipo_estudio}}</dd>
+    <dd class="col-7 fw-light">{{ estudio.tipo_estudio }}</dd>
 
     <dt class="col-5 fw-medium">Tipo de sospecha</dt>
     <dd class="col-7 fw-light">{{ estudio.tipo_sospecha }}</dd>
@@ -17,11 +38,36 @@
 
     <dt class="col-5 fw-medium">Estado</dt>
     <dd class="col-7 fw-light">
-        <span class="badge rounded-pill text-bg-success" alt>{{ estudio.estado }}</span>
+        {% if estudio.estado == estados.PAGADO %}
+            <span class="badge rounded-pill text-bg-primary" 
+            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe que firmar consentimiento">
+                PAGADO
+            </span>
+        {% elif estudio.estado == estados.AUTORIZADO %}
+            <span type="button" class="badge rounded-pill text-bg-primary" 
+            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe confirmar un turno">
+                AUTORIZADO
+            </span>         
+        {% elif estudio.estado == estados.FINALIZADO %}
+            <span class="badge rounded-pill text-bg-success">FINALIZADO</span>
+        {% elif estudio.estado == estados.CANCELADO %}
+            <span class="badge rounded-pill text-bg-danger">CANCELADO</span>
+        {% else %}
+            <span class="badge rounded-pill text-bg-primary">{{ estudio.estado|upper }}</span>
+        {% endif %}
     </dd>
 
     <dt class="col-5 fw-medium">Hallazgos secundarios</dt>
     <dd class="col-7 fw-light">-</dd>
+</dl>
+
+<h3>Presupuesto</h3>
+<dl class="row row-gap-3 row-gap-lg-2">
+    <dt class="col-5 fw-medium">Costo Exoma</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_exoma}}</dd>
+
+    <dt class="col-5 fw-medium">Costo Genes extra</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_genes_extra }}</dd>
 </dl>
 
 {% endblock %}

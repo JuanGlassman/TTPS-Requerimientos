@@ -46,7 +46,7 @@ class Estudio(models.Model):
     fecha = models.DateField()
     tipo_estudio = models.CharField(max_length=100)
     resultado = models.TextField(null=True)
-    estado = models.CharField(
+    estado = models.CharField(  
         max_length=20,
         choices=EstadoEstudio.choices,
         default=EstadoEstudio.INICIADO,

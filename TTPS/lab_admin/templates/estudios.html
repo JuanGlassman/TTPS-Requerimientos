@@ -23,7 +23,17 @@
             <td>{{ estudio.tipo_estudio }}</td>
             <td>{{ estudio.presupuesto.costo_exoma }}</td>
             <td>
-                {% if estudio.estado == estados.FINALIZADO %}
+                {% if estudio.estado == estados.PAGADO %}
+                    <span class="badge rounded-pill text-bg-primary" 
+                        data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe que firmar consentimiento">
+                        PAGADO
+                    </span>
+                {% elif estudio.estado == estados.AUTORIZADO %}
+                    <span class="badge rounded-pill text-bg-primary" 
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe confirmar un turno">
+                        AUTORIZADO
+                    </span>         
+                {% elif estudio.estado == estados.FINALIZADO %}
                     <span class="badge rounded-pill text-bg-success">FINALIZADO</span>
                 {% elif estudio.estado == estados.CANCELADO %}
                     <span class="badge rounded-pill text-bg-danger">CANCELADO</span>
@@ -32,30 +42,47 @@
                 {% endif %}
             </td>
             <td>
-                {% if estudio.estado == estados.INICIADO %}
-                    <a class="btn btn-secondary" href="/admin_lab/editar_presupuesto">Editar Presupuesto</a>
-                {% elif estudio.estado == estados.PRESUPUESTADO %}
-                    <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
-                        {% csrf_token %}
-                        <button class="btn btn-secondary" type="submit">PAGADO</button>
-                    </form>
-                {% elif estudio.estado == estados.PAGADO %}
-                    <p>El paciente tiene que firmar consentimiento</p>
-                {% elif estudio.estado == estados.AUTORIZADO %}
-                    <p>El paciente tiene que confirmar turno</p>
-                {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
-                    <a class="btn btn-secondary">Muestra realizada</a>
-                {% elif estudio.estado == estados.REALIZADA %}
-                    <a class="btn btn-secondary">Enviar al Centro</a>
-                {% elif estudio.estado == estados.CENTRALIZADA %}
-                    <a class="btn btn-secondary">Enviar al exterior</a>
-                {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
-                    <a class="btn btn-secondary">Cargar resultados</a>
-                {% endif %}
+                <div class="d-flex justify-content-end gap-2">                    
+                    {% if estudio.estado == estados.INICIADO %}
+                        <a class="btn btn-primary btn-sm" href="{% url 'lab_admin:form_presupuesto' estudio.id_estudio %}">Editar Presupuesto</a>
+                    {% elif estudio.estado == estados.PRESUPUESTADO %}
+                        <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
+                            {% csrf_token %}
+                            <button class="btn btn-primary btn-sm" type="submit">Pagado</button>
+                        </form>
+                    {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
+                        <a class="btn btn-primary btn-sm">Muestra realizada</a>
+                    {% elif estudio.estado == estados.REALIZADA %}
+                        <a class="btn btn-primary btn-sm">Enviar al Centro</a>
+                    {% elif estudio.estado == estados.CENTRALIZADA %}
+                        <a class="btn btn-primary btn-sm">Enviar al exterior</a>
+                    {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
+                        <a class="btn btn-primary btn-sm">Cargar resultados</a>
+                    {% endif %}
+                    
+                    <div>
+                        <a class="btn btn-secondary btn-sm" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                    </div>
 
-                {% if estudio.estado != estados.CANCELADO and estudio.estado != estados.FINALIZADO %}
-                    <a class="btn btn-danger">CANCELAR</a>
-                {% endif %}                
+                    {% if estudio.estado != estados.CANCELADO and estudio.estado != estados.FINALIZADO %}
+                        <div>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Acciones
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <form action="{% url 'lab_admin:cancelar' estudio.id_estudio %}" method="post">
+                                            <button class="dropdown-item" type="submit">CANCELAR</button>
+                                        </form>                                
+                                    </li>
+                                </ul>
+                            </div>        
+                        </div>                              
+                    {% endif %}                
+                </div>
             </td>
         </tr>
         {% endfor %}

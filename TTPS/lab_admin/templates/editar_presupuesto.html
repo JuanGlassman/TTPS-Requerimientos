@@ -4,6 +4,23 @@
 {% block content %}
 {% load static %}
 
-<h1 class="mb-2">Editar presupuesto</h1>
+<h1 class="mb-2">Editar presupuesto.
+<h2>Presupuesto del estudio: {{ estudio.id_interno }} </h2>
+
+<form action="{% url 'lab_admin:presupuestar' %}" method="post">
+    {% csrf_token %}
+    <input hidden value="{{ presupuesto.id_presupuesto }}" name="id_presupuesto" />
+    <div>
+        <label class="form-label">Precio Exoma</label>
+        <input value="{{ presupuesto.costo_exoma }}" name="costo_exoma" class="form-control"/>
+    </div>
+
+    <div>
+        <label class="form-label">Precio genes extra</label>
+        <input value="{{ presupuesto.costo_genes_extra }}" name="costo_genes_extra" class="form-control"/>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Confirmar Presupuesto</button>
+</form>
 
 {% endblock %}

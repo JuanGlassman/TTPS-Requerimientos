@@ -2,6 +2,7 @@ from estudios.models import Estudio, EstadoEstudio
 from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
 from medicos.models import Medico
+from lab_admin.models import Presupuesto
 from datetime import date
 def run_seeds():
 
@@ -13,6 +14,7 @@ def run_seeds():
         nombre = "Medico"
     )
 
+    #region Usuarios
     usuarioMedico = Usuario.objects.create(
         dni = 25652587,
         first_name = "Osvaldo",
@@ -122,6 +124,20 @@ def run_seeds():
         rol_id = rolPaciente.id_rol
     )
 
+    usuario9 = Usuario.objects.create(
+        username="fidel",
+        password="1234",
+        email="fidel@email.com",
+        dni = 38282827,
+        first_name = "Fidel",
+        last_name = "Alvarez",
+        fecha_nacimiento = "1999-11-05",
+        genero = "M",
+        rol_id = rolPaciente.id_rol
+    )
+    #endregion
+
+    #region Pacientes
     paciente1 = Paciente.objects.create(
         usuario_id = usuario1.id_usuario
     )
@@ -149,103 +165,157 @@ def run_seeds():
     paciente8 = Paciente.objects.create(
         usuario_id = usuario8.id_usuario
     )
+    #endregion
 
+    #region Estudios y Presupuestos
     estudio1 = Estudio.objects.create(
         id_interno="1234_LIR_ROD",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico, 
         estado = EstadoEstudio.INICIADO
     )
 
+    presupuesto1 = Presupuesto.objects.create(
+        estudio_id = estudio1.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio2 = Estudio.objects.create(
         id_interno="1245_LIR_ROD",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.FINALIZADO
     )
 
+    presupuesto2 = Presupuesto.objects.create(
+        estudio_id = estudio2.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio3 = Estudio.objects.create(
         id_interno="1245_LIR_ROD",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia3",
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.CANCELADO
     )
 
+    presupuesto3 = Presupuesto.objects.create(
+        estudio_id = estudio3.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio4 = Estudio.objects.create(
         id_interno="5965_VER_SOF",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia4",
         paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PRESUPUESTADO
     )
 
+    presupuesto4 = Presupuesto.objects.create(
+        estudio_id = estudio4.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio5 = Estudio.objects.create(
         id_interno="1275_REY_VAL",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PAGADO
     )
 
+    presupuesto5 = Presupuesto.objects.create(
+        estudio_id = estudio5.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio6 = Estudio.objects.create(
         id_interno="1275_CEN_RUB",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente4.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.AUTORIZADO
     )
 
+    presupuesto6 = Presupuesto.objects.create(
+        estudio_id = estudio6.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio7 = Estudio.objects.create(
         id_interno="1275_LIR_VAL",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente5.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.TURNO_CONFIRMADO
     )
 
+    presupuesto7 = Presupuesto.objects.create(
+        estudio_id = estudio7.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio8 = Estudio.objects.create(
         id_interno="1275_LIR_ROD",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente6.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.REALIZADA
     )
 
+    presupuesto8 = Presupuesto.objects.create(
+        estudio_id = estudio8.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio9 = Estudio.objects.create(
         id_interno="1275_HUM_ROD",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia8",
         paciente_id = paciente8.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.CENTRALIZADA
     )
 
+    presupuesto9 = Presupuesto.objects.create(
+        estudio_id = estudio9.id_estudio,
+        costo_exoma = 500
+    )
+
     estudio10 = Estudio.objects.create(
         id_interno="1275_LIR_ROD",
         fecha=date.today(),
-        tipo_estudio="tipo estudio",
+        tipo_estudio="Exoma",
         patologia="patologia1",
         paciente_id = paciente7.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.ENVIADA_EXTERIOR
     )
+
+    presupuesto10 = Presupuesto.objects.create(
+        estudio_id = estudio10.id_estudio,
+        costo_exoma = 500
+    )
+
+    #endregion
