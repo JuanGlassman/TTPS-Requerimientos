@@ -141,15 +141,12 @@ def run_seeds():
     paciente1 = Paciente.objects.create(
         usuario_id = usuario1.id_usuario
     )
-
     paciente2 = Paciente.objects.create(
         usuario_id = usuario2.id_usuario
     )
-
     paciente3 = Paciente.objects.create(
         usuario_id = usuario3.id_usuario
     )
-
     paciente4 = Paciente.objects.create(
         usuario_id = usuario4.id_usuario
     )
@@ -164,6 +161,9 @@ def run_seeds():
     )
     paciente8 = Paciente.objects.create(
         usuario_id = usuario8.id_usuario
+    )
+    paciente9 = Paciente.objects.create(
+        usuario_id = usuario9.id_usuario
     )
     #endregion
 
