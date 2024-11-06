@@ -21,13 +21,24 @@
         <tr>
             <td>{{ estudio.id_interno }}</td>
             <td>{{ estudio.tipo_estudio }}</td>
-            <td>Valor presupuesto</td>
-            <td>{{ estudio.estado }}</td>
+            <td>{{ estudio.presupuesto.costo_exoma }}</td>
+            <td>
+                {% if estudio.estado == estados.FINALIZADO %}
+                    <span class="badge rounded-pill text-bg-success">FINALIZADO</span>
+                {% elif estudio.estado == estados.CANCELADO %}
+                    <span class="badge rounded-pill text-bg-danger">CANCELADO</span>
+                {% else %}
+                    <span class="badge rounded-pill text-bg-primary">{{ estudio.estado|upper }}</span>
+                {% endif %}
+            </td>
             <td>
                 {% if estudio.estado == estados.INICIADO %}
-                    <a class="btn btn-secondary">Editar Presupuesto</a>
+                    <a class="btn btn-secondary" href="/admin_lab/editar_presupuesto">Editar Presupuesto</a>
                 {% elif estudio.estado == estados.PRESUPUESTADO %}
-                    <a class="btn btn-secondary">PAGADO</a>
+                    <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary" type="submit">PAGADO</button>
+                    </form>
                 {% elif estudio.estado == estados.PAGADO %}
                     <p>El paciente tiene que firmar consentimiento</p>
                 {% elif estudio.estado == estados.AUTORIZADO %}

@@ -7,6 +7,8 @@ from django.core.validators import MinValueValidator
 class Presupuesto(models.Model):
     id_presupuesto = models.AutoField(primary_key=True)
     estudio = models.OneToOneField(Estudio, on_delete=models.PROTECT)
+    costo_exoma = models.FloatField(null=True)
+    costo_genes_extra = models.FloatField(null=True)
 
     def __str__(self):
         return f"Presupuesto #{self.id_presupuesto} - {self.estudio.id_interno}"

@@ -6,18 +6,27 @@
 
 <h2>Paciente: {{paciente.usuario.first_name}} {{ paciente.usuario.last_name }}</h2>
 
-<form action="{% url 'iniciar_estudio' %}" method="POST">
+<form action="{% url 'iniciar_estudio' %}" method="post">
     {% csrf_token %}
 
-    <input hidden value="{{ paciente.id_paciente}}" name="id_paciente" />
+    <input hidden value="{{ paciente.id_paciente }}" name="id_paciente" />
+
+    <div>
+        <label class="form-label">Síntomas</label>
+        <select class="form-select" name="sintoma" multiple>
+            <option>Sintoma 1</option>
+            <option>Sintoma 2</option>
+            <option>Sintoma 3</option>
+        </select>
+    </div>
     <div>
         <label class="form-label">Patología a estudiar</label>
-        <select class="form-select" name="patologia">
-           
-                <option value="patologia1">Patologia 1</option>
-                <option value="patologia2">Patologia 2</option>
+        <select class="form-select" name="patologia">           
+            <option value="patologia1">Patologia 1</option>
+            <option value="patologia2">Patologia 2</option>
         </select>
     </div> 
+
     <div>
         <label class="form-label">Tipo de sospecha</label>
         <select class="form-select" name="sospecha">
@@ -25,9 +34,17 @@
             <option value="1">Sospecha familiar</option>
         </select>
     </div>
+
+    <div>
+        <label>Parentesco con el familiar</label>
+        <input class="form-control" />
+    </div>
+
     <div>
         <label class="form-label">Tipo de estudio</label>
-        <input class="form-control" name="tipo_estudio"/>
+        <select class="form-select" name="tipo_estudio">
+            <option value="exoma">Exoma</option>    
+        </select>
     </div>
 
     <div class="form-check">
@@ -39,4 +56,8 @@
     </div>
     <button type="submit" class="btn btn-primary">Iniciar Estudio</button>
 </form>
+
+<p>{{ api_data }}</p>
+<p>{{ api_data.nombre_patologia }}</p>
+<p>{{ api_data.gen }}</p>
 {% endblock %}
