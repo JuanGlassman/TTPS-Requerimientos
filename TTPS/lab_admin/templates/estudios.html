@@ -13,7 +13,7 @@
             <th>Tipo estudio</th>
             <th>Presupuesto</th>
             <th>Estado</th>
-            <th>Operación</th>
+            <th style="text-align:end">Operaciones</th>
         </tr>
     </thead>
     <tbody>
@@ -32,7 +32,12 @@
                     <span class="badge rounded-pill text-bg-primary" 
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe confirmar un turno">
                         AUTORIZADO
-                    </span>         
+                    </span>
+                {% elif estudio.estado == estados.REALIZADA %}
+                    <span class="badge rounded-pill text-bg-primary" 
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El transportiste debe centralizar la muestra">
+                        REALIZADA
+                    </span>            
                 {% elif estudio.estado == estados.FINALIZADO %}
                     <span class="badge rounded-pill text-bg-success">FINALIZADO</span>
                 {% elif estudio.estado == estados.CANCELADO %}
@@ -53,35 +58,37 @@
                     {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
                         <a class="btn btn-primary btn-sm">Muestra realizada</a>
                     {% elif estudio.estado == estados.REALIZADA %}
-                        <a class="btn btn-primary btn-sm">Enviar al Centro</a>
+                        <!-- <a class="btn btn-primary btn-sm">Enviar al Centro</a> -->
                     {% elif estudio.estado == estados.CENTRALIZADA %}
-                        <a class="btn btn-primary btn-sm">Enviar al exterior</a>
+                        <a class="btn btn-primary btn-sm">Ver Sample Set</a>
                     {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
                         <a class="btn btn-primary btn-sm">Cargar resultados</a>
                     {% endif %}
                     
-                    <div>
-                        <a class="btn btn-secondary btn-sm" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
-                            <i class="bi bi-eye-fill"></i>
-                        </a>
-                    </div>
-
-                    {% if estudio.estado != estados.CANCELADO and estudio.estado != estados.FINALIZADO %}
+                    {% if estudio.estado == estados.INICIADO or estudio.estado == estados.PRESUPUESTADO %}
                         <div>
                             <div class="btn-group">
                                 <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Acciones
+                                    <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <form action="{% url 'lab_admin:cancelar' estudio.id_estudio %}" method="post">
+                                            {% csrf_token %}
                                             <button class="dropdown-item" type="submit">CANCELAR</button>
                                         </form>                                
                                     </li>
                                 </ul>
                             </div>        
                         </div>                              
-                    {% endif %}                
+                    {% endif %}      
+
+                    <div>
+                        <a class="btn btn-secondary btn-sm" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                    </div>
+                             
                 </div>
             </td>
         </tr>
