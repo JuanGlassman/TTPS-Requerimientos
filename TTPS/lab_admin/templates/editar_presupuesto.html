@@ -4,7 +4,13 @@
 {% block content %}
 {% load static %}
 
-<h1 class="mb-2">Editar presupuesto.
+<div class="mb-2 d-flex justify-content-between">
+    <h1>Editar presupuesto.</h1>
+    <a href="javascript:history.back()">
+        <button class="btn btn-secondary">Volver</button>
+    </a>
+</div>
+
 <h2>Presupuesto del estudio: {{ estudio.id_interno }} </h2>
 
 <form action="{% url 'lab_admin:presupuestar' %}" method="post">
