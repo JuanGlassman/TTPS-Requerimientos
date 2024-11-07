@@ -28,7 +28,7 @@
                         <a class="btn btn-secondary" href="{% url 'estudios:estudio_detalle' ultimo_estudio.id_estudio %}">Detalle estudio</a>
                     {% endwith %}
                 {% else %}
-                    <a class="btn btn-primary" href="{% url 'iniciar_estudio_paciente' paciente.id_paciente %}">Iniciar estudio</a>
+                    <a class="btn btn-primary" href="{% url 'medicos:iniciar_estudio_paciente' paciente.id_paciente %}">Iniciar estudio</a>
                 {% endif %}
             </td>
         </tr>
