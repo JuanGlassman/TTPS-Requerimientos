@@ -1,5 +1,6 @@
 from django.db import models
 from pacientes.models import Paciente
+from medicos.models import Medico
 from django.core.validators import MinValueValidator
 
 class SampleSet(models.Model):
@@ -24,30 +25,33 @@ class Enfermedad(models.Model):
     class Meta:
         db_table = 'enfermedad'
 
-
 # Create your models here.
 class EstadoEstudio(models.TextChoices):
-    INICIADO = 'IN', 'Iniciado'
-    PRESUPUESTADO = 'PR', 'Presupuestado'
-    PAGADO = 'PA', 'Pagado'
-    TURNO_CONFIRMADO = 'TC', 'Turno Confirmado'
-    REALIZADA = 'RE', 'Realizada'
-    CENTRALIZADA = 'CE', 'Centralizada'
-    ENVIADA_EXTERIOR = 'EE', 'Enviada al Exterior'
-    FINALIZADO = 'FI', 'Finalizado'
+    INICIADO = 'Iniciado'
+    PRESUPUESTADO = 'Presupuestado'
+    PAGADO = 'Pagado'
+    AUTORIZADO = 'Autorizado'
+    TURNO_CONFIRMADO = 'Turno Confirmado'
+    REALIZADA = 'Realizada'
+    CENTRALIZADA = 'Centralizada'
+    ENVIADA_EXTERIOR = 'Enviada al Exterior'
+    FINALIZADO = 'Finalizado'
+    CANCELADO = 'Cancelado'
     
 class Estudio(models.Model):
     id_estudio = models.AutoField(primary_key=True)
     id_interno = models.CharField(max_length=50)  # Formato: "1234_APE_NOM"
     paciente = models.ForeignKey(Paciente, on_delete=models.PROTECT)
+    medico = models.ForeignKey(Medico, on_delete=models.PROTECT)
     fecha = models.DateField()
     tipo_estudio = models.CharField(max_length=100)
-    resultado = models.TextField()
-    estado = models.CharField(
-        max_length=2,
+    resultado = models.TextField(null=True)
+    estado = models.CharField(  
+        max_length=20,
         choices=EstadoEstudio.choices,
         default=EstadoEstudio.INICIADO,
     )
+    tipo_sospecha = models.CharField(max_length=100)
     sample_set = models.ForeignKey(SampleSet, on_delete=models.PROTECT, null=True, blank=True)
     patologia = models.CharField(max_length=200)
 

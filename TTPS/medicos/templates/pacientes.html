@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load static %}
+
+<h1>Listado de pacientes </h1>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Operaciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for paciente in pacientes %}
+        <tr>
+            <td>{{ paciente.id_paciente }}</td>
+            <td>{{ paciente.usuario.first_name }}</td>
+            <td>{{ paciente.usuario.last_name }}</td>
+            <td>
+                <a class="btn btn-secondary" href="{% url 'pacientes:paciente_detalle' paciente.id_paciente %}">Detalle paciente</a>
+                {% if paciente.estudio_set.all %}
+                    {% with ultimo_estudio=paciente.estudio_set.last %}
+                        <a class="btn btn-secondary" href="{% url 'estudios:estudio_detalle' ultimo_estudio.id_estudio %}">Detalle estudio</a>
+                    {% endwith %}
+                {% else %}
+                    <a class="btn btn-primary" href="{% url 'iniciar_estudio_paciente' paciente.id_paciente %}">Iniciar estudio</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
