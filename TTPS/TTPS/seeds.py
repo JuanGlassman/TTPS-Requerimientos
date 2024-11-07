@@ -4,8 +4,17 @@ from pacientes.models import Paciente
 from medicos.models import Medico
 from lab_admin.models import Presupuesto
 from datetime import date
+
 def run_seeds():
 
+    rol_system_admin = Rol.objects.create(
+        nombre = "system_admin"
+    )
+
+    rol_lab_admin = Rol.objects.create(
+        nombre = "lab_admin"
+    )
+    
     rolPaciente = Rol.objects.create(
         nombre = "Paciente"
     )
@@ -14,9 +23,11 @@ def run_seeds():
         nombre = "Medico"
     )
 
+
     #region Usuarios
     usuarioMedico = Usuario.objects.create(
-        dni = 25652587,
+        username="medico_osvaldo",
+        dni = 2011,
         first_name = "Osvaldo",
         last_name = "Dario",
         fecha_nacimiento = "1985-05-05",
@@ -29,10 +40,10 @@ def run_seeds():
     )
 
     usuario1 = Usuario.objects.create(
-        username="rodri",
+        username="rodri_lira",
         password="1234",
         email="rodri@email.com",
-        dni = 25489631,
+        dni = 2111,
         first_name = "Rodrigo",
         last_name = "Lira",
         fecha_nacimiento = "2002-05-05",
@@ -41,10 +52,10 @@ def run_seeds():
     )
 
     usuario2 = Usuario.objects.create(
-        username = "sofi",
+        username = "sofi_vera",
         password="1234",
         email="sofi@email.com",
-        dni = 33742169,
+        dni = 2211111,
         first_name = "Sofia",
         last_name = "Vera",
         fecha_nacimiento = "2002-05-05",
@@ -53,10 +64,10 @@ def run_seeds():
     )
 
     usuario3 = Usuario.objects.create(        
-        username = "valeria",
+        username = "valeria_reyes",
         password="1234",
         email="valeria@email.com",
-        dni = 40158923,
+        dni = 2311111,
         first_name = "Valeria",
         last_name = "Reyes",
         fecha_nacimiento = "1998-05-05",
@@ -65,10 +76,10 @@ def run_seeds():
     )
 
     usuario4 = Usuario.objects.create(        
-        username="ruben",
+        username="ruben_centurion",
         password="1234",
         email="ruben@email.com",
-        dni = 28967435,
+        dni = 241111,
         first_name = "Ruben",
         last_name = "Centurión",
         fecha_nacimiento = "1995-05-05",
@@ -77,10 +88,10 @@ def run_seeds():
     )
 
     usuario5 = Usuario.objects.create(
-        username="valentin",
+        username="juan_lira",
         password="1234",
         email="valentin@email.com",
-        dni = 35714982,
+        dni = 2511111,
         first_name = "Valentin",
         last_name = "Lira",
         fecha_nacimiento = "1995-05-05",
@@ -89,10 +100,10 @@ def run_seeds():
     )
 
     usuario6 = Usuario.objects.create(
-        username="valerio",
+        username="pedro_lira",
         password="1234",
         email="valerio@email.com",
-        dni = 31598746,
+        dni = 2611111,
         first_name = "Valerio",
         last_name = "Lira",
         fecha_nacimiento = "1995-05-05",
@@ -101,22 +112,22 @@ def run_seeds():
     )
 
     usuario7 = Usuario.objects.create(
-        username="valentina",
+        username="jorge_liriarte",
         password="1234",
         email="valentina@email.com",
-        dni = 38245917,
+        dni = 271111111,
         first_name = "Valentina",
-        last_name = "Lira",
+        last_name = "Liriarte",
         fecha_nacimiento = "1995-05-05",
         genero = "F",
         rol_id = rolPaciente.id_rol
     )
 
     usuario8 = Usuario.objects.create(
-        username="rodolfo",
+        username="rodolfo_humme",
         password="1234",
         email="rodolfo@email.com",
-        dni = 38288917,
+        dni = 28111,
         first_name = "Rodolfo",
         last_name = "Humme",
         fecha_nacimiento = "1995-05-05",
@@ -125,10 +136,10 @@ def run_seeds():
     )
 
     usuario9 = Usuario.objects.create(
-        username="fidel",
+        username="fidel_alvarez",
         password="1234",
         email="fidel@email.com",
-        dni = 38282827,
+        dni = 29111,
         first_name = "Fidel",
         last_name = "Alvarez",
         fecha_nacimiento = "1999-11-05",
@@ -319,3 +330,5 @@ def run_seeds():
     )
 
     #endregion
+
+run_seeds()

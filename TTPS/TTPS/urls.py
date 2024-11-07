@@ -17,12 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from medicos import views as medico_view
+
+app_name = 'TTPS'
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-    path('', views.base, name='base'),
+    path('', views.home, name='home'),
     path("lab_admin/", include("lab_admin.urls")),
     path("medicos/", include("medicos.urls")),
     path("pacientes/", include("pacientes.urls")),
