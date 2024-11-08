@@ -5,6 +5,7 @@ from medicos.models import Medico
 from lab_admin.models import Presupuesto
 from datetime import date
 
+
 def run_seeds():
 
     rol_system_admin = Rol.objects.create(
@@ -15,24 +16,50 @@ def run_seeds():
         nombre = "lab_admin"
     )
     
-    rolPaciente = Rol.objects.create(
-        nombre = "Paciente"
+    rol_paciente = Rol.objects.create(
+        nombre = "paciente"
     )
 
-    rolMedico = Rol.objects.create(
-        nombre = "Medico"
+    rol_medico = Rol.objects.create(
+        nombre = "medico"
     )
 
+    superuser = Usuario.objects.create(
+        username="admin",
+        email="admin@email.com",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
+        dni = 1,
+        is_superuser = 1,
+        first_name = "Juan",
+        last_name = "Admin",
+        fecha_nacimiento = "1985-05-05",
+        genero = "M",
+        rol_id = rol_system_admin.id_rol
+    )
+
+    admin_lab = Usuario.objects.create(
+        username="fidel_alvarez",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
+        email="fidel@email.com",
+        dni = 2,
+        first_name = "Fidel",
+        last_name = "Alvarez",
+        fecha_nacimiento = "1999-11-05",
+        genero = "M",
+        rol_id = rol_lab_admin.id_rol
+    )
 
     #region Usuarios
     usuarioMedico = Usuario.objects.create(
         username="medico_osvaldo",
-        dni = 2011,
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
+        email="medico_osvaldo@email.com",
+        dni = 3,
         first_name = "Osvaldo",
         last_name = "Dario",
         fecha_nacimiento = "1985-05-05",
         genero = "M",
-        rol_id = rolMedico.id_rol
+        rol_id = rol_medico.id_rol
     )
 
     medico = Medico.objects.create(
@@ -41,110 +68,110 @@ def run_seeds():
 
     usuario1 = Usuario.objects.create(
         username="rodri_lira",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="rodri@email.com",
-        dni = 2111,
+        dni = 4,
         first_name = "Rodrigo",
         last_name = "Lira",
         fecha_nacimiento = "2002-05-05",
         genero = "M",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario2 = Usuario.objects.create(
         username = "sofi_vera",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="sofi@email.com",
-        dni = 2211111,
+        dni = 5,
         first_name = "Sofia",
         last_name = "Vera",
         fecha_nacimiento = "2002-05-05",
         genero = "F",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario3 = Usuario.objects.create(        
         username = "valeria_reyes",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="valeria@email.com",
-        dni = 2311111,
+        dni = 6,
         first_name = "Valeria",
         last_name = "Reyes",
         fecha_nacimiento = "1998-05-05",
         genero = "F",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario4 = Usuario.objects.create(        
         username="ruben_centurion",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="ruben@email.com",
-        dni = 241111,
+        dni = 7,
         first_name = "Ruben",
         last_name = "Centurión",
         fecha_nacimiento = "1995-05-05",
         genero = "M",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario5 = Usuario.objects.create(
         username="juan_lira",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="valentin@email.com",
-        dni = 2511111,
+        dni = 8,
         first_name = "Valentin",
         last_name = "Lira",
         fecha_nacimiento = "1995-05-05",
         genero = "M",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario6 = Usuario.objects.create(
         username="pedro_lira",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="valerio@email.com",
-        dni = 2611111,
+        dni = 9,
         first_name = "Valerio",
         last_name = "Lira",
         fecha_nacimiento = "1995-05-05",
         genero = "M",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario7 = Usuario.objects.create(
         username="jorge_liriarte",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="valentina@email.com",
-        dni = 271111111,
+        dni = 10,
         first_name = "Valentina",
         last_name = "Liriarte",
         fecha_nacimiento = "1995-05-05",
         genero = "F",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario8 = Usuario.objects.create(
         username="rodolfo_humme",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="rodolfo@email.com",
-        dni = 28111,
+        dni = 11,
         first_name = "Rodolfo",
         last_name = "Humme",
         fecha_nacimiento = "1995-05-05",
         genero = "M",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
 
     usuario9 = Usuario.objects.create(
         username="fidel_alvarez",
-        password="1234",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="fidel@email.com",
-        dni = 29111,
+        dni = 12,
         first_name = "Fidel",
         last_name = "Alvarez",
         fecha_nacimiento = "1999-11-05",
         genero = "M",
-        rol_id = rolPaciente.id_rol
+        rol_id = rol_paciente.id_rol
     )
     #endregion
 
@@ -330,5 +357,3 @@ def run_seeds():
     )
 
     #endregion
-
-run_seeds()
