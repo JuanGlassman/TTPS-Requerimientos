@@ -63,7 +63,7 @@ def login_view(request):
 def perfil_view(request):
     return render(request, 'profile.html')
 
-@permission_required("lista_usuarios")
+@login_required
 def logout_view(request):
     logout(request)
     messages.info(request, "La sesión se cerró correctamente")
