@@ -18,7 +18,12 @@ class Presupuesto(models.Model):
 
 class Centro(models.Model):
     id_centro = models.AutoField(primary_key=True)
-    nombre = models.ForeignKey(Estudio, on_delete=models.PROTECT)
+    nombre = models.CharField(max_length=150, blank=True)
+    longitud = models.FloatField(null=True)
+    latitud = models.FloatField(null=True)
+    telefono = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(max_length=150, blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Centro #{self.nombre}"
@@ -29,10 +34,9 @@ class Centro(models.Model):
 class LabAdmin(models.Model):
     id_lab_admin = models.AutoField(primary_key=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    centro_trabaja = models.OneToOneField(Centro, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.usuario.first_name} {self.usuario.apellido}"
+        return f"{self.usuario.first_name} {self.usuario.last_name}"
 
     class Meta:
         db_table = 'lab_admin'
