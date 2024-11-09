@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load static %}
+
+<h1>Paciente {{ paciente.usuario.first_name }} </h1>
+<dl class="row row-gap-3 row-gap-lg-2">
+    <dt class="col-5 fw-medium">Historia medico</dt>
+    <dd class="col-7 fw-light">{{ estudio.historial_medico }}</dd>
+
+    <dt class="col-5 fw-medium">Antecedentes</dt>
+    <dd class="col-7 fw-light">{{ estudio.antecedentes }}</dd>
+
+    <dt class="col-5 fw-medium">Historial de estudios</dt>
+    <dd class="col-7 fw-light">-</dd>
+</dl>
+
+{% endblock %}

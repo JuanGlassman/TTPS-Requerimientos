@@ -1,69 +1,67 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash, authenticate, login
+from .forms import LoginForm
+from django.contrib.auth import get_user_model
+from .models import Rol
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.models import AnonymousUser
+from functools import wraps
+from .utils import PERMISOS_POR_ROL
 
-# Usado para mostrar el rol del usuario en cualquier momento
-# como contex_processors en settings.py TEMPLATES
-def user_role(request):
-    # Verifica si el usuario está autenticado y tiene un rol
-    if isinstance(request.user, AnonymousUser):
-        return {'user_role': None}
-    elif hasattr(request.user, 'rol') and request.user.rol:
-        return {'user_role': request.user.rol.nombre}
-    return {'user_role': None}
-
-def role_required(allowed_roles=[]):
+def permission_required(permiso_requerido):
     def decorator(view_func):
+        @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            if request.user.is_authenticated and request.user.rol.nombre in allowed_roles:
+            if not request.user.is_authenticated:
+                raise PermissionDenied  # O redirigir al login si no está autenticado
+
+            rol_usuario = request.user.rol.nombre  # Obtiene el rol del usuario
+
+            # Verifica si el rol del usuario tiene el permiso requerido
+            if rol_usuario in PERMISOS_POR_ROL and permiso_requerido in PERMISOS_POR_ROL[rol_usuario]:
                 return view_func(request, *args, **kwargs)
-            raise PermissionDenied
+            else:
+                raise PermissionDenied  # O redirigir a una página de acceso denegado
         return _wrapped_view
     return decorator
 
-#def login_view(request):
-#    if request.method == 'POST':
-#        email = request.POST['email']
-#        password = request.POST['password']
-#        user = authenticate(request, username=email, password=password)
-#
-#        if user is not None:
-#            if user.is_active:
-#                login(request, user)
-#                messages.success(request, "La sesión se inició correctamente")
-#                return redirect('home')
-#            else:
-#                messages.error(request, "Usuario bloqueado o eliminado.")
-#        else:
-#            messages.error(request, "Usuario o contraseña incorrectos")
-#        return redirect('login')
-#
-#    return render(request, 'login.html')
+
+def authenticate(request, dni=None, password=None):
+    User = get_user_model()
+    try:
+        user = User.objects.get(dni=dni)
+        if user.check_password(password):
+            return user
+    except User.DoesNotExist:
+        return None
+
 
 def login_view(request):
     if request.method == 'POST':
-        dni = request.POST['dni']
-        password = request.POST['password']
-        user = authenticate(request, username=dni, password=password)
-        print(user)
-        if user is not None:
-            print("1")
-            if user.is_active:
-                print("2")
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            dni = form.cleaned_data.get('dni')
+            password = form.cleaned_data.get('password')
+            
+            # Autentica al usuario usando el modelo personalizado
+            user = authenticate(request, dni=dni, password=password)
+            if user is not None:
                 login(request, user)
-                print("3")
-                messages.success(request, "La sesión se inició correctamente")
+                messages.success(request, "Inicio de sesión exitoso.")
+                return redirect('home') 
             else:
-                messages.error(request, "Usuario bloqueado o eliminado.")
-        else:
-            messages.error(request, "Usuario o contraseña incorrectos")
-        return redirect('inicio_sesion:login')
+                messages.error(request, "DNI o contraseña incorrectos.")
+    else:
+        form = LoginForm()
+    
+    return render(request, 'login.html', {'form': form})
 
-    return render(request, 'login.html')
 
+@login_required
+def perfil_view(request):
+    return render(request, 'profile.html')
 
 @login_required
 def logout_view(request):
@@ -71,11 +69,7 @@ def logout_view(request):
     messages.info(request, "La sesión se cerró correctamente")
     return redirect('home')
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.models import User
+
 
 @login_required
 def cambiar_contrasena_view(request):
@@ -87,17 +81,17 @@ def cambiar_contrasena_view(request):
         # Verificar que todos los campos estén llenos
         if not password1 or not password2 or not password3:
             messages.warning(request, "Todos los campos son obligatorios.")
-            return render(request, 'auth/change_password.html')
+            return render(request, 'change_password.html')
         
         # Verificar la contraseña actual
         if not request.user.check_password(password1):
             messages.error(request, "La contraseña actual es incorrecta.")
-            return render(request, 'auth/change_password.html')
+            return render(request, 'change_password.html')
 
         # Verificar que las contraseñas nuevas coincidan
         if password2 != password3:
             messages.error(request, "Las nuevas contraseñas no coinciden.")
-            return render(request, 'auth/change_password.html')
+            return render(request, 'change_password.html')
         
         # Cambiar la contraseña
         try:
@@ -109,4 +103,37 @@ def cambiar_contrasena_view(request):
         except Exception as e:
             messages.error(request, f"Error al cambiar la contraseña: {str(e)}")
         
-    return render(request, 'auth/change_password.html')
+    return render(request, 'change_password.html')
+
+
+@login_required
+def editar_perfil(request):
+    user = request.user  # Obtiene el usuario autenticado
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        fecha_nacimiento = request.POST.get('fecha_nacimiento')
+        genero = request.POST.get('genero')
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.fecha_nacimiento = fecha_nacimiento
+        user.genero = genero
+
+
+        user.save()
+
+        messages.success(request, "Perfil actualizado correctamente.")
+        return redirect('inicio_sesion:perfil')  # Redirige a la vista de perfil
+
+    else:
+        # Obtener todos los roles para el select
+        roles = Rol.objects.all()
+
+        context = {
+            'user': user,
+            'roles': roles,
+        }
+        return render(request, 'edit_profile.html', context)
+

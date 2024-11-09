@@ -2,23 +2,28 @@
 {% load static %}
 
 {% block content %}
-<div class="d-flex justify-content-center align-items-center vh-50" >
-    <div class="card p-4" style="width: 100%; max-width: 400px;">
-        <h2 class="text-center mb-4">Iniciar sesión</h2>
+<div class="d-flex justify-content-center bg-light">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4" style="color: #6a0dad;">Iniciar sesión</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <form method="post" action="{% url 'inicio_sesion:login' %}">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="dni" class="form-label">DNI:</label>
-                <input type="dni" class="form-control" id="dni" name="dni" placeholder="DNI" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña:</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
-            </div>
+            {{ form.as_p }}
+            
             <div class="d-grid">
-                <button class="btn btn-primary" type="submit" style="background-color: #6a0dad;">Iniciar sesión</button>
+                <button class="btn btn-violet" type="submit">Iniciar sesión</button>
             </div>
         </form>
     </div>
 </div>
+<a href="{% url 'home' %}" class="btn btn-outline-violet">Volver</a>  
 {% endblock %}
