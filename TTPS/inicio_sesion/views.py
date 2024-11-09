@@ -64,7 +64,6 @@ def login_view(request):
 
 
 @login_required
-@permission_required("lista_usuarios")
 def perfil_view(request):
     return render(request, 'profile.html')
 

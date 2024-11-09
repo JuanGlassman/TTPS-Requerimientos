@@ -6,15 +6,7 @@
     <div class="d-flex justify-content-center">
         <div class="card shadow p-4" style="width: 100%; max-width: 500px;">
             <h2 class="text-center mb-4" style="color: #6a0dad;">Editar Perfil</h2>
-            
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+
             
             <form method="post" action="{% url 'inicio_sesion:editar' %}">
                 {% csrf_token %}
