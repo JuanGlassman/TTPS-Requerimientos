@@ -59,18 +59,32 @@
                             <a class="nav-link text-white" href="{% url 'lab_admin:estudios' %}">Estudios</a>
                         </li>
                     {% endif %}
+
+                    {% tiene_permiso user "lista_usuarios" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_usuarios' %}">Usuarios</a>
+                        </li>
+                    {% endif %}
                     
                     {% tiene_permiso user "lista_lab_admin" as puede_ver %}
                     {% if puede_ver %}
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Admistradores de laboratorio</a>
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_lab_admins' %}">Admistradores de laboratorio</a>
                         </li>
                     {% endif %}
                     
                     {% tiene_permiso user "lista_medicos" as puede_ver %}
                     {% if puede_ver %}
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Medicos</a>
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_medicos' %}">Medicos</a>
+                        </li>
+                    {% endif %}
+
+                    {% tiene_permiso user "lista_centros" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_centros' %}">Centros</a>
                         </li>
                     {% endif %}
 

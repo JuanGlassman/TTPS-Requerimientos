@@ -1,0 +1,16 @@
+<!-- crear_medico.html -->
+{% extends 'base.html' %}
+
+{% block title %}Crear de Medico{% endblock %}
+
+{% block content %}
+    <h2>Crear Medico</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ usuario_form.as_p }}
+      {{ medico_form.as_p }}
+      <button type="submit" class="btn btn-primary">Crear Médico</button>
+    </form>
+
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_medicos' %}">Volver</a>
+{% endblock %}
