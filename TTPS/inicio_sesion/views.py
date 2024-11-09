@@ -49,8 +49,12 @@ def login_view(request):
             user = authenticate(request, dni=dni, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, "Inicio de sesión exitoso.")
-                return redirect('home') 
+                if user.first_login:
+                    messages.info(request, "Es tu primer inicio de sesión. Cambia tu contraseña.")
+                    return redirect('inicio_sesion:cambiar_contrasena')  # Redirige a cambio de contraseña
+                else:
+                    messages.success(request, "Inicio de sesión exitoso.")
+                    return redirect('home')
             else:
                 messages.error(request, "DNI o contraseña incorrectos.")
     else:
@@ -60,6 +64,7 @@ def login_view(request):
 
 
 @login_required
+@permission_required("lista_usuarios")
 def perfil_view(request):
     return render(request, 'profile.html')
 
@@ -70,21 +75,31 @@ def logout_view(request):
     return redirect('home')
 
 
-
 @login_required
 def cambiar_contrasena_view(request):
+    user = request.user  # Accede al usuario autenticado
+
     if request.method == 'POST':
-        password1 = request.POST.get("current_password")
+        # Verificar si es el primer inicio de sesión
+        if user.first_login:
+            password1 = user.password
+        else:
+            password1 = request.POST.get("current_password")
+        
+        # Obtener las nuevas contraseñas
         password2 = request.POST.get("new_password")
         password3 = request.POST.get("new_password_again")
         
         # Verificar que todos los campos estén llenos
-        if not password1 or not password2 or not password3:
-            messages.warning(request, "Todos los campos son obligatorios.")
+        if not user.first_login and not password1:
+            messages.warning(request, "La contraseña actual es obligatoria.")
+            return render(request, 'change_password.html')
+        if not password2 or not password3:
+            messages.warning(request, "Los campos de la nueva contraseña son obligatorios.")
             return render(request, 'change_password.html')
         
-        # Verificar la contraseña actual
-        if not request.user.check_password(password1):
+        # Verificar la contraseña actual, excepto en el primer inicio de sesión
+        if not user.first_login and not user.check_password(password1):
             messages.error(request, "La contraseña actual es incorrecta.")
             return render(request, 'change_password.html')
 
@@ -95,15 +110,17 @@ def cambiar_contrasena_view(request):
         
         # Cambiar la contraseña
         try:
-            request.user.set_password(password2)
-            request.user.save()
-            update_session_auth_hash(request, request.user)  # Mantener la sesión iniciada
+            user.first_login = False
+            user.set_password(password2)
+            user.save()
+            update_session_auth_hash(request, user)  # Mantener la sesión iniciada
             messages.success(request, "Contraseña cambiada exitosamente.")
-            return redirect('home')  # Redirigir a la página de inicio o a otra vista
+            return redirect('home')  # Redirigir a la página de inicio
         except Exception as e:
             messages.error(request, f"Error al cambiar la contraseña: {str(e)}")
         
     return render(request, 'change_password.html')
+
 
 
 @login_required
