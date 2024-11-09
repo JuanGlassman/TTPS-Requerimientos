@@ -1,10 +1,10 @@
-<!-- formulario_usuario.html -->
+<!-- formulario_centro.html -->
 {% extends 'base.html' %}
 
-{% block title %}Formulario de Usuario{% endblock %}
+{% block title %}Formulario de Centro{% endblock %}
 
 {% block content %}
-    <h2>{% if form.instance.pk %}Editar Usuario{% else %}Crear Usuario{% endif %}</h2>
+    <h2>{% if form.instance.pk %}Editar Centro{% else %}Crear Centro{% endif %}</h2>
 
     <form method="POST" class="p-4 rounded border border-light bg-light shadow-sm">
         {% csrf_token %}
@@ -13,5 +13,5 @@
         <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
     </form>
 
-    <a class="btn btn-secondary" href="{% url 'system_admin:lista_usuarios' %}">Volver</a>
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_centros' %}">Volver</a>
 {% endblock %}

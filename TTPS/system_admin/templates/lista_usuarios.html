@@ -4,16 +4,23 @@
 {% block title %}Lista de Usuarios{% endblock %}
 
 {% block content %}
+    {% if activated %}
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_medicos' %}">Medicos</a>
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_lab_admins' %}">Administradores laboratorio</a>
+    <hr>
     <h2>Lista de Usuarios</h2>
+    {% else %}
+    <h2>Lista de Usuarios Desactivados</h2>
+    {% endif %}
 
-    <table>
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>Usuario</th>
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Rol</th>
-                <th>Acciones</th>
+                <th>Operaciones</th>
             </tr>
         </thead>
         <tbody>
@@ -24,17 +31,26 @@
                 <td>{{ usuario.email }}</td>
                 <td>{{ usuario.rol }}</td>
                 <td>
-                    <a href="{% url 'system_admin:editar_usuario' usuario.pk %}">Editar</a> |
-                    <a href="{% url 'system_admin:eliminar_usuario' usuario.pk %}" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
+                    <a class="btn btn-secondary" href="{% url 'system_admin:editar_usuario' usuario.pk %}">Editar</a>
+                    {% if usuario.is_deleted %}
+                    <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' usuario.pk %}" onclick="return confirm('¿Estás seguro de activar este usuario?')">Activar</a>
+                    {% else %}
+                    <a class="btn btn-danger" href="{% url 'system_admin:eliminar_usuario' usuario.pk %}" onclick="return confirm('¿Estás seguro de desactivar este usuario?')">Desactivar</a>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">No hay usuarios registrados.</td>
+                <td colspan="5">No hay usuarios para mostrar.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <a href="{% url 'system_admin:crear_usuario' %}">Agregar nuevo usuario</a>
+    
+    {% if activated %}
+    <a class="btn btn-primary" href="{% url 'system_admin:crear_usuario' %}">Agregar nuevo usuario</a>
+    <a class="btn btn-secondary" href="{% url 'system_admin:usuarios_desactivados' %}">Usuarios desactivados</a>
+    {% else %}
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_usuarios' %}">Volver</a>
+    {% endif %}
 {% endblock %}

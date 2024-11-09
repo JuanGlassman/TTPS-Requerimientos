@@ -1,0 +1,58 @@
+<!-- lista_medicos.html -->
+{% extends 'base.html' %}
+
+{% block title %}Lista de Admin. Laboratorio{% endblock %}
+
+{% block content %}
+    {% if activated %}
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_usuarios' %}">Usuarios</a>
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_medicos' %}">Medicos</a>
+    <hr>
+    <h2>Lista de Admin. Laboratorio</h2>
+    {% else %}
+    <h2>Lista de Admin. Laboratorio Desactivados</h2>
+    {% endif %}
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Centro</th>
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lab_admin in object_list %}
+            <tr>
+                <td>{{ lab_admin.usuario.username }}</td>
+                <td>{{ lab_admin.usuario.first_name }} {{ lab_admin.usuario.last_name }}</td>
+                <td>{{ lab_admin.usuario.email }}</td>
+                <td>{{ lab_admin.usuario.rol }}</td>
+                <td>{{ lab_admin.centro_trabaja.nombre }}</td>
+                <td>
+                    <a class="btn btn-secondary" href="{% url 'system_admin:editar_lab_admin' lab_admin.id_lab_admin %}">Editar</a>
+                    {% if lab_admin.usuario.is_deleted %}
+                    <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' lab_admin.usuario.pk %}" onclick="return confirm('¿Estás seguro de activar este usuario?')">Activar</a>
+                    {% else %}
+                    <a class="btn btn-danger" href="{% url 'system_admin:eliminar_usuario' lab_admin.usuario.pk %}" onclick="return confirm('¿Estás seguro de desactivar este usuario?')">Desactivar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay usuarios para mostrar.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if activated %}
+    <a class="btn btn-primary" href="{% url 'system_admin:crear_lab_admin' %}">Agregar nuevo admin. laboratorio </a>
+    <a class="btn btn-secondary" href="{% url 'system_admin:lab_admin_desactivados' %}">Admin. Laboratorio desactivados</a>
+    {% else %}
+    <a class="btn btn-secondary" href="{% url 'system_admin:lista_lab_admins' %}">Volver</a>
+    {% endif %}
+{% endblock %}

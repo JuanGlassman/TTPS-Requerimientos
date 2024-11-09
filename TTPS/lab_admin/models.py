@@ -30,7 +30,7 @@ class Turno(models.Model):
 
 class Centro(models.Model):
     id_centro = models.AutoField(primary_key=True)
-    nombre = models.ForeignKey(Estudio, on_delete=models.PROTECT)
+    nombre = models.CharField(max_length=150, blank=True)
 
     def __str__(self):
         return f"Centro #{self.nombre}"
@@ -44,7 +44,7 @@ class LabAdmin(models.Model):
     centro_trabaja = models.OneToOneField(Centro, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.usuario.first_name} {self.usuario.apellido}"
+        return f"{self.usuario.first_name} {self.usuario.last_name}"
 
     class Meta:
         db_table = 'lab_admin'
