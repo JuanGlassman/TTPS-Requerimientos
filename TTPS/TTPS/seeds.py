@@ -1,4 +1,4 @@
-from estudios.models import Estudio, EstadoEstudio
+from estudios.models import Estudio, EstadoEstudio, HistorialEstudio
 from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
 from medicos.models import Medico
@@ -175,7 +175,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico, 
-        estado = EstadoEstudio.INICIADO
+        estado = EstadoEstudio.INICIADO,
+        tipo_sospecha = 0
     )
 
     presupuesto1 = Presupuesto.objects.create(
@@ -190,7 +191,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.FINALIZADO
+        estado = EstadoEstudio.FINALIZADO,
+        tipo_sospecha = 0
     )
 
     presupuesto2 = Presupuesto.objects.create(
@@ -205,7 +207,8 @@ def run_seeds():
         patologia="patologia3",
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.CANCELADO
+        estado = EstadoEstudio.CANCELADO,
+        tipo_sospecha = 0
     )
 
     presupuesto3 = Presupuesto.objects.create(
@@ -220,7 +223,8 @@ def run_seeds():
         patologia="patologia4",
         paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.PRESUPUESTADO
+        estado = EstadoEstudio.PRESUPUESTADO,
+        tipo_sospecha = 0
     )
 
     presupuesto4 = Presupuesto.objects.create(
@@ -235,7 +239,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.PAGADO
+        estado = EstadoEstudio.PAGADO,
+        tipo_sospecha = 0
     )
 
     presupuesto5 = Presupuesto.objects.create(
@@ -250,7 +255,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente4.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.AUTORIZADO
+        estado = EstadoEstudio.AUTORIZADO,
+        tipo_sospecha = 0
     )
 
     presupuesto6 = Presupuesto.objects.create(
@@ -265,7 +271,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente5.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.TURNO_CONFIRMADO
+        estado = EstadoEstudio.TURNO_CONFIRMADO,
+        tipo_sospecha = 0
     )
 
     presupuesto7 = Presupuesto.objects.create(
@@ -280,7 +287,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente6.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.REALIZADA
+        estado = EstadoEstudio.REALIZADA,
+        tipo_sospecha = 0
     )
 
     presupuesto8 = Presupuesto.objects.create(
@@ -295,7 +303,8 @@ def run_seeds():
         patologia="patologia8",
         paciente_id = paciente8.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.CENTRALIZADA
+        estado = EstadoEstudio.CENTRALIZADA,
+        tipo_sospecha = 0
     )
 
     presupuesto9 = Presupuesto.objects.create(
@@ -310,7 +319,8 @@ def run_seeds():
         patologia="patologia1",
         paciente_id = paciente7.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.ENVIADA_EXTERIOR
+        estado = EstadoEstudio.ENVIADA_EXTERIOR,
+        tipo_sospecha = 0
     )
 
     presupuesto10 = Presupuesto.objects.create(

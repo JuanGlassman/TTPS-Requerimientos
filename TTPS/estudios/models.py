@@ -2,6 +2,7 @@ from django.db import models
 from pacientes.models import Paciente
 from medicos.models import Medico
 from django.core.validators import MinValueValidator
+from datetime import datetime
 
 class SampleSet(models.Model):
     id_sample_set = models.AutoField(primary_key=True)
@@ -25,7 +26,18 @@ class Enfermedad(models.Model):
     class Meta:
         db_table = 'enfermedad'
 
-# Create your models here.
+
+class Gen(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_gen_api = models.IntegerField()
+    nombre = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = 'genes'
+
+    def __str__(self):
+        return self.nombre
+
 class EstadoEstudio(models.TextChoices):
     INICIADO = 'Iniciado'
     PRESUPUESTADO = 'Presupuestado'
@@ -51,12 +63,26 @@ class Estudio(models.Model):
         choices=EstadoEstudio.choices,
         default=EstadoEstudio.INICIADO,
     )
-    tipo_sospecha = models.CharField(max_length=100)
+    hallazgos_secundarios = models.BooleanField(default=False)
+    tipo_sospecha = models.IntegerField()
+    parentesco = models.CharField(max_length=30)
     sample_set = models.ForeignKey(SampleSet, on_delete=models.PROTECT, null=True, blank=True)
     patologia = models.CharField(max_length=200)
+    genes = models.ManyToManyField(Gen)
 
     def __str__(self):
         return f"{self.id_interno} - {self.paciente}"
 
     class Meta:
         db_table = 'estudios'
+
+class HistorialEstudio(models.Model):
+    id_historial_estudio = models.AutoField(primary_key=True)
+    estudio = models.ForeignKey(Estudio, on_delete=models.PROTECT)
+    estado = models.CharField(  
+        max_length=20,
+        choices=EstadoEstudio.choices,
+        null=False
+    )
+    fecha_inicio = models.DateTimeField(null=False, default=datetime.now())
+    fecha_fin = models.DateTimeField(null=True)

@@ -11,53 +11,128 @@
 
     <input hidden value="{{ paciente.id_paciente }}" name="id_paciente" />
 
-    <div>
-        <label class="form-label">Síntomas</label>
-        <select class="form-select" name="sintoma" multiple>
-            <option>Sintoma 1</option>
-            <option>Sintoma 2</option>
-            <option>Sintoma 3</option>
-        </select>
+    <div class="mb-4">
+        <label class="form-label">Síntomas del paciente</label>
+        {% if sintomas.results %}
+            <select class="form-select" name="sintomas" multiple>
+                {% for sintoma in sintomas %}
+                    <option>{{ sintoma }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <select class="form-select" name="sintomas" multiple>
+                <option>Sintoma 1</option>
+                <option>Sintoma 2</option>
+                <option>Sintoma 3</option>
+            </select>
+        {% endif %}
     </div>
-    <div>
-        <label class="form-label">Patología a estudiar</label>
-        <select class="form-select" name="patologia">           
-            <option value="patologia1">Patologia 1</option>
-            <option value="patologia2">Patologia 2</option>
-        </select>
-    </div> 
 
-    <div>
-        <label class="form-label">Tipo de sospecha</label>
-        <select class="form-select" name="sospecha">
-            <option value="0">Sospecha puntual</option>
+    <div class="mb-4">
+        <div>
+            <label class="form-label">Patología sospechada</label>
+            <input id="patologia-input" class="form-control" name="patologia"/>
+        </div>    
+        <div>
+            <p><b>Gen a analizar: </b><span id="gen-analizar"></span></p>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="mb-2">
+            <label class="form-label">Tipo de sospecha</label>
+            <select class="form-select" name="sospecha" id="sospechaId">
+                <option value="0">Sospecha puntual</option>
             <option value="1">Sospecha familiar</option>
-        </select>
+            </select>
+        </div>
+
+        <div id="parentescoId" style="display: none;" class="mb-2">
+            <label>Parentesco con el familiar</label>
+            <input class="form-control" name="parentesco"/>
+        </div>
     </div>
 
-    <div>
-        <label>Parentesco con el familiar</label>
-        <input class="form-control" />
-    </div>
-
-    <div>
+    <div class="mb-4">
         <label class="form-label">Tipo de estudio</label>
         <select class="form-select" name="tipo_estudio">
             <option value="exoma">Exoma</option>    
         </select>
     </div>
 
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="hallazgo-check" name="hallazgo">
+    <div class="mb-4">
+        <label class="form-label">Elegir genes a analizar (opcional)</label>
+        {% if genes %}
+            <select class="form-select" name="genes" multiple>
+                {% for gen in genes %}
+                    <option>{{ gen.nombre }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+    </div>
+
+
+    <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="hallazgo-check" name="hallazgo">
         <label class="form-check-label" for="hallazgo-check">
             Hallazgos secundarios
         </label>
-
     </div>
-    <button type="submit" class="btn btn-primary">Iniciar Estudio</button>
+
+    <div class="d-flex justify-content-center gap-2">
+        <button type="submit" class="btn btn-primary">Iniciar Estudio</button>
+        <a href="javascript:history.back()" class="btn btn-light">Cancelar</a>
+    </div>
 </form>
 
 <p>{{ api_data }}</p>
 <p>{{ api_data.nombre_patologia }}</p>
 <p>{{ api_data.gen }}</p>
+
+<script>
+    const patologiaInput = document.getElementById('patologia-input');
+    const gen_div = document.getElementById('gen-analizar');
+
+    const parentescoId = document.getElementById('parentescoId');
+    const sospechaId = document.getElementById('sospechaId');
+
+    var datap;
+    var statusCode;
+
+    patologiaInput.addEventListener('blur', function(e) {
+        fetch(`https://api.claudioraverta.com/genes-analizar/${patologiaInput.value}`)
+        .then(response => {
+            statusCode = response.status;
+            return response.json()
+        })
+        .then(data => {
+            datap = data; 
+            if (statusCode == 200) {
+                gen_div.innerHTML = data.gen;
+                console.log(data);
+            }
+            else {
+                gen_div.innerHTML = data.error;
+                console.log(data);
+            }     
+        })
+        .catch(error => {
+            debugger;
+            errorp = error;
+            gen_div.innerHTML = "Hubo problemas para conectarse a los servicios. Intente nuevamente más tarde."
+            console.error('Error:', error);
+        });
+    });
+
+    sospechaId.addEventListener('change', function(e) {
+        if (sospechaId.value == '1') {
+            parentescoId.style = "display: block;"
+        }
+        else {
+            parentescoId.style = "display: none;"
+        }
+    });
+
+</script>
+
 {% endblock %}
