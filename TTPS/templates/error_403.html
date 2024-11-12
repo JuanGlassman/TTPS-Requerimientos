@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Denegado</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+        .btn-violet {
+            background-color: #6a0dad;
+            border-color: #6a0dad;
+            color: white;
+        }
+        .btn-violet:hover {
+            background-color: #5a0cad;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <div class="card shadow-lg p-5" style="max-width: 600px;">
+            <h1 class="display-4 text-danger">403</h1>
+            <h2 class="mb-4">Acceso Denegado</h2>
+            <p class="lead">No tienes permiso para acceder a esta página.</p>
+            <a href="{% url 'home' %}" class="btn btn-violet mt-3">Volver a la Página Principal</a>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
