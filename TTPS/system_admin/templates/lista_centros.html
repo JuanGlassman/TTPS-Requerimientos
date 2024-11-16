@@ -46,6 +46,7 @@
                         {% if puede_ver %}
                             <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
                         {% endif %}
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}
