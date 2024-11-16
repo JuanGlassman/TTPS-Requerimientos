@@ -52,6 +52,28 @@
         {% empty %}
             <tr>
                 <td colspan="6">No hay centros para mostrar.</td>
+                <td>{{ centro.nombre }}</td>
+                <td>{{ centro.longitud }}</td>
+                <td>{{ centro.latitud }}</td>
+                <td>{{ centro.telefono }}</td>
+                <td>{{ centro.email }}</td>
+                <td>
+                    {% tiene_permiso user "centro_update" as puede_ver %}
+                    {% if puede_ver %}
+                        <a class="btn btn-secondary" href="{% url 'system_admin:editar_centro' centro.pk %}">Editar</a>
+                    {% endif %}
+                    {% if centro.is_deleted %}
+                        {% tiene_permiso user "centro_destroy" as puede_ver %}
+                        {% if puede_ver %}
+                            <a class="btn btn-danger" href="{% url 'system_admin:eliminar_centro' centro.pk %}" onclick="return confirm('¿Estás seguro de eliminar este centro?')">Eliminar</a>
+                        {% endif %}
+                    {% else %}
+                        {% tiene_permiso user "centro_update" as puede_ver %}
+                        {% if puede_ver %}
+                            <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>
