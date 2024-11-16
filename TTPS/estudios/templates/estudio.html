@@ -25,7 +25,7 @@
             {% elif estudio.estado == estados.REALIZADA %}
                 <a class="btn btn-primary">Enviar al Centro</a>
             {% elif estudio.estado == estados.CENTRALIZADA %}
-                <a class="btn btn-primary">Enviar al exterior</a>
+                <a class="btn btn-primary">Ver Sample Set</a>
             {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
                 <a class="btn btn-primary">Cargar resultados</a>
             {% endif %}
@@ -38,7 +38,7 @@
     <dd class="col-7 fw-light">{{ estudio.tipo_estudio }}</dd>
 
     <dt class="col-5 fw-medium">Tipo de sospecha</dt>
-    <dd class="col-7 fw-light">{{ estudio.tipo_sospecha }}</dd>
+    <dd class="col-7 fw-light">{%  if estudio.tipo_sospecha == 0 %} Puntual {% else %} Familiar {% endif %}</dd>
 
     <dt class="col-5 fw-medium">Sintomas</dt>
     <dd class="col-7 fw-light">-</dd>
@@ -65,7 +65,7 @@
     </dd>
 
     <dt class="col-5 fw-medium">Hallazgos secundarios</dt>
-    <dd class="col-7 fw-light">-</dd>
+    <dd class="col-7 fw-light">{% if estudio.hallazgos_secundarios %} Si {% else %} No {% endif %}</dd>
 </dl>
 
 <h3>Presupuesto</h3>
@@ -75,6 +75,9 @@
 
     <dt class="col-5 fw-medium">Costo Genes extra</dt>
     <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_genes_extra }}</dd>
+
+    <dt class="col-5 fw-medium">Costo Hallazgos secundarios</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_hallazgos_secundarios }}</dd>
 </dl>
 
 {% endblock %}

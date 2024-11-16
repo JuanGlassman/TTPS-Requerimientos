@@ -26,7 +26,11 @@
         <tr>
             <td>{{ estudio.id_interno }}</td>
             <td>{{ estudio.tipo_estudio }}</td>
-            <td>{{ estudio.presupuesto.costo_exoma }}</td>
+            
+            <td>
+                {{ estudio.presupuesto.costo_exoma }}
+            </td>
+            
             <td>
                 {% if estudio.estado == estados.PAGADO %}
                     <span class="badge rounded-pill text-bg-primary" 

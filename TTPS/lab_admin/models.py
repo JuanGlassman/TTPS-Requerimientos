@@ -2,12 +2,12 @@ from django.db import models
 from inicio_sesion.models import Usuario
 from estudios.models import Estudio
 
-# Create your models here.
 class Presupuesto(models.Model):
     id_presupuesto = models.AutoField(primary_key=True)
     estudio = models.OneToOneField(Estudio, on_delete=models.PROTECT)
     costo_exoma = models.FloatField(null=True, default=0)
     costo_genes_extra = models.FloatField(null=True, default=0)
+    costo_hallazgos_secundarios = models.FloatField(null=True, default=0)
 
     def __str__(self):
         return f"Presupuesto #{self.id_presupuesto} - {self.estudio.id_interno}"
