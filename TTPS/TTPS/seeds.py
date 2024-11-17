@@ -3,11 +3,12 @@ from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
 from medicos.models import Medico
 from lab_admin.models import Presupuesto
+from lab_admin.models import LabAdmin
 from datetime import date
-
 
 def run_seeds():
 
+    #Crear Roles
     rol_system_admin = Rol.objects.create(
         nombre = "system_admin"
     )
@@ -24,6 +25,7 @@ def run_seeds():
         nombre = "medico"
     )
 
+    #Crear usuario Administrador de sistema
     superuser = Usuario.objects.create(
         username="admin",
         email="admin@email.com",
@@ -37,7 +39,8 @@ def run_seeds():
         rol_id = rol_system_admin.id_rol
     )
 
-    admin_lab = Usuario.objects.create(
+    #Crear usuario Administrador de laboratorio
+    usuario_admin_lab = Usuario.objects.create(
         username="fidel_alvarez",
         password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="fidel@email.com",
@@ -49,7 +52,12 @@ def run_seeds():
         rol_id = rol_lab_admin.id_rol
     )
 
-    #region Usuarios
+    admin_lab = LabAdmin.objects.create(
+        usuario=usuario_admin_lab
+    )
+
+
+    #Crear usuario Medico
     usuarioMedico = Usuario.objects.create(
         username="medico_osvaldo",
         password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
@@ -63,9 +71,12 @@ def run_seeds():
     )
 
     medico = Medico.objects.create(
-        usuario_id = usuarioMedico.id_usuario
+        usuario_id = usuarioMedico.id_usuario,
+        especialidad = "Cardiologo",
+        matricula = "113/1234"
     )
 
+    #Crear usuarios Pacientes
     usuario1 = Usuario.objects.create(
         username="rodri_lira",
         password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
@@ -163,49 +174,64 @@ def run_seeds():
     )
 
     usuario9 = Usuario.objects.create(
-        username="fidel_alvarez",
+        username="joaquien_garcia",
         password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
         email="fidel@email.com",
         dni = 12,
-        first_name = "Fidel",
-        last_name = "Alvarez",
+        first_name = "Joaquin",
+        last_name = "Garcia",
         fecha_nacimiento = "1999-11-05",
         genero = "M",
         rol_id = rol_paciente.id_rol
     )
-    #endregion
-
-    #region Pacientes
+    
     paciente1 = Paciente.objects.create(
-        usuario_id = usuario1.id_usuario
+        usuario_id = usuario1.id_usuario,
+        antecedentes = "No posee",
+        historial_medico = "Nunca vino"
     )
     paciente2 = Paciente.objects.create(
-        usuario_id = usuario2.id_usuario
+        usuario_id = usuario2.id_usuario,
+        antecedentes = "Alergia al paracetamol",
+        historial_medico = "Operacion de apéndice"
     )
     paciente3 = Paciente.objects.create(
-        usuario_id = usuario3.id_usuario
+        usuario_id = usuario3.id_usuario,
+        antecedentes = "Todas las vacunas contra el covid",
+        historial_medico = "Fisura abdominal"
     )
     paciente4 = Paciente.objects.create(
-        usuario_id = usuario4.id_usuario
+        usuario_id = usuario4.id_usuario,
+        antecedentes = "Antitetánica, vacuna contra la gripe",
+        historial_medico = "Nunca vino"
     )
     paciente5 = Paciente.objects.create(
-        usuario_id = usuario5.id_usuario
+        usuario_id = usuario5.id_usuario,
+        antecedentes = "Higado graso",
+        historial_medico = "Operacion de peritonitis"
     )
     paciente6 = Paciente.objects.create(
-        usuario_id = usuario6.id_usuario
+        usuario_id = usuario6.id_usuario,
+        antecedentes = "Clamidia",
+        historial_medico = "Nunca vino"
     )
     paciente7 = Paciente.objects.create(
-        usuario_id = usuario7.id_usuario
+        usuario_id = usuario7.id_usuario,
+        antecedentes = "HPV",
+        historial_medico = "Operacion de berrugas de HPV"
     )
     paciente8 = Paciente.objects.create(
-        usuario_id = usuario8.id_usuario
+        usuario_id = usuario8.id_usuario,
+        antecedentes = "No posee",
+        historial_medico = "Nunca vino"
     )
     paciente9 = Paciente.objects.create(
-        usuario_id = usuario9.id_usuario
+        usuario_id = usuario9.id_usuario,
+        antecedentes = "Convulsiones",
+        historial_medico = "Operación de corneas"
     )
-    #endregion
 
-    #region Estudios y Presupuestos
+    #Crear Estudios y Presupuestos
     estudio1 = Estudio.objects.create(
         id_interno="1234_LIR_ROD",
         fecha=date.today(),
@@ -365,5 +391,3 @@ def run_seeds():
         estudio_id = estudio10.id_estudio,
         costo_exoma = 500
     )
-
-    #endregion

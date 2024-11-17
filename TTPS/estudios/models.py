@@ -65,7 +65,7 @@ class Estudio(models.Model):
     )
     hallazgos_secundarios = models.BooleanField(default=False)
     tipo_sospecha = models.IntegerField()
-    parentesco = models.CharField(max_length=30)
+    parentesco = models.CharField(max_length=30, null=True)
     sample_set = models.ForeignKey(SampleSet, on_delete=models.PROTECT, null=True, blank=True)
     patologia = models.CharField(max_length=200)
     genes = models.ManyToManyField(Gen)
