@@ -55,6 +55,7 @@ class Usuario(AbstractUser):
     )
     rol = models.ForeignKey('Rol', on_delete=models.PROTECT, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
+    first_login = models.BooleanField(default=True)
 
     objects = UsuarioManager()  # Asigna el UserManager personalizado
 

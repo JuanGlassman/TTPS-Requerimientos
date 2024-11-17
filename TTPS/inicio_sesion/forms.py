@@ -2,10 +2,10 @@ from django import forms
 
 class LoginForm(forms.Form):
     dni = forms.CharField(
-        label="DNI o Usuario",
+        label="DNI",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese su DNI o Usuario'
+            'placeholder': 'Ingrese su DNI'
         })
     )
     password = forms.CharField(

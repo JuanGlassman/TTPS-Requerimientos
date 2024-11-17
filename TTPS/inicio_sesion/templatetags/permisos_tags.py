@@ -1,7 +1,6 @@
 # inicio_sesion/templatetags/permisos_tags.py
 from django import template
 from inicio_sesion.views import PERMISOS_POR_ROL  # Ajusta la importación según tu proyecto
-from django.contrib.auth.decorators import login_required
 
 register = template.Library()
 

@@ -1,22 +1,49 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from estudios.models import Estudio, EstadoEstudio
+from estudios.models import Estudio, EstadoEstudio, HistorialEstudio
+from datetime import datetime
 
 def estudio_terminado(estudio):
     return estudio.estado in [EstadoEstudio.CANCELADO, EstadoEstudio.FINALIZADO]
+
+def registrar_historial(estudio, estado_anterior, estado_nuevo):
+    h = get_object_or_404(HistorialEstudio,
+        estudio_id = estudio.id_estudio,
+        estado = estado_anterior
+    )
+    h.fecha_fin = datetime.now()
+    h.save()
+    HistorialEstudio.objects.create(
+        estudio_id = estudio.id_estudio,
+        estado = estado_nuevo
+    )
+
+def estudio_iniciado(estudio):
+    if estudio_terminado(estudio):
+        return False, estudio
+    if estudio.estado == EstadoEstudio.INICIADO:
+        h = HistorialEstudio.objects.create(
+            estudio_id = estudio.id_estudio,
+            estado = estudio.estado
+        )
+    return True, estudio
 
 def estudio_presupuestado(estudio):
     if estudio_terminado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.INICIADO):
         estudio.estado = EstadoEstudio.PRESUPUESTADO
-    return True, estudio
+        registrar_historial(estudio, EstadoEstudio.INICIADO, EstadoEstudio.PRESUPUESTADO)
+        return True, estudio
+    else:
+        return False, estudio
 
 def estudio_pagado(estudio):
     if estudio_terminado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.PRESUPUESTADO):
         estudio.estado = EstadoEstudio.PAGADO
+        registrar_historial(estudio, EstadoEstudio.PRESUPUESTADO, EstadoEstudio.PAGADO)
         return True, estudio
     else:
         return False, estudio
@@ -27,6 +54,7 @@ def estudio_autorizado(estudio):
 
     if (estudio.estado == EstadoEstudio.PAGADO):
         estudio.estado = EstadoEstudio.AUTORIZADO
+        registrar_historial(estudio, EstadoEstudio.PAGADO, EstadoEstudio.AUTORIZADO)
         return True, estudio
     else:
         return False, estudio

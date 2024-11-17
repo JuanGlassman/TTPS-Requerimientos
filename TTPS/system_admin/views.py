@@ -183,7 +183,7 @@ def editar_lab_admin_view(request, id_lab_admin):
 @login_required
 @permission_required('lista_centros')
 def lista_centros(request):
-    centros = Centro.objects.filter()
+    centros = Centro.objects.filter(is_deleted=False)
     return render(request, 'lista_centros.html', {'object_list': centros})
 
 @login_required

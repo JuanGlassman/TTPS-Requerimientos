@@ -17,8 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from django.conf.urls import handler403
 
 app_name = 'TTPS'
+
+handler403 = 'TTPS.views.acceso_denegado_view'
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
