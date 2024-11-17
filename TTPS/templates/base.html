@@ -95,6 +95,13 @@
                             <a class="nav-link text-white" href="{% url 'medicos:pacientes' %}">Pacientes</a>
                         </li>
                     {% endif %}
+
+                    {% tiene_permiso user "nav_bar_mis_estudios" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'pacientes:historial_estudios_paciente' %}">Mis estudios</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 {% if user.is_authenticated %}
                     <div class="dropdown">
