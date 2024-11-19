@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1>Reservar Turno</h1>
+    <p><strong>Estudio:</strong> {{ estudio.id_interno }} - {{ estudio.tipo_estudio }}</p>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="centro" class="form-label"><strong>Centro Médico</strong></label>
+            <select id="centro" name="centro" class="form-select" required>
+                <option value="">Seleccione un centro</option>
+                {% for centro in centros %}
+                    <option value="{{ centro.id_centro }}">{{ centro.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="fecha" class="form-label"><strong>Fecha</strong></label>
+            <input type="date" id="fecha" name="fecha" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="horario" class="form-label"><strong>Horario</strong></label>
+            <select id="horario" name="horario" class="form-select" required>
+                <option value="">Seleccione un horario</option>
+            </select>
+        </div>
+
+        
+        
+        <div class="mb-3">
+            <label for="consentimiento" class="form-label"><strong> Subir Consentimiento:</strong>   Descargalo, rellena el formulario y subilo completo!</label>
+            <a href="{% url 'pacientes:descargar_consentimiento' %}" class="btn btn-secondary">
+                Descargar Consentimiento
+            </a>
+            <input type="file" id="consentimiento" name="consentimiento" class="form-control" accept="application/pdf" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Reservar Turno</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const centroSelect = document.getElementById('centro');
+        const fechaInput = document.getElementById('fecha');
+        const horarioSelect = document.getElementById('horario');
+    
+        function actualizarHorarios() {
+            const centroId = centroSelect.value;
+            const fecha = fechaInput.value;
+    
+            if (centroId && fecha) {
+                const url = `{% url 'pacientes:obtener_horarios_disponibles' %}?centro_id=${centroId}&fecha=${fecha}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        horarioSelect.innerHTML = '<option value="">Seleccione un horario</option>';
+                        if (data.horarios) {
+                            data.horarios.forEach(horario => {
+                                const option = document.createElement('option');
+                                option.value = horario;
+                                option.textContent = horario;
+                                horarioSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error al obtener horarios:', error));
+            }
+        }
+    
+        centroSelect.addEventListener('change', actualizarHorarios);
+        fechaInput.addEventListener('change', actualizarHorarios);
+    });
+    </script>
+    
+{% endblock %}

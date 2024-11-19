@@ -34,6 +34,6 @@ PERMISOS_POR_ROL = {
         "iniciar_estudio", "historial_estudios_paciente", "estudio_show", 
     ],
     "paciente": [
-        "historial_estudios_paciente", "elegir_turno", "estudio_show", "dar_concentimiento"
+        "historial_estudios_paciente", "elegir_turno", "estudio_show", "dar_concentimiento", "nav_bar_mis_estudios"
     ]
 }

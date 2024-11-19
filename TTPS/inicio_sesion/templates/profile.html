@@ -25,16 +25,23 @@
                         {% else %} Otro 
                         {% endif %}
                     </li>
-                    <li class="list-group-item">
-                        <strong>Rol:</strong> 
-                        {{ user.rol.nombre|default:"Sin rol asignado" }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Estado:</strong> 
-                        {% if user.is_deleted %} Eliminado 
-                        {% else %} Activo 
-                        {% endif %}
-                    </li>
+                    {% if user.rol.nombre == "medico" %}
+                        <li class="list-group-item">
+                            <strong>Especialidad:</strong> {{ medico.especialidad }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Matrícula:</strong> {{ medico.matricula }}
+                        </li>
+                    {% endif %}
+
+                    {% if user.rol.nombre == "paciente" %}
+                        <li class="list-group-item">
+                            <strong>Antecedentes:</strong> {{ paciente.antecedentes }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Historial Médico:</strong> {{ paciente.historial_medico }}
+                        </li>
+                    {% endif %}
                 </ul>
                 <div class="mt-4 d-grid">
                     <a href="{% url 'inicio_sesion:editar' %}" class="btn btn-violet" >Editar Perfil</a>

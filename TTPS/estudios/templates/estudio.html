@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permisos_tags %}
 
 {% block content %}
 {% load static %}
@@ -11,25 +12,27 @@
         <a href="javascript:history.back()">
             <button class="btn btn-secondary">Volver</button>
         </a>
-
-        <div>  
-            {% if estudio.estado == estados.INICIADO %}
-                <a class="btn btn-primary" href="{% url 'lab_admin:form_presupuesto' estudio.id_estudio %}">Editar Presupuesto</a>
-            {% elif estudio.estado == estados.PRESUPUESTADO %}
-                <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
-                    {% csrf_token %}
-                    <button class="btn btn-primary" type="submit">Pagado</button>
-                </form>
-            {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
-                <a class="btn btn-primary">Muestra realizada</a>
-            {% elif estudio.estado == estados.REALIZADA %}
-                <a class="btn btn-primary">Enviar al Centro</a>
-            {% elif estudio.estado == estados.CENTRALIZADA %}
-                <a class="btn btn-primary">Ver Sample Set</a>
-            {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
-                <a class="btn btn-primary">Cargar resultados</a>
-            {% endif %}
-        </div>
+            {% tiene_permiso user "cambiar_estado" as puede_ver %}
+            {% if puede_ver %}
+            <div>  
+                {% if estudio.estado == estados.INICIADO %}
+                    <a class="btn btn-primary" href="{% url 'lab_admin:form_presupuesto' estudio.id_estudio %}">Editar Presupuesto</a>
+                {% elif estudio.estado == estados.PRESUPUESTADO %}
+                    <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit">Pagado</button>
+                    </form>
+                {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
+                    <a class="btn btn-primary">Muestra realizada</a>
+                {% elif estudio.estado == estados.REALIZADA %}
+                    <a class="btn btn-primary">Enviar al Centro</a>
+                {% elif estudio.estado == estados.CENTRALIZADA %}
+                    <a class="btn btn-primary">Ver Sample Set</a>
+                {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
+                    <a class="btn btn-primary">Cargar resultados</a>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>
 
@@ -78,7 +81,30 @@
 
     <dt class="col-5 fw-medium">Costo Hallazgos secundarios</dt>
     <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_hallazgos_secundarios }}</dd>
+
+    <hr> 
+    
+    <dt class="col-5 fw-medium">Costo total</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.total }}</dd>
+    
 </dl>
+
+<div class="card shadow-sm" style="width: 18rem;">
+    <div class="card-body text-center">
+        <h5 class="card-title">Resultado del Estudio</h5>
+        <p class="card-text">
+            {% if estudio.resultado %}
+                {% if estudio.resultado == "positivo" %}
+                    <span class="badge rounded-pill text-bg-success">Positivo</span>
+                {% elif estudio.resultado == "negativo" %}
+                    <span class="badge rounded-pill text-bg-danger">Negativo</span>
+                {% endif %}
+            {% else %}
+                <span class="badge rounded-pill text-bg-secondary">No cargado</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
 
 {% endblock %}
 
