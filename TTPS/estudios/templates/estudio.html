@@ -81,7 +81,30 @@
 
     <dt class="col-5 fw-medium">Costo Hallazgos secundarios</dt>
     <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_hallazgos_secundarios }}</dd>
+
+    <hr> 
+    
+    <dt class="col-5 fw-medium">Costo total</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.total }}</dd>
+    
 </dl>
+
+<div class="card shadow-sm" style="width: 18rem;">
+    <div class="card-body text-center">
+        <h5 class="card-title">Resultado del Estudio</h5>
+        <p class="card-text">
+            {% if estudio.resultado %}
+                {% if estudio.resultado == "positivo" %}
+                    <span class="badge rounded-pill text-bg-success">Positivo</span>
+                {% elif estudio.resultado == "negativo" %}
+                    <span class="badge rounded-pill text-bg-danger">Negativo</span>
+                {% endif %}
+            {% else %}
+                <span class="badge rounded-pill text-bg-secondary">No cargado</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
 
 {% endblock %}
 

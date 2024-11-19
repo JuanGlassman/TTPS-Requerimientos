@@ -49,8 +49,8 @@
                 </td>
                 <td>
                     <div class="d-flex justify-content-end gap-2">
-                        {% if estudio.estado == estados.PAGADO %}
-                            <a href="{% url 'home' %}" class="btn btn-outline-violet btn-sm">Sacar Turno</a>
+                        {% if estudio.estado == estados.PAGADO and not estudio.turno_set.exists %}
+                            <a href="{% url 'pacientes:sacar_turno' estudio.id_estudio %}" class="btn btn-outline-violet btn-sm">Sacar Turno</a>
                         {% endif %}
                         <a href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}"
                            class="btn btn-secondary btn-sm" title="Ver Detalles">
