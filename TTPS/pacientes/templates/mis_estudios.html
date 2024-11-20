@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <h1 class="fw-bold" style="color: #6a0dad;">Mis Estudios</h1>
+    <a href="{% url 'home' %}" class="btn btn-outline-violet">Volver</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped text-center align-middle shadow-sm">
+        <thead class="table-grey">
+            <tr>
+                <th scope="col">ID Estudio</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estudio in page_obj %}
+            <tr>
+                <td>{{ estudio.id_interno }}</td>
+                <td>
+                    {% if estudio.estado == estados.PAGADO %}
+                        <span class="badge bg-primary"
+                              data-bs-toggle="tooltip" data-bs-placement="right"
+                              title="El paciente debe firmar consentimiento">
+                              PAGADO
+                        </span>
+                    {% elif estudio.estado == estados.AUTORIZADO %}
+                        <span class="badge bg-primary"
+                              data-bs-toggle="tooltip" data-bs-placement="right"
+                              title="El paciente debe confirmar un turno">
+                              AUTORIZADO
+                        </span>
+                    {% elif estudio.estado == estados.REALIZADA %}
+                        <span class="badge bg-info"
+                              data-bs-toggle="tooltip" data-bs-placement="right"
+                              title="El transportista debe centralizar la muestra">
+                              REALIZADA
+                        </span>
+                    {% elif estudio.estado == estados.FINALIZADO %}
+                        <span class="badge bg-success">FINALIZADO</span>
+                    {% elif estudio.estado == estados.CANCELADO %}
+                        <span class="badge bg-danger">CANCELADO</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ estudio.estado|upper }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="d-flex justify-content-end gap-2">
+                        {% if estudio.estado == estados.PAGADO and not estudio.turno_set.exists %}
+                            <a href="{% url 'pacientes:sacar_turno' estudio.id_estudio %}" class="btn btn-outline-violet btn-sm">Sacar Turno</a>
+                        {% endif %}
+                        <a href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}"
+                           class="btn btn-secondary btn-sm" title="Ver Detalles">
+                           Ver Detalle
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center py-4">No hay estudios para mostrar.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Controles de Paginación -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Anterior">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="visually-hidden">Anterior</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }} <span class="visually-hidden">(current)</span></span>
+                </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Siguiente">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="visually-hidden">Siguiente</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

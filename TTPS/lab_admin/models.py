@@ -1,13 +1,15 @@
 from django.db import models
 from inicio_sesion.models import Usuario
 from estudios.models import Estudio
+from django.core.validators import MinValueValidator
 
-# Create your models here.
 class Presupuesto(models.Model):
     id_presupuesto = models.AutoField(primary_key=True)
     estudio = models.OneToOneField(Estudio, on_delete=models.PROTECT)
     costo_exoma = models.FloatField(null=True, default=0)
     costo_genes_extra = models.FloatField(null=True, default=0)
+    costo_hallazgos_secundarios = models.FloatField(null=True, default=0)
+    total = models.FloatField(null=True, default=0)
 
     def __str__(self):
         return f"Presupuesto #{self.id_presupuesto} - {self.estudio.id_interno}"
@@ -40,3 +42,20 @@ class LabAdmin(models.Model):
 
     class Meta:
         db_table = 'lab_admin'
+
+        
+class Turno(models.Model):
+    id_turno = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    estudio = models.ForeignKey('estudios.Estudio', on_delete=models.CASCADE)
+    fecha = models.DateField(null=True, blank=True)
+    centro = models.ForeignKey(Centro, on_delete=models.CASCADE)
+    horario = models.TimeField()  
+    consentimiento = models.FileField(upload_to='consentimientos/', null=True, blank=True) 
+
+
+    def __str__(self):
+        return f"Turno: {self.numero}"
+
+    class Meta:
+        db_table = 'turnos'

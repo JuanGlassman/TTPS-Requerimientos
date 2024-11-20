@@ -24,11 +24,14 @@ def form_presupuesto(request, estudio_id):
 def presupuestar(request):
     costo_exoma = request.POST.get('costo_exoma')
     costo_genes_extra = request.POST.get('costo_genes_extra')
+    costo_hallazgos_secundario = request.POST.get('costo_hallazgos_secundarios')
     id_presupuesto = request.POST.get('id_presupuesto')
 
     presupuesto = get_object_or_404(Presupuesto, id_presupuesto=id_presupuesto)
     presupuesto.costo_exoma = costo_exoma
-    presupuesto.costo_genes_extra = costo_genes_extra    
+    presupuesto.costo_genes_extra = costo_genes_extra 
+    presupuesto.costo_hallazgos_secundarios = costo_hallazgos_secundario   
+    presupuesto.total = costo_genes_extra + costo_exoma + costo_hallazgos_secundario
 
     estudio = get_object_or_404(Estudio, id_estudio=presupuesto.estudio_id)
     res, estudio = estudio_view.estudio_presupuestado(estudio)

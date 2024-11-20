@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5 text-center">
+    <h1 class="text-success">Turno Confirmado</h1>
+    <p>Gracias, {{ request.user.first_name }}.</p>
+    <p><strong> Fecha: </strong>{{ turno.fecha }}</p>
+    <p><strong> Horario: </strong>{{ turno.horario }}</p>
+    <p><strong> Centro Médico: </strong>{{ turno.centro.nombre }}</p>
+    <a href="{% url 'pacientes:historial_estudios_paciente' %}" class="btn btn-primary">Volver</a>
+</div>
+{% endblock %}

@@ -9,21 +9,23 @@ from .models import Rol
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from .utils import PERMISOS_POR_ROL
+from medicos.models import Medico
+from pacientes.models import Paciente
 
 def permission_required(permiso_requerido):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             if not request.user.is_authenticated:
-                raise PermissionDenied  # O redirigir al login si no está autenticado
+                raise PermissionDenied 
 
-            rol_usuario = request.user.rol.nombre  # Obtiene el rol del usuario
+            rol_usuario = request.user.rol.nombre 
 
             # Verifica si el rol del usuario tiene el permiso requerido
             if rol_usuario in PERMISOS_POR_ROL and permiso_requerido in PERMISOS_POR_ROL[rol_usuario]:
                 return view_func(request, *args, **kwargs)
             else:
-                raise PermissionDenied  # O redirigir a una página de acceso denegado
+                raise PermissionDenied  
         return _wrapped_view
     return decorator
 
@@ -45,12 +47,15 @@ def login_view(request):
             dni = form.cleaned_data.get('dni')
             password = form.cleaned_data.get('password')
             
-            # Autentica al usuario usando el modelo personalizado
             user = authenticate(request, dni=dni, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, "Inicio de sesión exitoso.")
-                return redirect('home') 
+                if user.first_login:
+                    messages.info(request, "Es tu primer inicio de sesión. Cambia tu contraseña.")
+                    return redirect('inicio_sesion:cambiar_contrasena') 
+                else:
+                    messages.success(request, "Inicio de sesión exitoso.")
+                    return redirect('home')
             else:
                 messages.error(request, "DNI o contraseña incorrectos.")
     else:
@@ -61,7 +66,22 @@ def login_view(request):
 
 @login_required
 def perfil_view(request):
-    return render(request, 'profile.html')
+    user = request.user
+    medico = None
+    paciente = None
+
+    if hasattr(user, 'medico'):
+        medico = user.medico
+    elif hasattr(user, 'paciente'):
+        paciente = user.paciente
+
+    context = {
+        'user': user,
+        'medico': medico,
+        'paciente': paciente,
+    }
+    return render(request, 'profile.html', context)
+
 
 @login_required
 def logout_view(request):
@@ -70,21 +90,28 @@ def logout_view(request):
     return redirect('home')
 
 
-
 @login_required
 def cambiar_contrasena_view(request):
+    user = request.user
+
     if request.method == 'POST':
-        password1 = request.POST.get("current_password")
+        if user.first_login:
+            password1 = user.password
+        else:
+            password1 = request.POST.get("current_password")
+        
         password2 = request.POST.get("new_password")
         password3 = request.POST.get("new_password_again")
         
-        # Verificar que todos los campos estén llenos
-        if not password1 or not password2 or not password3:
-            messages.warning(request, "Todos los campos son obligatorios.")
+        if not user.first_login and not password1:
+            messages.warning(request, "La contraseña actual es obligatoria.")
+            return render(request, 'change_password.html')
+        if not password2 or not password3:
+            messages.warning(request, "Los campos de la nueva contraseña son obligatorios.")
             return render(request, 'change_password.html')
         
-        # Verificar la contraseña actual
-        if not request.user.check_password(password1):
+        # Verificar la contraseña actual, excepto en el primer inicio de sesión
+        if not user.first_login and not user.check_password(password1):
             messages.error(request, "La contraseña actual es incorrecta.")
             return render(request, 'change_password.html')
 
@@ -93,13 +120,13 @@ def cambiar_contrasena_view(request):
             messages.error(request, "Las nuevas contraseñas no coinciden.")
             return render(request, 'change_password.html')
         
-        # Cambiar la contraseña
         try:
-            request.user.set_password(password2)
-            request.user.save()
-            update_session_auth_hash(request, request.user)  # Mantener la sesión iniciada
+            user.first_login = False
+            user.set_password(password2)
+            user.save()
+            update_session_auth_hash(request, user) 
             messages.success(request, "Contraseña cambiada exitosamente.")
-            return redirect('home')  # Redirigir a la página de inicio o a otra vista
+            return redirect('home')  
         except Exception as e:
             messages.error(request, f"Error al cambiar la contraseña: {str(e)}")
         
@@ -107,33 +134,67 @@ def cambiar_contrasena_view(request):
 
 
 @login_required
+def editar_perfil_medico(request, medico):
+    especialidad = request.POST.get('especialidad')
+    matricula = request.POST.get('matricula')
+
+    medico.especialidad = especialidad
+    medico.matricula = matricula
+    medico.save()
+
+@login_required
+def editar_perfil_paciente(request, paciente):
+    antecedentes = request.POST.get('antecedentes')
+    historial_medico = request.POST.get('historial_medico')
+
+    paciente.antecedentes = antecedentes
+    paciente.historial_medico = historial_medico
+    paciente.save()
+
+@login_required
+def actualizar_usuario_basico(request, user):
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')
+    fecha_nacimiento = request.POST.get('fecha_nacimiento')
+    genero = request.POST.get('genero')
+
+    user.first_name = first_name
+    user.last_name = last_name
+    user.fecha_nacimiento = fecha_nacimiento
+    user.genero = genero
+    user.save()
+
+
+@login_required
 def editar_perfil(request):
-    user = request.user  # Obtiene el usuario autenticado
+    user = request.user
+
+    medico = None
+    paciente = None
+
+    if hasattr(user, 'medico'):
+        medico = user.medico
+    elif hasattr(user, 'paciente'):
+        paciente = user.paciente
 
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        fecha_nacimiento = request.POST.get('fecha_nacimiento')
-        genero = request.POST.get('genero')
+        actualizar_usuario_basico(request, user)
 
-        user.first_name = first_name
-        user.last_name = last_name
-        user.fecha_nacimiento = fecha_nacimiento
-        user.genero = genero
+        if medico:
+            editar_perfil_medico(request, medico)
 
-
-        user.save()
+        if paciente:
+            editar_perfil_paciente(request, paciente)
 
         messages.success(request, "Perfil actualizado correctamente.")
-        return redirect('inicio_sesion:perfil')  # Redirige a la vista de perfil
+        return redirect('inicio_sesion:perfil')
 
-    else:
-        # Obtener todos los roles para el select
-        roles = Rol.objects.all()
+    roles = Rol.objects.all()
 
-        context = {
-            'user': user,
-            'roles': roles,
-        }
-        return render(request, 'edit_profile.html', context)
-
+    context = {
+        'user': user,
+        'roles': roles,
+        'medico': medico,
+        'paciente': paciente,
+    }
+    return render(request, 'edit_profile.html', context)
