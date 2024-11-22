@@ -6,7 +6,7 @@
 
 <h2>Paciente: {{paciente.usuario.first_name}} {{ paciente.usuario.last_name }}</h2>
 
-<form action="{% url 'iniciar_estudio' %}" method="post">
+<form action="{% url 'medicos:iniciar_estudio' %}" method="post">
     {% csrf_token %}
 
     <input hidden value="{{ paciente.id_paciente }}" name="id_paciente" />

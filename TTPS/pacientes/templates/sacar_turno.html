@@ -18,7 +18,7 @@
 
         <div class="mb-3">
             <label for="fecha" class="form-label"><strong>Fecha</strong></label>
-            <input type="date" id="fecha" name="fecha" class="form-control" required>
+            <input type="date" id="fecha" name="fecha" class="form-control" required :min="minDate">
         </div>
 
         <div class="mb-3">
@@ -32,13 +32,15 @@
         
         <div class="mb-3">
             <label for="consentimiento" class="form-label"><strong> Subir Consentimiento:</strong>   Descargalo, rellena el formulario y subilo completo!</label>
-            <a href="{% url 'pacientes:descargar_consentimiento' %}" class="btn btn-secondary">
+            <a href="{% url 'pacientes:descargar_consentimiento' %}" class="btn btn-success">
                 Descargar Consentimiento
             </a>
             <input type="file" id="consentimiento" name="consentimiento" class="form-control" accept="application/pdf" required>
         </div>
 
         <button type="submit" class="btn btn-primary">Reservar Turno</button>
+
+        <a href="{% url 'pacientes:historial_estudios_paciente' %}" class="btn btn-secondary">Volver</a>
     </form>
 </div>
 
@@ -74,6 +76,23 @@
         centroSelect.addEventListener('change', actualizarHorarios);
         fechaInput.addEventListener('change', actualizarHorarios);
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtén la fecha de mañana
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        // Formatear la fecha para el atributo `min`
+        const yyyy = tomorrow.getFullYear();
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); // Mes con 2 dígitos
+        const dd = String(tomorrow.getDate()).padStart(2, '0'); // Día con 2 dígitos
+        const minDate = `${yyyy}-${mm}-${dd}`;
+
+        // Establecer el atributo `min` en el campo de fecha
+        const dateInput = document.getElementById('fecha');
+        dateInput.setAttribute('min', minDate);
+        });
     </script>
     
 {% endblock %}

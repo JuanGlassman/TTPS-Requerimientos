@@ -43,6 +43,11 @@
     <dt class="col-5 fw-medium">Tipo de sospecha</dt>
     <dd class="col-7 fw-light">{%  if estudio.tipo_sospecha == 0 %} Puntual {% else %} Familiar {% endif %}</dd>
 
+    {%  if estudio.tipo_sospecha != 0 %}
+        <dt class="col-5 fw-medium">Parentesco</dt>
+        <dd class="col-7 fw-light">{{ estudio.parentesco }}</dd>
+    {% endif %}
+
     <dt class="col-5 fw-medium">Sintomas</dt>
     <dd class="col-7 fw-light">-</dd>
 
