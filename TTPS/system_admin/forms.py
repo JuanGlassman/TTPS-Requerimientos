@@ -54,4 +54,4 @@ class MedicoForm(forms.ModelForm):
 class CentroForm(forms.ModelForm):
     class Meta:
         model = Centro
-        fields = ['nombre', 'longitud', 'latitud', 'telefono', 'email']
+        fields = ['nombre', 'direccion', 'longitud', 'latitud', 'telefono', 'email']

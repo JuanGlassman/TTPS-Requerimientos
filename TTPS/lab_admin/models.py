@@ -21,6 +21,7 @@ class Presupuesto(models.Model):
 class Centro(models.Model):
     id_centro = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=150, blank=True)
+    direccion = models.CharField(max_length=150, blank=True)
     longitud = models.FloatField(null=True)
     latitud = models.FloatField(null=True)
     telefono = models.CharField(max_length=50, blank=True)

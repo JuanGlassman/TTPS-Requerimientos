@@ -3,6 +3,9 @@ from estudios.models import Estudio, EstadoEstudio
 from estudios import views as estudio_estado
 from .models import Presupuesto
 from estudios import views as estudio_view
+from transportista.views import agregar_estudio_a_pedido
+from django.contrib.auth.decorators import login_required
+from inicio_sesion.views import permission_required
 
 def estudios(request):
     estudios = Estudio.objects.order_by("fecha")
@@ -51,3 +54,15 @@ def cancelar_estudio(request, estudio_id):
     res, estudio = estudio_estado.estudio_cancelado(estudio)
     estudio.save()    
     return render(request, "estudio.html", {'estudio': estudio})
+
+@login_required
+@permission_required('pedido_create')
+@permission_required('pedido_update')
+@permission_required('ruta_create')
+@permission_required('ruta_update')
+def realizar_estudio(request, estudio_id):
+    estudio = get_object_or_404(Estudio, id_estudio=estudio_id)
+    response = agregar_estudio_a_pedido(estudio_id)
+    res, estudio = estudio_estado.estudio_realizado(estudio)
+    estudio.save()
+    return redirect('lab_admin:estudios')

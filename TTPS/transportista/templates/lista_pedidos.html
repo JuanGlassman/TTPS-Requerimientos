@@ -1,18 +1,20 @@
+{% load static %}
+{% load filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hoja de Ruta</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/transportista_styles.css' %}">
 </head>
 <body>
-    <!-- Cabecera -->
     <header>
-        <span id="user-name">Transportista: {{ hoja_de_ruta.transportista.nombre }}</span>
+        <span id="user-name" style="float: left; margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
+        <a href="{% url 'inicio_sesion:logout' %}" class="cerrar_sesion" style="float: right;">Cerrar Sesión</a>
     </header>
+    {% if hoja_de_ruta %}
 
-    <!-- Contenedor principal -->
     <div class="container">
         <!-- Fecha -->
         <div class="info">
@@ -45,7 +47,7 @@
                 <div class="pedido-item">
                     <div>
                         <p><strong>Centro:</strong> {{ pedido.centro.nombre }}</p>
-                        <p><strong>Dirección:</strong> {{ pedido.centro.longitud }} - {{ pedido.centro.latitud }}</p>
+                        <p><strong>Dirección:</strong> {{ pedido.centro.direccion }}</p>
                     </div>
                     <button onclick="verPedido('{{ pedido.id_pedido }}')">Ver</button>
                 </div>
@@ -60,3 +62,6 @@
             {% endif %}
         {% endwith %}
     </div>
+    {% else %}
+        <h3>No hay hoja de ruta para el día de hoy.</h3>
+    {% endif %}
