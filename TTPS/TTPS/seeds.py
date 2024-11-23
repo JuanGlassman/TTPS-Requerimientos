@@ -4,6 +4,7 @@ from pacientes.models import Paciente
 from medicos.models import Medico
 from lab_admin.models import Presupuesto
 from lab_admin.models import LabAdmin
+from transportista.models import Transportista
 from datetime import date
 
 def run_seeds():
@@ -23,6 +24,10 @@ def run_seeds():
 
     rol_medico = Rol.objects.create(
         nombre = "medico"
+    )
+
+    rol_transportista = Rol.objects.create(
+        nombre = "transportista"
     )
 
     #Crear usuario Administrador de sistema
@@ -74,6 +79,22 @@ def run_seeds():
         usuario_id = usuarioMedico.id_usuario,
         especialidad = "Cardiologo",
         matricula = "113/1234"
+    )
+
+    usuarioTransportista = Usuario.objects.create(
+        username="lucas_garcia",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
+        email="lukitas@email.com",
+        dni = 13,
+        first_name = "Lucas",
+        last_name = "Garcia",
+        fecha_nacimiento = "1999-11-05",
+        genero = "M",
+        rol_id = rol_transportista.id_rol
+    )
+
+    transportista = Transportista.objects.create(
+        usuario_id = usuarioTransportista.id_usuario
     )
 
     #Crear usuarios Pacientes

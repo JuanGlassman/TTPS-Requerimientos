@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'pacientes',
     'system_admin',
     'inicio_sesion',
+    'transportista',
 ]
 
 MIDDLEWARE = [
