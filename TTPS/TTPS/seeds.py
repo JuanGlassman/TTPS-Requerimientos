@@ -4,9 +4,37 @@ from pacientes.models import Paciente
 from medicos.models import Medico
 from lab_admin.models import Presupuesto
 from lab_admin.models import LabAdmin
-from datetime import date
+from transportista.models import Transportista, HojaDeRuta, Pedido
+from lab_admin.models import Centro, Turno
+from datetime import date, time, timedelta
 
 def run_seeds():
+    centro1 = Centro.objects.create(
+        nombre = "Diagnosticos Cipriano",
+        direccion = "Calle 9 777",
+        longitud = -57.953714, 
+        latitud = -34.915258,
+        telefono = "221-123456",
+        email = "diagnoslp@email.com"
+    )
+
+    centro2 = Centro.objects.create(
+        nombre = "Laboratorio de Analisis",
+        direccion = "Calle 71 301",
+        longitud = -57.923714,
+        latitud = -34.925258,
+        telefono = "221-123456",
+        email = "labanal@email.com"
+    )
+
+    centro3 = Centro.objects.create(
+        nombre = "Extraccion de sangre",
+        direccion = "Avenida 13 1486",
+        longitud = -57.944586953543435,
+        latitud = -34.92836420212585,
+        telefono = "221-123456",
+        email = "extracsang@email.com"
+    )
 
     #Crear Roles
     rol_system_admin = Rol.objects.create(
@@ -23,6 +51,10 @@ def run_seeds():
 
     rol_medico = Rol.objects.create(
         nombre = "medico"
+    )
+
+    rol_transportista = Rol.objects.create(
+        nombre = "transportista"
     )
 
     #Crear usuario Administrador de sistema
@@ -74,6 +106,22 @@ def run_seeds():
         usuario_id = usuarioMedico.id_usuario,
         especialidad = "Cardiologo",
         matricula = "113/1234"
+    )
+
+    usuarioTransportista = Usuario.objects.create(
+        username="lucas_garcia",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=", # el numero 1 hasheado
+        email="lukitas@email.com",
+        dni = 13,
+        first_name = "Lucas",
+        last_name = "Garcia",
+        fecha_nacimiento = "1999-11-05",
+        genero = "M",
+        rol_id = rol_transportista.id_rol
+    )
+
+    transportista = Transportista.objects.create(
+        usuario_id = usuarioTransportista.id_usuario
     )
 
     #Crear usuarios Pacientes
@@ -259,6 +307,14 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    turno_estudio2 = Turno.objects.create(
+        usuario_id = usuario1.id_usuario,
+        estudio_id = estudio2.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro1.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
     presupuesto2 = Presupuesto.objects.create(
         estudio_id = estudio2.id_estudio,
         costo_exoma = 500
@@ -323,6 +379,14 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    turno_estudio6 = Turno.objects.create(
+        usuario_id = usuario4.id_usuario,
+        estudio_id = estudio6.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro2.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
     presupuesto6 = Presupuesto.objects.create(
         estudio_id = estudio6.id_estudio,
         costo_exoma = 500
@@ -337,6 +401,14 @@ def run_seeds():
         medico_id = medico.id_medico,
         estado = EstadoEstudio.TURNO_CONFIRMADO,
         tipo_sospecha = 0
+    )
+
+    turno_estudio7 = Turno.objects.create(
+        usuario_id = usuario5.id_usuario,
+        estudio_id = estudio7.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro1.id_centro,
+        horario = time(hour=14, minute=30, second=0)
     )
 
     presupuesto7 = Presupuesto.objects.create(
@@ -355,6 +427,14 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    turno_estudio8 = Turno.objects.create(
+        usuario_id = usuario6.id_usuario,
+        estudio_id = estudio8.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro2.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
     presupuesto8 = Presupuesto.objects.create(
         estudio_id = estudio8.id_estudio,
         costo_exoma = 500
@@ -369,6 +449,14 @@ def run_seeds():
         medico_id = medico.id_medico,
         estado = EstadoEstudio.CENTRALIZADA,
         tipo_sospecha = 0
+    )
+
+    turno_estudio9 = Turno.objects.create(
+        usuario_id = usuario8.id_usuario,
+        estudio_id = estudio9.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro2.id_centro,
+        horario = time(hour=14, minute=30, second=0)
     )
 
     presupuesto9 = Presupuesto.objects.create(
@@ -387,7 +475,421 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    turno_estudio10 = Turno.objects.create(
+        usuario_id = usuario7.id_usuario,
+        estudio_id = estudio10.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro1.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
     presupuesto10 = Presupuesto.objects.create(
         estudio_id = estudio10.id_estudio,
         costo_exoma = 500
     )
+
+    # Crear 10 pacientes adicionales
+    usuario10 = Usuario.objects.create(
+        username="matias_fernandez",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="matias@email.com",
+        dni=14,
+        first_name="Matías",
+        last_name="Fernández",
+        fecha_nacimiento="1990-03-12",
+        genero="M",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente10 = Paciente.objects.create(
+        usuario_id=usuario10.id_usuario,
+        antecedentes="Hipertensión arterial",
+        historial_medico="Chequeos regulares"
+    )
+
+    usuario11 = Usuario.objects.create(
+        username="lucia_gomez",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="lucia@email.com",
+        dni=15,
+        first_name="Lucía",
+        last_name="Gómez",
+        fecha_nacimiento="1987-07-25",
+        genero="F",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente11 = Paciente.objects.create(
+        usuario_id=usuario11.id_usuario,
+        antecedentes="Asma leve",
+        historial_medico="Tratamiento con inhaladores"
+    )
+
+    usuario12 = Usuario.objects.create(
+        username="andrea_lopez",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="andrea@email.com",
+        dni=16,
+        first_name="Andrea",
+        last_name="López",
+        fecha_nacimiento="1995-01-08",
+        genero="F",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente12 = Paciente.objects.create(
+        usuario_id=usuario12.id_usuario,
+        antecedentes="Alergia al polen",
+        historial_medico="Sin intervenciones mayores"
+    )
+
+    usuario13 = Usuario.objects.create(
+        username="juan_perez",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="juan@email.com",
+        dni=17,
+        first_name="Juan",
+        last_name="Pérez",
+        fecha_nacimiento="1980-09-15",
+        genero="M",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente13 = Paciente.objects.create(
+        usuario_id=usuario13.id_usuario,
+        antecedentes="Colesterol alto",
+        historial_medico="Controlado con medicación"
+    )
+
+    usuario14 = Usuario.objects.create(
+    username="mariana_rios",
+    password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+    email="mariana@email.com",
+    dni=18,
+    first_name="Mariana",
+    last_name="Ríos",
+    fecha_nacimiento="1983-06-18",
+    genero="F",
+    rol_id=rol_paciente.id_rol
+    )
+    paciente14 = Paciente.objects.create(
+        usuario_id=usuario14.id_usuario,
+        antecedentes="Diabetes tipo 2",
+        historial_medico="En tratamiento con insulina"
+    )
+    
+    usuario15 = Usuario.objects.create(
+        username="carlos_martin",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="carlos@email.com",
+        dni=19,
+        first_name="Carlos",
+        last_name="Martín",
+        fecha_nacimiento="1986-11-05",
+        genero="M",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente15 = Paciente.objects.create(
+        usuario_id=usuario15.id_usuario,
+        antecedentes="No posee antecedentes relevantes",
+        historial_medico="En perfectas condiciones"
+    )
+    
+    usuario16 = Usuario.objects.create(
+        username="paula_fernandez",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="paula@email.com",
+        dni=20,
+        first_name="Paula",
+        last_name="Fernández",
+        fecha_nacimiento="1992-02-15",
+        genero="F",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente16 = Paciente.objects.create(
+        usuario_id=usuario16.id_usuario,
+        antecedentes="Migrañas frecuentes",
+        historial_medico="Tratamiento con analgésicos"
+    )
+    
+    usuario17 = Usuario.objects.create(
+        username="martin_garcia",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="martin@email.com",
+        dni=21,
+        first_name="Martín",
+        last_name="García",
+        fecha_nacimiento="1997-08-23",
+        genero="M",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente17 = Paciente.objects.create(
+        usuario_id=usuario17.id_usuario,
+        antecedentes="Artritis en las rodillas",
+        historial_medico="Fisioterapia en curso"
+    )
+    
+    usuario18 = Usuario.objects.create(
+        username="juanita_luna",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="juanita@email.com",
+        dni=22,
+        first_name="Juanita",
+        last_name="Luna",
+        fecha_nacimiento="1993-09-30",
+        genero="F",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente18 = Paciente.objects.create(
+        usuario_id=usuario18.id_usuario,
+        antecedentes="Problemas gastrointestinales",
+        historial_medico="En tratamiento con probióticos"
+    )
+    
+    usuario19 = Usuario.objects.create(
+        username="gustavo_mora",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="gustavo@email.com",
+        dni=23,
+        first_name="Gustavo",
+        last_name="Mora",
+        fecha_nacimiento="1989-10-10",
+        genero="M",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente19 = Paciente.objects.create(
+        usuario_id=usuario19.id_usuario,
+        antecedentes="Hipotiroidismo",
+        historial_medico="Tratamiento con levotiroxina"
+    )
+    
+    usuario20 = Usuario.objects.create(
+        username="marta_vega",
+        password="pbkdf2_sha256$870000$yigOCtPVQV2hyOAfg4Jvbu$vJg5/v0OGKH7JgXF0b9prmNou9m4dhUZ02qAGH2Yjkg=",  # el número 1 hasheado
+        email="marta@email.com",
+        dni=24,
+        first_name="Marta",
+        last_name="Vega",
+        fecha_nacimiento="1984-12-20",
+        genero="F",
+        rol_id=rol_paciente.id_rol
+    )
+    paciente20 = Paciente.objects.create(
+        usuario_id=usuario20.id_usuario,
+        antecedentes="Fibromialgia",
+        historial_medico="Bajo tratamiento sintomático"
+    )
+
+    # Crear estudios en estado PAGADO
+    estudio_pagado1 = Estudio.objects.create(
+        id_interno="2345_FER_MAT",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia10",
+        paciente_id=paciente10.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.PAGADO,
+        tipo_sospecha=0
+    )
+    presupuesto_pagado1 = Presupuesto.objects.create(
+        estudio_id=estudio_pagado1.id_estudio,
+        costo_exoma=500
+    )
+
+    estudio_pagado2 = Estudio.objects.create(
+        id_interno="2346_GOM_LUC",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia11",
+        paciente_id=paciente11.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.PAGADO,
+        tipo_sospecha=0
+    )
+    presupuesto_pagado2 = Presupuesto.objects.create(
+        estudio_id=estudio_pagado2.id_estudio,
+        costo_exoma=500
+    )
+
+    estudio_pagado3 = Estudio.objects.create(
+        id_interno="2348_RIO_MAR",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia11",
+        paciente_id=paciente14.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.PAGADO,
+        tipo_sospecha=0
+    )
+    presupuesto_pagado3 = Presupuesto.objects.create(
+        estudio_id=estudio_pagado3.id_estudio,
+        costo_exoma=500
+    )
+
+    # Crear estudios en estado REALIZADA y sus turnos
+    estudio_realizado1 = Estudio.objects.create(
+        id_interno="2347_LOP_AND",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia12",
+        paciente_id=paciente12.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado1 = Turno.objects.create(
+        usuario_id=paciente12.usuario.id_usuario,
+        estudio_id=estudio_realizado1.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro1.id_centro,
+        horario=time(hour=9, minute=30)
+    )
+
+    estudio_realizado2 = Estudio.objects.create(
+        id_interno="2348_PER_JUA",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente13.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado2 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado2.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=10, minute=45)
+    )
+
+    estudio_realizado3 = Estudio.objects.create(
+        id_interno="2349_MAR_CAR",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente15.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado3 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado3.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=11, minute=00)
+    )
+
+    estudio_realizado4 = Estudio.objects.create(
+        id_interno="2350_FER_PAU",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente16.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado4 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado4.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=11, minute=15)
+    )
+
+    estudio_realizado5 = Estudio.objects.create(
+        id_interno="2351_GAR_MAR",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente17.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado5 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado5.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=11, minute=15)
+    )
+
+    estudio_realizado6 = Estudio.objects.create(
+        id_interno="2352_LUN_JUA",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente18.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado6 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado6.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=11, minute=15)
+    )
+
+    estudio_realizado7 = Estudio.objects.create(
+        id_interno="2353_MOR_GUS",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente19.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado7 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado7.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=11, minute=15)
+    )
+
+    estudio_realizado8 = Estudio.objects.create(
+        id_interno="2354_VEG_MAR",
+        fecha=date.today(),
+        tipo_estudio="Exoma",
+        patologia="patologia13",
+        paciente_id=paciente20.id_paciente,
+        medico_id=medico.id_medico,
+        estado=EstadoEstudio.REALIZADA,
+        tipo_sospecha=0
+    )
+    turno_realizado8 = Turno.objects.create(
+        usuario_id=paciente13.usuario.id_usuario,
+        estudio_id=estudio_realizado8.id_estudio,
+        fecha=date.today() - timedelta(days=2),
+        centro_id=centro2.id_centro,
+        horario=time(hour=11, minute=15)
+    )
+
+    # Crear pedidos manualmente
+    pedido1 = Pedido.objects.create(
+        centro_id=centro1.id_centro,
+        estado="pendiente"
+    )
+    pedido1.estudios.add(estudio_realizado1, estudio_realizado3, estudio_realizado5)
+
+    pedido2 = Pedido.objects.create(
+        centro_id=centro2.id_centro,
+        estado="pendiente"
+    )
+    pedido2.estudios.add(estudio_realizado2, estudio_realizado4, estudio_realizado6)
+
+    pedido3 = Pedido.objects.create(
+        centro_id=centro3.id_centro,
+        estado="pendiente"
+    )
+    pedido3.estudios.add(estudio_realizado8, estudio_realizado7)
+
+    # Crear hoja de ruta manualmente
+    hoja_de_ruta = HojaDeRuta.objects.create(
+        fecha=date.today(),
+        transportista_id=transportista.id_transportista,
+        estado="pendiente"
+    )
+    hoja_de_ruta.pedidos.add(pedido1, pedido2, pedido3)

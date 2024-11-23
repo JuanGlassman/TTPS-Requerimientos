@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'pacientes',
     'system_admin',
     'inicio_sesion',
+    'transportista',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +136,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'pacientes/static'),
     os.path.join(BASE_DIR, 'system_admin/static'),
     os.path.join(BASE_DIR, 'inicio_sesion/static'),
+    os.path.join(BASE_DIR, 'transportista/static'),
     ]
 
 

@@ -55,6 +55,8 @@ def login_view(request):
                     return redirect('inicio_sesion:cambiar_contrasena') 
                 else:
                     messages.success(request, "Inicio de sesión exitoso.")
+                    if (user.rol.nombre == 'transportista'):
+                        return redirect('transportista:lista_pedidos')
                     return redirect('home')
             else:
                 messages.error(request, "DNI o contraseña incorrectos.")
@@ -126,6 +128,8 @@ def cambiar_contrasena_view(request):
             user.save()
             update_session_auth_hash(request, user) 
             messages.success(request, "Contraseña cambiada exitosamente.")
+            if (user.rol.nombre == 'transportista'):
+                return redirect('transportista:lista_pedidos')
             return redirect('home')  
         except Exception as e:
             messages.error(request, f"Error al cambiar la contraseña: {str(e)}")

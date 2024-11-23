@@ -1,0 +1,67 @@
+{% load static %}
+{% load filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoja de Ruta</title>
+    <link rel="stylesheet" href="{% static 'css/transportista_styles.css' %}">
+</head>
+<body>
+    <header>
+        <span id="user-name" style="float: left; margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
+        <a href="{% url 'inicio_sesion:logout' %}" class="cerrar_sesion" style="float: right;">Cerrar Sesión</a>
+    </header>
+    {% if hoja_de_ruta %}
+
+    <div class="container">
+        <!-- Fecha -->
+        <div class="info">
+            <span id="current-date">Fecha: {{ hoja_de_ruta.fecha }}</span>
+        </div>
+
+        <!-- Botón de iniciar recorrido -->
+        <button class="btn" id="start-btn" onclick="startRecorrido()">Iniciar recorrido</button>
+
+        <!-- Mensaje dinámico -->
+        <div class="message" id="status-message">
+          {% if hoja_de_ruta.estado == 'generada' %}
+            {% if not hoja_de_ruta.pedidos %}
+                No hay pedidos para el día de hoy.
+            {% else %}
+                Tus pedidos del día de hoy
+            {% endif %}
+          {% elif hoja_de_ruta.estado == 'en_curso' %}
+              {% with hoja_de_ruta.pedidos.all|filtrar_pendientes:"pendiente" as pedidos_pendientes %}
+                <p>Pedidos pendientes: {{ pedidos_pendientes.count }}</p>
+              {% endwith %}
+          {% elif hoja_de_ruta.estado == 'finalizada' %}
+            Has completado tu recorrido.
+          {% endif %}         
+        </div>
+
+        <!-- Lista de pedidos -->
+        <div class="pedido-list" id="pedido-list">
+            {% for pedido in hoja_de_ruta.pedidos.all %}
+                <div class="pedido-item">
+                    <div>
+                        <p><strong>Centro:</strong> {{ pedido.centro.nombre }}</p>
+                        <p><strong>Dirección:</strong> {{ pedido.centro.direccion }}</p>
+                    </div>
+                    <button onclick="verPedido('{{ pedido.id_pedido }}')">Ver</button>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% with hoja_de_ruta.pedidos.all|filtrar_pendientes:"pendiente" as pedidos_pendientes %}
+            {% if pedidos_pendientes %}
+              <button class="footer-btn hidden" id="map-btn" onclick="verMapa()">Ver mapa</button>
+            {% else %}        
+              <button class="footer-btn hidden" id="send-btn" onclick="enviarCentral()">Enviar a central</button>
+            {% endif %}
+        {% endwith %}
+    </div>
+    {% else %}
+        <h3>No hay hoja de ruta para el día de hoy.</h3>
+    {% endif %}

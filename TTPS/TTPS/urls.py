@@ -32,5 +32,6 @@ urlpatterns = [
     path("pacientes/", include("pacientes.urls")),
     path("system_admin/", include("system_admin.urls")),
     path("inicio_sesion/", include("inicio_sesion.urls")),
-    path("estudios/", include('estudios.urls'))
+    path("estudios/", include('estudios.urls')),
+    path("transportista/", include('transportista.urls')),
 ]
