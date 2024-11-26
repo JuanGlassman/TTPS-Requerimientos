@@ -1,4 +1,4 @@
-from estudios.models import Estudio, EstadoEstudio, HistorialEstudio
+from estudios.models import Estudio, EstadoEstudio, Enfermedad
 from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
 from medicos.models import Medico
@@ -279,12 +279,33 @@ def run_seeds():
         historial_medico = "Operación de corneas"
     )
 
+    #Patologias
+    patologia1 = Enfermedad.objects.create(
+        nombre= "ASMD"
+    )
+
+    patologia2 = Enfermedad.objects.create(
+        nombre= "GAUCHER"
+    )
+
+    patologia3 = Enfermedad.objects.create(
+        nombre= "MPSI"
+    )
+
+    patologia4 = Enfermedad.objects.create(
+        nombre= "FABRY"
+    )
+
+    patologia5 = Enfermedad.objects.create(
+        nombre= "POMPE"
+    )
+
     #Crear Estudios y Presupuestos
     estudio1 = Estudio.objects.create(
         id_interno="1234_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id = patologia1.id_enfermedad,
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico, 
         estado = EstadoEstudio.INICIADO,
@@ -300,7 +321,7 @@ def run_seeds():
         id_interno="1245_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id=patologia1.id_enfermedad,
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.FINALIZADO,
@@ -324,7 +345,7 @@ def run_seeds():
         id_interno="1245_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia3",
+        patologia_id = patologia3.id_enfermedad,
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.CANCELADO,
@@ -340,7 +361,7 @@ def run_seeds():
         id_interno="5965_VER_SOF",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia4",
+        patologia_id=patologia4.id_enfermedad,
         paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PRESUPUESTADO,
@@ -356,7 +377,7 @@ def run_seeds():
         id_interno="1275_REY_VAL",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id=patologia2.id_enfermedad,
         paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PAGADO,
@@ -372,7 +393,7 @@ def run_seeds():
         id_interno="1275_CEN_RUB",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id=patologia1.id_enfermedad,
         paciente_id = paciente4.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.AUTORIZADO,
@@ -396,7 +417,7 @@ def run_seeds():
         id_interno="1275_LIR_VAL",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id=patologia5.id_enfermedad,
         paciente_id = paciente5.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.TURNO_CONFIRMADO,
@@ -420,7 +441,7 @@ def run_seeds():
         id_interno="1275_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id=patologia2.id_enfermedad,
         paciente_id = paciente6.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.REALIZADA,
@@ -444,7 +465,7 @@ def run_seeds():
         id_interno="1275_HUM_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia8",
+        patologia_id=patologia1.id_enfermedad,
         paciente_id = paciente8.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.CENTRALIZADA,
@@ -468,7 +489,7 @@ def run_seeds():
         id_interno="1275_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia1",
+        patologia_id = patologia2.id_enfermedad,
         paciente_id = paciente7.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.ENVIADA_EXTERIOR,
@@ -681,7 +702,7 @@ def run_seeds():
         id_interno="2345_FER_MAT",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia10",
+        patologia_id= patologia2.id_enfermedad,
         paciente_id=paciente10.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.PAGADO,
@@ -696,7 +717,7 @@ def run_seeds():
         id_interno="2346_GOM_LUC",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia11",
+        patologia_id= patologia3.id_enfermedad,
         paciente_id=paciente11.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.PAGADO,
@@ -711,7 +732,7 @@ def run_seeds():
         id_interno="2348_RIO_MAR",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia11",
+        patologia_id=patologia4.id_enfermedad,
         paciente_id=paciente14.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.PAGADO,
@@ -727,7 +748,7 @@ def run_seeds():
         id_interno="2347_LOP_AND",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia12",
+        patologia_id = patologia4.id_enfermedad,
         paciente_id=paciente12.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -745,7 +766,7 @@ def run_seeds():
         id_interno="2348_PER_JUA",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia5.id_enfermedad,
         paciente_id=paciente13.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -763,7 +784,7 @@ def run_seeds():
         id_interno="2349_MAR_CAR",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia1.id_enfermedad,
         paciente_id=paciente15.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -781,7 +802,7 @@ def run_seeds():
         id_interno="2350_FER_PAU",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia3.id_enfermedad,
         paciente_id=paciente16.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -799,7 +820,7 @@ def run_seeds():
         id_interno="2351_GAR_MAR",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia3.id_enfermedad,
         paciente_id=paciente17.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -817,7 +838,7 @@ def run_seeds():
         id_interno="2352_LUN_JUA",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia5.id_enfermedad,
         paciente_id=paciente18.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -835,7 +856,7 @@ def run_seeds():
         id_interno="2353_MOR_GUS",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia1.id_enfermedad,
         paciente_id=paciente19.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,
@@ -853,7 +874,7 @@ def run_seeds():
         id_interno="2354_VEG_MAR",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia="patologia13",
+        patologia_id=patologia2.id_enfermedad,
         paciente_id=paciente20.id_paciente,
         medico_id=medico.id_medico,
         estado=EstadoEstudio.REALIZADA,

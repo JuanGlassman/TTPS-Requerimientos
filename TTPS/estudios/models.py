@@ -37,6 +37,17 @@ class Gen(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class Sintoma(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_sintoma_api = models.IntegerField()
+    nombre = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = 'sintomas'
+
+    def __str__(self):
+        return self.nombre
 
 class EstadoEstudio(models.TextChoices):
     INICIADO = 'Iniciado'
@@ -67,8 +78,9 @@ class Estudio(models.Model):
     tipo_sospecha = models.IntegerField()
     parentesco = models.CharField(max_length=30, null=True)
     sample_set = models.ForeignKey(SampleSet, on_delete=models.PROTECT, null=True, blank=True)
-    patologia = models.CharField(max_length=200)
+    patologia = models.ForeignKey(Enfermedad, on_delete=models.PROTECT, null=True )
     genes = models.ManyToManyField(Gen)
+    sintomas = models.ManyToManyField(Sintoma)
 
     def __str__(self):
         return f"{self.id_interno} - {self.paciente}"
