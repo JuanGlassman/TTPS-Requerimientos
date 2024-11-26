@@ -56,11 +56,13 @@
 
         {% with hoja_de_ruta.pedidos.all|filtrar_pendientes:"pendiente" as pedidos_pendientes %}
             {% if pedidos_pendientes %}
-              <button class="footer-btn hidden" id="map-btn" onclick="verMapa()">Ver mapa</button>
+              <a class="footer-btn hidden" id="map-btn" href="{% url 'transportista:ver_mapa'  hoja_de_ruta.id_hoja_de_ruta %}">Ver mapa</button>
             {% else %}        
               <button class="footer-btn hidden" id="send-btn" onclick="enviarCentral()">Enviar a central</button>
             {% endif %}
         {% endwith %}
+
+        <a class="btn btn-primary" id="map-btn" href="{% url 'transportista:ver_mapa' hoja_de_ruta.id_hoja_de_ruta %}">Ver mapa</button>
     </div>
     {% else %}
         <h3>No hay hoja de ruta para el día de hoy.</h3>

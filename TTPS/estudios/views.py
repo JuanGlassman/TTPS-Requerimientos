@@ -64,6 +64,7 @@ def estudio_confirmado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.AUTORIZADO):
         estudio.estado = EstadoEstudio.TURNO_CONFIRMADO
+        registrar_historial(estudio, EstadoEstudio.AUTORIZADO, EstadoEstudio.TURNO_CONFIRMADO)
         return True, estudio
     else:
         return False, estudio
@@ -73,6 +74,7 @@ def estudio_realizado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.TURNO_CONFIRMADO):
         estudio.estado = EstadoEstudio.REALIZADA
+        registrar_historial(estudio, EstadoEstudio.TURNO_CONFIRMADO, EstadoEstudio.REALIZADA)
         return True, estudio
     else:
         return False, estudio
@@ -82,6 +84,7 @@ def estudio_centralizado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.REALIZADA):
         estudio.estado = EstadoEstudio.CENTRALIZADA
+        registrar_historial(estudio, EstadoEstudio.REALIZADA, EstadoEstudio.CENTRALIZADA)
         return True, estudio
     else:
         return False, estudio
@@ -91,6 +94,7 @@ def estudio_enviado_exterior(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.CENTRALIZADA):
         estudio.estado = EstadoEstudio.ENVIADA_EXTERIOR
+        registrar_historial(estudio, EstadoEstudio.CENTRALIZADA, EstadoEstudio.ENVIADA_EXTERIOR)
         return True, estudio
     else:
         return False, estudio
@@ -100,6 +104,7 @@ def estudio_finalizado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.ENVIADA_EXTERIOR):
         estudio.estado = EstadoEstudio.FINALIZADO
+        registrar_historial(estudio, EstadoEstudio.ENVIADA_EXTERIOR, EstadoEstudio.FINALIZADO)
         return True, estudio
     else:
         return False, estudio

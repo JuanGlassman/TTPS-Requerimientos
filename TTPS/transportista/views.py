@@ -59,3 +59,9 @@ def agregar_estudio_a_pedido(estudio_id):
     pedido.estudios.add(estudio)
     pedido.save()
     return True
+
+def ver_mapa(request, hoja_id):
+    hoja = get_object_or_404(HojaDeRuta, id_hoja_de_ruta=hoja_id)
+    centros = Centro.objects.filter(pedido__in=hoja.pedidos.all()).distinct()
+    print(centros)
+    return render(request, 'mapa_pedidos.html',  {"centros": centros})
