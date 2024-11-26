@@ -16,10 +16,13 @@
         <div id="sintomas-seleccionados" class="mb-3"></div>
         <div class="row">
             <div class="col-12 col-md-4">
-                <input class="form-control" type="text" id="buscador-sintomas" />
+                <input class="form-control" type="text" id="buscador-sintomas" placeholder="Buscar sintoma. Al menos 4 caracteres."/>
             </div>
             <div class="col-12 col-md-8">
                 <select id="select-sintomas" class="form-select" name="sintomas"></select>
+                <div class="invalid-feedback" id="error-sintomas" style="display: none;">
+                    Debe seleccionar al menos un sintoma.
+                </div>
             </div>
         </div>
     </div>
@@ -33,9 +36,12 @@
                         <select class="form-select" name="patologia" id="patologia-select">
                             <option selected disabled >Elegir patologia</option>
                             {% for patologia in patologias %}
-                                <option>{{ patologia.nombre }}</option>
+                                <option value="{{ patologia.id_enfermedad }}">{{ patologia.nombre }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback" id="error-patologia" style="display: none;">
+                            Debe seleccionar una patología.
+                        </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <p><b>Gen a analizar: </b><span id="gen-analizar"></span></p>
@@ -62,7 +68,10 @@
 
         <div id="parentescoId" style="display: none;" class="mb-2 col-12 col-md-6">
             <label class="form-label">Parentesco con el familiar</label>
-            <input class="form-control" name="parentesco"/>
+            <input class="form-control" name="parentesco" id="parentescoInput"/>
+            <div class="invalid-feedback" id="error-parentesco" style="display: none;">
+                Debe ingresar el parentesco familiar.
+            </div>
         </div>
     </div>
 
@@ -80,7 +89,8 @@
                 {% for gen in genes %}
                     <option>{{ gen.nombre }}</option>
                 {% endfor %}
-            </select>
+            </select>           
+          
         {% endif %}
     </div>
 
@@ -98,9 +108,24 @@
     </div>
 </form>
 
-<p>{{ api_data }}</p>
-<p>{{ api_data.nombre_patologia }}</p>
-<p>{{ api_data.gen }}</p>
+<div class="modal fade" id="my-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Los síntomas no son válidos para la patología seleccionada.</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Intente con otro síntoma compatible.</p>
+              </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+  
 
 <script>
 
@@ -116,7 +141,7 @@
     var valores = [];
     var sintoma = {}    
 
-    sintomasInput.addEventListener('input', function(e) {
+    sintomasInput.addEventListener('input', function(e) {        
         if (sintomasInput.value.length > 3) {
             fetch(`https://api.claudioraverta.com/lista-sintomas/?nombre=${sintomasInput.value}`)
             .then(response => response.json())
@@ -137,7 +162,7 @@
     });
 
     sintomasSelect.addEventListener('change', function(e) {
-
+        e.preventDefault()
         if (!valores.some(s => s.id === e.target.value)) {
             const nuevoSintoma = {
                 id: e.target.value,
@@ -175,8 +200,11 @@
     const patologiaSelect = document.getElementById('patologia-select');
     const gen_div = document.getElementById('gen-analizar');
 
+    var nombrePatologia;
+
     patologiaSelect.addEventListener('change', function(e) {
-        fetch(`https://api.claudioraverta.com/genes-analizar/${patologiaSelect.value}`)
+        nombrePatologia = patologiaSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML;
+        fetch(`https://api.claudioraverta.com/genes-analizar/${nombrePatologia}`)
         .then(response => {
             statusCode = response.status;
             return response.json()
@@ -226,36 +254,45 @@
         if (!validarSintomas()) return false
         if (!validarPatologia(formData.get('patologia'))) return false
         if (!validarSospecha(formData.get('sospecha'), formData.get('parentesco'))) return false
-        if (!await validarSintomasConPatologia(formData.get('patologia'))) return false
+        if (!await validarSintomasConPatologia(
+            patologiaSelect.querySelector(`option[value="${formData.get('patologia')}"]`).innerHTML)) 
+            return false
         return true;
     } 
+    
+    function validarSintomas() {
+        if(valores.length == 0) {
+            sintomasSelect.className = "form-select is-invalid"
+            document.getElementById('error-sintomas').style = "display: block;"
+            return false;
+        }
+        sintomasSelect.className = "form-select is-valid"
+        document.getElementById('error-sintomas').style = "display: none;"
+        return true
+    }
 
     function validarPatologia(patologia) {
         if(!patologia) {
-            alert('Debe seleccionar una patología');
+            patologiaSelect.className = "form-control is-invalid"
+            document.getElementById('error-patologia').style = "display: block;"
             return false;
         }
+        patologiaSelect.className = "form-control is-valid"
+        document.getElementById('error-patologia').style = "display: none;"
         return true;
-    }
-
-    function validarSintomas() {
-        if(valores.length == 0) {
-            alert('Debe seleccionar algun sintoma');
-            return false;
-        }
-        return true
     }
 
     function validarSospecha(sospecha, parentesco) {
         console.log(sospecha)
         console.log(parentesco)
         if (sospecha == '1' & !parentesco) {
-            alert("Debe ingresar el parentesco familiar");
+            document.getElementById('parentescoInput').className = "form-control is-invalid"
+            document.getElementById('error-parentesco').style = "display: block;"
             return false;
         }
-        else {
-            return true;
-        }
+        document.getElementById('parentescoInput').className = "form-control is-valid"
+        document.getElementById('error-parentesco').style = "display: none;"
+        return true;
     }
 
     async function validarSintomasConPatologia(patologia) {
@@ -281,7 +318,8 @@
             });
             const data = await response.json();
             if (!data.valido) {
-                alert("Los sintomas no son validos para la patologia seleccionada");
+                const myModal = new bootstrap.Modal(document.getElementById('my-modal'));
+                myModal.show();
                 return false
             } 
         } catch (error) {

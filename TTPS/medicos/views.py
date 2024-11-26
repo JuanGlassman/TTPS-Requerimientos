@@ -58,7 +58,6 @@ def iniciar_estudio(request):
         sintomas = request.POST.getlist('sintomas')
         sospecha = request.POST.get('sospecha')
         id_paciente = request.POST.get('id_paciente')
-        print( request.POST.get('hallazgo'))
         hallazgos_secundarios = request.POST.get('hallazgo') == 'on'
         genes = request.POST.getlist('genes')
         paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
@@ -73,23 +72,23 @@ def iniciar_estudio(request):
             id_interno = generar_id_interno(paciente),
             fecha=date.today(),
             tipo_estudio=tipo_estudio,
-            patologia=patologia,
+            patologia_id = patologia,
             paciente_id = id_paciente,
             medico_id = medico.id_medico,
             tipo_sospecha = int(sospecha),
             hallazgos_secundarios = hallazgos_secundarios
         ) 
         
-        # estudio_views.estudio_iniciado(estudio)
-        print(hallazgos_secundarios)
+        estudio_views.estudio_iniciado(estudio)
         presupuesto = Presupuesto.objects.create(
             estudio_id = estudio.id_estudio,
             costo_exoma = 500.0,
             costo_genes_extra = len(genes) * 30,
-            costo_hallazgos_secundarios = 200.0 if hallazgos_secundarios else 0
+            costo_hallazgos_secundarios = 200.0 if hallazgos_secundarios else 0,
+            total = 500.0 + len(genes) * 30 + 200.0 if hallazgos_secundarios else 0
         )
         
-        return redirect("/lab_admin")
+        return redirect("estudios:estudio_detalle", estudio.id_estudio)
             
     except Exception as e:
         print(e)

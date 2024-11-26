@@ -314,7 +314,8 @@ def run_seeds():
 
     presupuesto1 = Presupuesto.objects.create(
         estudio_id = estudio1.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio2 = Estudio.objects.create(
@@ -338,7 +339,8 @@ def run_seeds():
 
     presupuesto2 = Presupuesto.objects.create(
         estudio_id = estudio2.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio3 = Estudio.objects.create(
@@ -354,7 +356,8 @@ def run_seeds():
 
     presupuesto3 = Presupuesto.objects.create(
         estudio_id = estudio3.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio4 = Estudio.objects.create(
@@ -370,7 +373,8 @@ def run_seeds():
 
     presupuesto4 = Presupuesto.objects.create(
         estudio_id = estudio4.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio5 = Estudio.objects.create(
@@ -386,7 +390,8 @@ def run_seeds():
 
     presupuesto5 = Presupuesto.objects.create(
         estudio_id = estudio5.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio6 = Estudio.objects.create(
@@ -410,7 +415,8 @@ def run_seeds():
 
     presupuesto6 = Presupuesto.objects.create(
         estudio_id = estudio6.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio7 = Estudio.objects.create(
@@ -434,7 +440,8 @@ def run_seeds():
 
     presupuesto7 = Presupuesto.objects.create(
         estudio_id = estudio7.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio8 = Estudio.objects.create(
@@ -458,7 +465,8 @@ def run_seeds():
 
     presupuesto8 = Presupuesto.objects.create(
         estudio_id = estudio8.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio9 = Estudio.objects.create(
@@ -482,7 +490,8 @@ def run_seeds():
 
     presupuesto9 = Presupuesto.objects.create(
         estudio_id = estudio9.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     estudio10 = Estudio.objects.create(
@@ -506,7 +515,8 @@ def run_seeds():
 
     presupuesto10 = Presupuesto.objects.create(
         estudio_id = estudio10.id_estudio,
-        costo_exoma = 500
+        costo_exoma = 500,
+        total = 500.0
     )
 
     # Crear 10 pacientes adicionales
@@ -710,7 +720,8 @@ def run_seeds():
     )
     presupuesto_pagado1 = Presupuesto.objects.create(
         estudio_id=estudio_pagado1.id_estudio,
-        costo_exoma=500
+        costo_exoma=500,
+        total = 500.0
     )
 
     estudio_pagado2 = Estudio.objects.create(
@@ -725,7 +736,8 @@ def run_seeds():
     )
     presupuesto_pagado2 = Presupuesto.objects.create(
         estudio_id=estudio_pagado2.id_estudio,
-        costo_exoma=500
+        costo_exoma=500,
+        total = 500.0
     )
 
     estudio_pagado3 = Estudio.objects.create(
@@ -740,7 +752,8 @@ def run_seeds():
     )
     presupuesto_pagado3 = Presupuesto.objects.create(
         estudio_id=estudio_pagado3.id_estudio,
-        costo_exoma=500
+        costo_exoma=500,
+        total = 500.0
     )
 
     # Crear estudios en estado REALIZADA y sus turnos

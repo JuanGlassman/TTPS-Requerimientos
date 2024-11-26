@@ -89,7 +89,7 @@ def perfil_view(request):
 def logout_view(request):
     logout(request)
     messages.info(request, "La sesión se cerró correctamente")
-    return redirect('home')
+    return redirect(f'/')
 
 
 @login_required
