@@ -20,6 +20,8 @@ class Pedido(models.Model):
     estado = models.CharField(max_length=50)
     estudios = models.ManyToManyField(Estudio)
     centro = models.ForeignKey(Centro, on_delete=models.CASCADE)
+    firma = models.TextField(null=True)
+    observacion = models.TextField(null=True)
 
     def __str__(self):
         return f"{self.id_pedido} - {self.centro} - {self.estado}"
@@ -27,7 +29,7 @@ class Pedido(models.Model):
     class Meta:
         db_table = 'pedido'
 
-# estados de la hoja de ruta: pendiente, en curso, finalizada
+# estados de la hoja de ruta: pendiente, en_curso, finalizada
 class HojaDeRuta(models.Model):
     id_hoja_de_ruta = models.AutoField(primary_key=True)
     fecha = models.DateField()

@@ -43,6 +43,8 @@
         }
 
     </style>
+    {% block head %}
+    {% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
     {% load static %}
@@ -141,7 +143,7 @@
         {% endif %}
     </div> -->
 
-    <div id="div-map">
+    <div id="container">
         {% block content %}
         {% endblock %}
     </div>
