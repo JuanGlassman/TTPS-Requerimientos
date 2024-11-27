@@ -24,7 +24,7 @@ def run_seeds():
         longitud = -57.923714,
         latitud = -34.925258,
         telefono = "221-123456",
-        email = "labanal@email.com"
+        email = "laboratorio_analisis@email.com"
     )
 
     centro3 = Centro.objects.create(
