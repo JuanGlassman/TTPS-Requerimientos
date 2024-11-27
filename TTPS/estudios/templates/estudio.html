@@ -44,7 +44,11 @@
     <dd class="col-7 fw-light">{%  if estudio.tipo_sospecha == 0 %} Puntual {% else %} Familiar {% endif %}</dd>
 
     <dt class="col-5 fw-medium">Sintomas</dt>
-    <dd class="col-7 fw-light">-</dd>
+    <dd class="col-7 fw-light">
+        {% for sintoma in estudio.sintomas.all %}
+            {{ sintoma.nombre }} -
+        {% endfor %}
+    </dd>
 
     <dt class="col-5 fw-medium">Estado</dt>
     <dd class="col-7 fw-light">

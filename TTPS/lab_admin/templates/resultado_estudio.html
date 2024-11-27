@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% load static %}
+
+<div class="mb-2 d-flex justify-content-between">
+    <h1>Cargar resultado de estudio.</h1>
+    <a href="javascript:history.back()">
+        <button class="btn btn-secondary">Volver</button>
+    </a>
+</div>
+
+<h2 class="mb-4">Estudio: {{ estudio.id_interno }} </h2>
+
+<form action="{% url 'lab_admin:presupuestar' %}" method="post">
+    {% csrf_token %}
+    <input hidden value="{{ presupuesto.id_presupuesto }}" name="id_presupuesto" />
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+                <label class="form-label">gen</label>
+                <input value="{{ presupuesto.costo_exoma }}" name="costo_exoma" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+                <label class="form-label">Precio genes extra</label>
+                <input value="{{ presupuesto.costo_genes_extra }}" name="costo_genes_extra" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Precio Hallazgos secundarios</label>
+            <input value="{{ presupuesto.costo_hallazgos_secundarios }}" name="costo_hallazgos_secundarios" class="form-control"/>
+    </div>
+    </div>
+    <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-primary" type="submit">Confirmar presupuesto</button>
+        <a class="btn btn-light">Cancelar</a>
+    </div>
+</form>
+
+{% endblock %}

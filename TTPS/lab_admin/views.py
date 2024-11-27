@@ -66,3 +66,10 @@ def realizar_estudio(request, estudio_id):
     res, estudio = estudio_estado.estudio_realizado(estudio)
     estudio.save()
     return redirect('lab_admin:estudios')
+
+def form_resultado(request, estudio_id):
+    estudio = get_object_or_404(Estudio, id_estudio=estudio_id)
+    render(request, "resultado_estudio.html", { "estudio": estudio })
+
+def cargar_resultado(request):
+    pass

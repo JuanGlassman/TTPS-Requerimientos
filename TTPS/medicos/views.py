@@ -1,8 +1,9 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Medico
 from inicio_sesion.models import Usuario
-from estudios.models import Estudio, Enfermedad
+from estudios.models import Estudio, Enfermedad, Sintoma
 from lab_admin.models import Presupuesto
 from pacientes.models import Paciente
 from datetime import date
@@ -55,7 +56,8 @@ def iniciar_estudio(request):
     try:            
         patologia = request.POST.get('patologia')
         tipo_estudio = request.POST.get('tipo_estudio')
-        sintomas = request.POST.getlist('sintomas')
+        #sintomas = request.POST.getlist('sintomas')
+        sintomas = json.loads(request.POST.get('sintomas', '[]'))
         sospecha = request.POST.get('sospecha')
         id_paciente = request.POST.get('id_paciente')
         hallazgos_secundarios = request.POST.get('hallazgo') == 'on'
@@ -67,6 +69,9 @@ def iniciar_estudio(request):
 
         medico = get_object_or_404(Medico, usuario_id=request.user)
         
+
+        print(sintomas)
+
         #Crear el estudio
         estudio = Estudio.objects.create(
             id_interno = generar_id_interno(paciente),
@@ -75,9 +80,21 @@ def iniciar_estudio(request):
             patologia_id = patologia,
             paciente_id = id_paciente,
             medico_id = medico.id_medico,
-            tipo_sospecha = int(sospecha),
+            tipo_sospecha = int(sospecha),            
             hallazgos_secundarios = hallazgos_secundarios
-        ) 
+        )
+
+        for sintoma in sintomas:
+            try:
+                sintomaAux = Sintoma.objects.get(id_sintoma_api=sintoma.get('id'))
+                print(sintomaAux)
+                estudio.sintomas.add(sintomaAux)          
+            except:
+                sintomaNuevo = Sintoma.objects.create(
+                    id_sintoma_api = sintoma.get('id'),
+                    nombre = sintoma.get('nombre')
+                )
+                estudio.sintomas.add(sintomaNuevo)
         
         estudio_views.estudio_iniciado(estudio)
         presupuesto = Presupuesto.objects.create(
@@ -92,7 +109,7 @@ def iniciar_estudio(request):
             
     except Exception as e:
         print(e)
-        return redirect('iniciar_estudio')
+        return redirect('home')
     
 
 def generar_id_interno(paciente) -> str:

@@ -19,7 +19,9 @@
                 <input class="form-control" type="text" id="buscador-sintomas" placeholder="Buscar sintoma. Al menos 4 caracteres."/>
             </div>
             <div class="col-12 col-md-8">
-                <select id="select-sintomas" class="form-select" name="sintomas"></select>
+                <select id="select-sintomas" class="form-select">
+                    <option selected disabled>Elegir sintoma</option>
+                </select>
                 <div class="invalid-feedback" id="error-sintomas" style="display: none;">
                     Debe seleccionar al menos un sintoma.
                 </div>
@@ -147,7 +149,10 @@
             .then(response => response.json())
             .then(data => {
                 sintomasSelect.innerHTML = '';
-                console.log(data)
+                const optionDefault = document.createElement('option');
+                optionDefault.textContent = "Elegir síntoma"
+                sintomasSelect.appendChild(optionDefault);
+                sintomasSelect[0].disabled = true 
                 data.results.forEach(sintoma => {
                     const option = document.createElement('option');
                     option.value = sintoma.id;
@@ -244,9 +249,14 @@
         const formData = new FormData(e.target);      
 
         if (await validarForm(formData)) {
-            formData.append('sintomas', JSON.stringify(valores));
+
+            // Crear input hidden
+            const inputSintomas = document.createElement('input');
+            inputSintomas.type = 'hidden';
+            inputSintomas.name = 'sintomas';
+            inputSintomas.value = JSON.stringify(valores);
+            this.appendChild(inputSintomas);
             this.submit(); // Envía el formulario
-            alert("Formulario enviado!");
         };     
      });
 
