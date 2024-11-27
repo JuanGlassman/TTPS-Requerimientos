@@ -10,36 +10,7 @@ body {
   overflow-x: hidden; /* Evita desbordamientos horizontales */
 }
 
-header {
-  width: 100%;
-  background-color: #6a0dad;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 1.2em;
-  position: relative; /* Para ajustar el botón de cerrar sesión */
-}
-
-header span#user-name {
-  float: none;
-  display: inline-block;
-  margin-right: 20px; /* Espacio antes del botón */
-}
-
-header a {
-  right: 15px;
-  top: 15px;
-  background-color: white;
-  color: #6a0dad;
-  padding: 5px 10px;
-  text-decoration: none;
-  border-radius: 5px;
-  font-size: 0.9em;
-  font-weight: bold;
-  border: 1px solid #6a0dad;
-}
-
-.container {
+.container-transportista {
   width: 100%;
   max-width: 500px;
   padding: 10px;
@@ -55,7 +26,7 @@ header a {
 }
 
 /* Button styles */
-.btn {
+.transportista-btn {
   width: calc(100% - 20px); /* Deja un pequeño margen lateral */
   max-width: 400px; /* No exceder un ancho */
   background-color: #6a0dad;
@@ -79,11 +50,6 @@ header a {
   cursor: pointer;
   border-radius: 5px; /* Bordes redondeados */
   display: block;
-}
-
-.btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 
 /* Dynamic message styles */
@@ -132,7 +98,7 @@ header a {
 }
 
 /* Footer button styles */
-.footer-btn {
+.boton-abajo-transportista {
   width: calc(100% - 20px);
   max-width: 400px;
   padding: 15px;
@@ -144,10 +110,6 @@ header a {
   color: white;
   margin: 10px auto; /* Centrado */
   border-radius: 5px;
-}
-
-.footer-btn.hidden {
-  display: none;
 }
 
 /* Responsive Design */

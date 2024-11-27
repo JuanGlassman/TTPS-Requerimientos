@@ -1,28 +1,17 @@
+{% extends 'base_maps.html' %}
 {% load static %}
 {% load filters %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoja de Ruta</title>
-    <link rel="stylesheet" href="{% static 'css/transportista_styles.css' %}">
-</head>
-<body>
-    <header>
-        <span id="user-name" style="float: left; margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
-        <a href="{% url 'inicio_sesion:logout' %}" class="cerrar_sesion" style="float: right;">Cerrar Sesión</a>
-    </header>
+{% block content %}
     {% if hoja_de_ruta %}
 
-    <div class="container">
+    <div class="container-transportista">
         <!-- Fecha -->
         <div class="info">
             <span id="current-date">Fecha: {{ hoja_de_ruta.fecha }}</span>
         </div>
 
         <!-- Botón de iniciar recorrido -->
-        <button class="btn" id="start-btn" onclick="startRecorrido()">Iniciar recorrido</button>
+        <button class="btn-transportista" id="start-btn" onclick="startRecorrido()">Iniciar recorrido</button>
 
         <!-- Mensaje dinámico -->
         <div class="message" id="status-message">
@@ -54,16 +43,9 @@
             {% endfor %}
         </div>
 
-        {% with hoja_de_ruta.pedidos.all|filtrar_pendientes:"pendiente" as pedidos_pendientes %}
-            {% if pedidos_pendientes %}
-              <a class="footer-btn hidden" id="map-btn" href="{% url 'transportista:ver_mapa'  hoja_de_ruta.id_hoja_de_ruta %}">Ver mapa</button>
-            {% else %}        
-              <button class="footer-btn hidden" id="send-btn" onclick="enviarCentral()">Enviar a central</button>
-            {% endif %}
-        {% endwith %}
-
-        <a class="btn btn-primary" id="map-btn" href="{% url 'transportista:ver_mapa' hoja_de_ruta.id_hoja_de_ruta %}">Ver mapa</button>
+        <a class="btn-transportista" href="{% url 'transportista:ver_mapa' hoja_de_ruta.id_hoja_de_ruta %}">Ver mapa</button>
     </div>
     {% else %}
         <h3>No hay hoja de ruta para el día de hoy.</h3>
     {% endif %}
+{% endblock %}
