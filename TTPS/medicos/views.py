@@ -63,7 +63,7 @@ def iniciar_estudio(request):
         paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
 
         if not validar_inicio_estudio(request):
-            return redirect('iniciar_estudio')
+            return redirect('medicos:pacientes')
 
         medico = get_object_or_404(Medico, usuario_id=request.user)
         
@@ -92,7 +92,7 @@ def iniciar_estudio(request):
             
     except Exception as e:
         print(e)
-        return redirect('iniciar_estudio')
+        return redirect('medicos:pacientes')
     
 
 def generar_id_interno(paciente) -> str:
