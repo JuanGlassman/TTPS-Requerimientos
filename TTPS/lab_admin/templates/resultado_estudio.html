@@ -13,27 +13,149 @@
 
 <h2 class="mb-4">Estudio: {{ estudio.id_interno }} </h2>
 
-<form action="{% url 'lab_admin:presupuestar' %}" method="post">
+<form action="{% url 'lab_admin:cargar_resultado' %}" method="post">
     {% csrf_token %}
-    <input hidden value="{{ presupuesto.id_presupuesto }}" name="id_presupuesto" />
+    <input hidden value="{{ estudio.id_estudio }}" name="id_estudio" />
     <div class="row align-items-center mb-4">
         <div class="col-md-6">
-                <label class="form-label">gen</label>
-                <input value="{{ presupuesto.costo_exoma }}" name="costo_exoma" class="form-control"/>
-        </div>
+            <label class="form-label">Seleccionar variantes</label>
+            <div id="variantes-seleccionadas" class="mb-3"></div>
+            <select class="form-select" name="patologia" id="variante-select">
+                <option selected disabled >Elegir variante</option>
+                {% for variante in variantes %}
+                    <option value="{{ variante.id }}">{{ variante.nombre }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback" id="error-variantes" style="display: none;">
+                Debe seleccionar al menos una variante para generar el diagnóstico.
+            </div>
+        </div> 
+        
         <div class="col-md-6">
-                <label class="form-label">Precio genes extra</label>
-                <input value="{{ presupuesto.costo_genes_extra }}" name="costo_genes_extra" class="form-control"/>
+            <p><b>Pre - Diagnóstico (Este resultado no es el análisis final): </b><span id="diagnostico-analizar"></span></p>
         </div>
-        <div class="col-md-6">
-            <label class="form-label">Precio Hallazgos secundarios</label>
-            <input value="{{ presupuesto.costo_hallazgos_secundarios }}" name="costo_hallazgos_secundarios" class="form-control"/>
+
     </div>
     </div>
     <div class="d-flex justify-content-center gap-2">
-        <button class="btn btn-primary" type="submit">Confirmar presupuesto</button>
+        <button class="btn btn-primary" type="submit">Guardar Diagnóstico</button>
         <a class="btn btn-light">Cancelar</a>
     </div>
 </form>
+
+<script>
+    const varianteSelect = document.getElementById('variante-select');
+    const divVariantesSeleccionadas = document.getElementById('variantes-seleccionadas');
+    var variantesSeleccionadas = []
+
+    const patologia = "{{ estudio.patologia.nombre }}"
+
+    const divDiagnostico = document.getElementById('diagnostico-analizar');
+
+    varianteSelect.addEventListener('change', async function(e) {
+        e.preventDefault()
+        if (!variantesSeleccionadas.some(s => s.id === e.target.value)) {
+            const nuevaVariante = {
+                id: e.target.value,
+                nombre: varianteSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML
+            };
+            variantesSeleccionadas.push(nuevaVariante);
+        }
+        const chip = document.createElement('span');
+        chip.className = "badge rounded-pill text-bg-primary me-2";
+        chip.textContent = varianteSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML;
+
+        const closeBtn = document.createElement('a');
+        const icon = document.createElement('i');
+        icon.className = "bi bi-x-lg ml-2 delete-variante";
+        icon.id = e.target.value;
+
+        closeBtn.appendChild(icon)
+        chip.appendChild(closeBtn)
+        divVariantesSeleccionadas.appendChild(chip);
+
+        resultado = await analizarVariantes()
+        console.log(resultado)
+        if (resultado) {
+            divDiagnostico.innerHTML = "VÁLIDO"
+            divDiagnostico.className = "badge text-bg-success"
+        }
+        else {
+            divDiagnostico.innerHTML = "INVÁLIDO"
+            divDiagnostico.className = "badge text-bg-danger"
+        }
+
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-variante')) {
+            console.log('ID del elemento:', e.target.id);
+            variantesSeleccionadas = variantesSeleccionadas.filter((v) =>  v.id !== e.target.id);
+
+            const chip = e.target.closest('.badge');
+            if (chip) {
+                chip.remove();
+            }
+        }
+        if (variantesSeleccionadas.length == 0) {
+            divDiagnostico.className = "d-none"
+        }
+    });
+
+    async function analizarVariantes() {
+        try {
+            var variantes = [];
+            variantesSeleccionadas.forEach(e => variantes.push(e.nombre));
+            const response = await fetch('https://api.claudioraverta.com/confirma-diagnostico/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    patologia: patologia,
+                    variantes: variantes
+                })
+            });
+            const data = await response.json();
+            if (!data.valido) {
+                return false
+            } 
+            return true
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    };
+
+    async function validarForm(formData) {
+        if(variantesSeleccionadas.length == 0) {
+            varianteSelect.className = "form-select is-invalid"
+            document.getElementById('error-variantes').style = "display: block;"
+            return false;
+        }
+        varianteSelect.className = "form-select is-valid"
+        document.getElementById('error-variantes').style = "display: none;"
+        return true
+    }
+
+    document.querySelector('form').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Detiene el envío del formulario
+     
+        const formData = new FormData(e.target);      
+
+        if (await validarForm(formData)) {
+
+            // Crear input hidden
+            const inputVariantes = document.createElement('input');
+            inputVariantes.type = 'hidden';
+            inputVariantes.name = 'variantes';
+            inputVariantes.value = JSON.stringify(variantesSeleccionadas);
+            this.appendChild(inputVariantes);
+
+            this.submit(); // Envía el formulario
+        };     
+     });
+
+</script>
 
 {% endblock %}
