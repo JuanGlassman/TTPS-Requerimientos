@@ -1,5 +1,4 @@
 {% extends 'base_maps.html' %}
-
 {% load static %}
 
 {% block content %}
@@ -13,6 +12,7 @@
         display: none;
     }
 </style>
+
 <a href="javascript:history.back()">
     <button class="btn btn-secondary">Volver</button>
 </a>
@@ -23,31 +23,80 @@
 
 <script>
     var map = L.map('map').fitWorld();
-    map.locate({ setView: true });
+
+    // ubicacion actual
+    map.locate({ setView: true, watch: false });
+
+    var userIcon = L.icon({
+        iconUrl: "{% static 'camion.svg' %}", // camionsito
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+    });
+
+    var centerIcon = L.icon({
+        iconUrl: "{% static 'paquete.svg' %}", // paquete
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+    });
+
+    // funcion para calcular distancia entre dos puntos
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371; // Radio de la Tierra en km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Retorna la distancia en km
+    }
+
+    function onLocationFound(e) {
+        const userLocation = e.latlng;
+
+        // agrego el camion
+        L.marker(userLocation, { icon: userIcon }).addTo(map);
+
+        // coord de los centros
+        let centros = [
+            {% for centro in centros %}
+                { lat: {{ centro.latitud }}, lng: {{ centro.longitud }} }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        // ordeno los centros
+        centros.sort((a, b) => 
+            calculateDistance(userLocation.lat, userLocation.lng, a.lat, a.lng) - 
+            calculateDistance(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        );
+
+        const waypoints = [userLocation, ...centros.map(centro => {
+            const latLng = L.latLng(centro.lat, centro.lng);
+            L.marker(latLng, { icon: centerIcon }).addTo(map); // agrego icono paquete
+            return latLng;
+        })];
+
+        L.Routing.control({
+            waypoints: waypoints,
+            language: 'es',
+            createMarker: function() {
+                // desactivar marcadores automáticos de la ruta
+                return null;
+            }
+        }).addTo(map);
+    }
+
+    map.on('locationfound', onLocationFound);
+
+    // manejar errores
+    map.on('locationerror', function (e) {
+        alert("No se pudo acceder a la ubicación. Asegúrate de habilitar el GPS.");
+    });
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Pedidos</a>'
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-
-    function onLocationFound(e) {
-        console.log(e);
-        L.marker(e.latlng).addTo(map);
-    }
-
-    map.on('locationfound', onLocationFound)
-
-    const waypoints = [
-        {% for centro in centros %}
-            L.latLng({{ centro.latitud }}, {{ centro.longitud }}){% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
-
-    L.Routing.control({ 
-        waypoints: waypoints,
-         language: 'es' 
-    }).addTo(map);
-
 </script>
-
 {% endblock %}
