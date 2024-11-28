@@ -2,13 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Medico
 from inicio_sesion.models import Usuario
-from estudios.models import Estudio
+from estudios.models import Estudio, Enfermedad
 from lab_admin.models import Presupuesto
 from pacientes.models import Paciente
 from datetime import date
 import requests, random, string
 from estudios import views as estudio_views
-
+from .validaciones import validar_inicio_estudio
 
 def pacientes(request):
     pacientes = Paciente.objects.order_by("id_paciente")
@@ -17,20 +17,16 @@ def pacientes(request):
 def iniciar_estudio_paciente(request, paciente_id):        
     paciente = get_object_or_404(Paciente, id_paciente=paciente_id)
 
-    sintomas = get_sintomas()
     genes = get_genes()
     
     return render(request, "iniciar_estudio.html", {
         "paciente": paciente,
-        "sintomas": sintomas,
+        "patologias": get_patologias(),
         "genes": genes.get("results")
         })
 
-def get_sintomas():
-    response = requests.get('https://api.claudioraverta.com/lista-sintomas/?page=1&page_size=15')
-    if response.status_code == 200:
-        data = response.json()
-    return data
+def get_patologias():
+    return Enfermedad.objects.order_by()
 
 def get_genes():
     response = requests.get('https://api.claudioraverta.com/lista-genes/?page=1&page_size=15')
@@ -62,36 +58,37 @@ def iniciar_estudio(request):
         sintomas = request.POST.getlist('sintomas')
         sospecha = request.POST.get('sospecha')
         id_paciente = request.POST.get('id_paciente')
-        print( request.POST.get('hallazgo'))
         hallazgos_secundarios = request.POST.get('hallazgo') == 'on'
         genes = request.POST.getlist('genes')
         paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
 
-        #Cuando esté lo del logeo y roles implemento lo del medico
-        #medico = get_object_or_404(Medico, usuario_id=request.user.id)
+        if not validar_inicio_estudio(request):
+            return redirect('iniciar_estudio')
+
+        medico = get_object_or_404(Medico, usuario_id=request.user)
         
         #Crear el estudio
         estudio = Estudio.objects.create(
             id_interno = generar_id_interno(paciente),
             fecha=date.today(),
             tipo_estudio=tipo_estudio,
-            patologia=patologia,
+            patologia_id = patologia,
             paciente_id = id_paciente,
-            medico_id = 1, #medico.id_medico
+            medico_id = medico.id_medico,
             tipo_sospecha = int(sospecha),
             hallazgos_secundarios = hallazgos_secundarios
         ) 
         
         estudio_views.estudio_iniciado(estudio)
-        print(hallazgos_secundarios)
         presupuesto = Presupuesto.objects.create(
             estudio_id = estudio.id_estudio,
             costo_exoma = 500.0,
             costo_genes_extra = len(genes) * 30,
-            costo_hallazgos_secundarios = 200.0 if hallazgos_secundarios else 0
+            costo_hallazgos_secundarios = 200.0 if hallazgos_secundarios else 0,
+            total = 500.0 + len(genes) * 30 + 200.0 if hallazgos_secundarios else 0
         )
         
-        return redirect("/lab_admin")
+        return redirect("estudios:estudio_detalle", estudio.id_estudio)
             
     except Exception as e:
         print(e)

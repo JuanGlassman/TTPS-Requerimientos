@@ -28,7 +28,7 @@
             <td>{{ estudio.tipo_estudio }}</td>
             
             <td>
-                {{ estudio.presupuesto.costo_exoma }}
+                {{ estudio.presupuesto.total }}
             </td>
             
             <td>
@@ -65,7 +65,7 @@
                             <button class="btn btn-primary btn-sm" type="submit">Pagado</button>
                         </form>
                     {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
-                        <a class="btn btn-primary btn-sm">Muestra realizada</a>
+                        <a href="{% url 'lab_admin:realizar' estudio.id_estudio %}" class="btn btn-primary btn-sm">Muestra realizada</a>
                     {% elif estudio.estado == estados.REALIZADA %}
                         <!-- <a class="btn btn-primary btn-sm">Enviar al Centro</a> -->
                     {% elif estudio.estado == estados.CENTRALIZADA %}

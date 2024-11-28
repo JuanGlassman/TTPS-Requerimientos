@@ -1,0 +1,181 @@
+{% extends 'base_maps.html' %}
+{% load static %}
+{% load filters %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/transportista_styles.css' %}">
+{% endblock %}
+{% block content %}
+    
+
+    {% if pedido %}
+    <div class="container-transportista">
+      <a href="javascript:history.back()">
+        <button class="btn btn-secondary">Volver</button>
+      </a>
+        <div class="message" id="status-message">
+          {% if pedido.estado == 'pendiente' %}
+            <p>Si no se pudo hacer entrega, aclararlo en Observaciones.</p>
+          {% elif pedido.estado == 'finalizado' %}
+            <p>Este pedido ha sido entregado.</p>
+          {% endif %}
+        </div>
+
+        <div class="pedido-list" id="pedido-list">
+          <div class="pedido-item">
+            <div>
+              <p><strong>Centro:</strong> {{ pedido.centro.nombre }}</p>
+              <p><strong>Dirección:</strong> {{ pedido.centro.direccion }}</p>
+            </div>
+          </div>
+        </div>
+        
+        {% if pedido.estado == 'pendiente' %}
+            <div class="container-transportista">
+              <!-- Área para firma digital -->
+              <div class="signature-area">
+                  <label for="signature-canvas" class="signature-label">Firma Digital:</label>
+                  <canvas id="signature-canvas" class="signature-canvas"></canvas>
+                  <button class="clear-signature-btn" onclick="clearSignature()">Limpiar Firma</button>
+              </div>
+            
+              <!-- Campo de observaciones -->
+              <div class="observations-area">
+                  <label for="observations" class="observations-label">Observaciones:</label>
+                  <textarea id="observations" class="observations-input" rows="4" placeholder="Escribe las observaciones aquí..."></textarea>
+              </div>
+            </div>
+            <a class="btn-transportista" onclick="entregarPedido()">Entregar</a>
+        {% endif %}
+    </div>
+    {% else %}
+        <h3>No hay hoja de ruta para el día de hoy.</h3>
+    {% endif %}
+{% endblock %}
+{% block  scripts %}
+<script>
+  // Obtener el canvas y el contexto de dibujo
+  const canvas = document.getElementById("signature-canvas");
+  const ctx = canvas.getContext("2d");
+
+  // Configurar el tamaño del canvas
+  canvas.width = window.innerWidth - 40; // Ajusta el tamaño según sea necesario
+  canvas.height = 200; // Ajusta la altura del canvas según sea necesario
+
+  let drawing = false; // Variable para controlar si se está dibujando
+
+  // Funciones para manejar el dibujo con el mouse
+  function startDrawing(event) {
+      drawing = true;
+      const x = event.clientX - canvas.offsetLeft;
+      const y = event.clientY - canvas.offsetTop;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+  }
+
+  function draw(event) {
+      if (drawing) {
+          const x = event.clientX - canvas.offsetLeft;
+          const y = event.clientY - canvas.offsetTop;
+          ctx.lineTo(x, y);
+          ctx.stroke();
+      }
+  }
+
+  function stopDrawing() {
+      drawing = false;
+  }
+
+  // Funciones para manejar el dibujo con el toque (pantalla táctil)
+  function startDrawingTouch(event) {
+      drawing = true;
+      const touch = event.touches[0];
+      const x = touch.clientX - canvas.offsetLeft;
+      const y = touch.clientY - canvas.offsetTop;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+  }
+
+  function drawTouch(event) {
+      if (drawing) {
+          const touch = event.touches[0];
+          const x = touch.clientX - canvas.offsetLeft;
+          const y = touch.clientY - canvas.offsetTop;
+          ctx.lineTo(x, y);
+          ctx.stroke();
+      }
+  }
+
+  function stopDrawingTouch() {
+      drawing = false;
+  }
+
+  function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function getCSRFToken() {
+    let csrfToken = null;
+    const cookies = document.cookie.split(';');
+    cookies.forEach(cookie => {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') {
+            csrfToken = value;
+        }
+    });
+    return csrfToken;
+  }
+
+  function entregarPedido() {
+    const signatureData = canvas.toDataURL('image/png'); // Convierte el canvas a Base64
+    var urlGuardarFirma = "{% url 'transportista:entregar_pedido' %}";
+    var pedidoId = "{{ pedido.id_pedido }}";
+    var observaciones = document.getElementById("observations").value;
+    fetch(urlGuardarFirma, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken()
+      },
+      body: JSON.stringify({ 
+        firma: signatureData,
+        pedido_id: pedidoId,
+        observaciones: observaciones
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Pedido entregado correctamente');
+        } else {
+          if (data.status === 404) {
+            alert('No existe el pedido en la base de datos');
+          } else {
+            alert('Error al entregar el pedido');
+          }
+        }
+        var urlPedidos = "{% url 'transportista:lista_pedidos' %}";
+        window.location.href = urlPedidos;
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+  // Agregar eventos para mouse
+  canvas.addEventListener("mousedown", startDrawing);
+  canvas.addEventListener("mousemove", draw);
+  canvas.addEventListener("mouseup", stopDrawing);
+  canvas.addEventListener("mouseout", stopDrawing);  // Para detener el dibujo si el mouse sale del área
+
+  // Agregar eventos para toque en dispositivos móviles
+  canvas.addEventListener("touchstart", startDrawingTouch);
+  canvas.addEventListener("touchmove", drawTouch);
+  canvas.addEventListener("touchend", stopDrawingTouch);
+  canvas.addEventListener("touchcancel", stopDrawingTouch);
+  function preventTouchMove(event) {
+      event.preventDefault(); // Esto evita que la pantalla se desplace al tocarla
+  }
+
+  // Agregar la prevención de movimiento táctil
+  canvas.addEventListener("touchstart", preventTouchMove, { passive: false });
+  canvas.addEventListener("touchmove", preventTouchMove, { passive: false });
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base_maps.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    #map {
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .leaflet-top.leaflet-right {
+        display: none;
+    }
+</style>
+<a href="javascript:history.back()">
+    <button class="btn btn-secondary">Volver</button>
+</a>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+<script src="{% static 'leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.js' %}"></script>
+
+<script>
+    var map = L.map('map').fitWorld();
+    map.locate({ setView: true });
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Pedidos</a>'
+    }).addTo(map);
+
+    function onLocationFound(e) {
+        console.log(e);
+        L.marker(e.latlng).addTo(map);
+    }
+
+    map.on('locationfound', onLocationFound)
+
+    const waypoints = [
+        {% for centro in centros %}
+            L.latLng({{ centro.latitud }}, {{ centro.longitud }}){% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    L.Routing.control({ 
+        waypoints: waypoints,
+         language: 'es' 
+    }).addTo(map);
+
+</script>
+
+{% endblock %}

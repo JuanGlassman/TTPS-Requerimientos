@@ -102,6 +102,12 @@
                             <a class="nav-link text-white" href="{% url 'pacientes:historial_estudios_paciente' %}">Mis estudios</a>
                         </li>
                     {% endif %}
+                    {% tiene_permiso user "transportista" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'transportista:lista_pedidos' %}">Pedidos</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 {% if user.is_authenticated %}
                     <div class="dropdown">

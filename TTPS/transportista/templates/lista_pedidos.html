@@ -1,0 +1,67 @@
+{% extends 'base_maps.html' %}
+{% load static %}
+{% load filters %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/transportista_styles.css' %}">
+{% endblock %}
+{% block content %}
+    
+
+    {% if hoja_de_ruta %}
+    <div class="container-transportista">
+        <!-- Fecha -->
+        <div class="info">
+            <span id="current-date">Fecha: {{ hoja_de_ruta.fecha }}</span>
+        </div>
+
+        {% if hoja_de_ruta.estado == 'pendiente' %}
+            <a class="btn-transportista" href="{% url 'transportista:iniciar_recorrido' hoja_de_ruta.id_hoja_de_ruta %}">Iniciar recorrido</a>
+        {% elif hoja_de_ruta.estado == 'en_curso' %}
+            <button class="btn-hora" style="cursor: default;">Hora de comienzo: {{hoja_de_ruta.hora_comienzo}}</button>
+        {% elif hoja_de_ruta.estado == 'finalizada' %}
+            <button class="btn-finalizado" style="cursor: default;">Hora de finalización: {{hoja_de_ruta.hora_fin}}</button>
+        {% endif %}
+
+        <!-- Mensaje dinámico -->
+        <div class="message" id="status-message">
+          {% if hoja_de_ruta.estado == 'pendiente' %}
+            {% if not hoja_de_ruta.pedidos %}
+                <p>No hay pedidos para el día de hoy.</p>
+            {% else %}
+                <p>Tus pedidos del día de hoy</p>
+            {% endif %}
+          {% elif hoja_de_ruta.estado == 'en_curso' %}
+            <p>Pedidos pendientes: {{ pendientes }}</p>
+          {% elif hoja_de_ruta.estado == 'finalizada' %}
+            <p>Has completado tu recorrido.</p>
+          {% endif %}
+        </div>
+
+        <!-- Lista de pedidos -->
+        <div class="pedido-list" id="pedido-list">
+            {% for pedido in pedidos %}
+                <div class="pedido-item">
+                    <div>
+                        <p><strong>Centro:</strong> {{ pedido.centro.nombre }}</p>
+                        <p><strong>Dirección:</strong> {{ pedido.centro.direccion }}</p>
+                    </div>
+                    {% if pedido.estado == 'pendiente' and hoja_de_ruta.estado != 'pendiente'%}
+                        <a href="{% url 'transportista:ver_pedido' pedido.id_pedido %}">Ver</a>
+                    {% elif pedido.estado == 'finalizado' %}
+                        <button class="btn-visitado">Visitado</button>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if hoja_de_ruta.estado == 'en_curso' and pendientes == 0 %}
+            <a class="btn-transportista" href="{% url 'transportista:finalizar_recorrido' hoja_de_ruta.id_hoja_de_ruta %}">Finalizar recorrido</a>
+        {% elif hoja_de_ruta.estado == 'pendiente' or hoja_de_ruta.estado == 'en_curso' %}
+            <a class="btn-transportista" href="{% url 'transportista:ver_mapa' hoja_de_ruta.id_hoja_de_ruta %}">Ver mapa</a>
+        {% elif hoja_de_ruta.estado == 'finalizada' %}
+            <a class="btn-finalizado">Felicitaciones por tu trabajo!</a>
+        {% endif %}
+    </div>
+    {% else %}
+        <h3>No hay hoja de ruta para el día de hoy.</h3>
+    {% endif %}
+{% endblock %}

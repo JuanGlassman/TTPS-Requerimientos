@@ -37,7 +37,6 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 lib/
@@ -119,7 +118,6 @@ media
 .Python
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -277,7 +275,6 @@ __pycache__/
 bin/
 build/
 develop-eggs/
-dist/
 eggs/
 lib/
 lib64/
