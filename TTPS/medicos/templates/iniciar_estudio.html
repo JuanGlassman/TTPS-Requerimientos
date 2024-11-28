@@ -19,7 +19,9 @@
                 <input class="form-control" type="text" id="buscador-sintomas" placeholder="Buscar sintoma. Al menos 4 caracteres."/>
             </div>
             <div class="col-12 col-md-8">
-                <select id="select-sintomas" class="form-select" name="sintomas"></select>
+                <select id="select-sintomas" class="form-select">
+                    <option selected disabled>Elegir sintoma</option>
+                </select>
                 <div class="invalid-feedback" id="error-sintomas" style="display: none;">
                     Debe seleccionar al menos un sintoma.
                 </div>
@@ -137,7 +139,7 @@
 
     const sintomasInput = document.getElementById('buscador-sintomas')
     const sintomasSelect = document.getElementById('select-sintomas')
-    const sintomasSeleccionados = document.getElementById('sintomas-seleccionados')
+    const divSintomasSeleccionados = document.getElementById('sintomas-seleccionados')
     var valores = [];
     var sintoma = {}    
 
@@ -147,7 +149,10 @@
             .then(response => response.json())
             .then(data => {
                 sintomasSelect.innerHTML = '';
-                console.log(data)
+                const optionDefault = document.createElement('option');
+                optionDefault.textContent = "Elegir síntoma"
+                sintomasSelect.appendChild(optionDefault);
+                sintomasSelect[0].disabled = true 
                 data.results.forEach(sintoma => {
                     const option = document.createElement('option');
                     option.value = sintoma.id;
@@ -182,14 +187,12 @@
 
         closeBtn.appendChild(icon)
         chip.appendChild(closeBtn)
-        sintomasSeleccionados.appendChild(chip);
+        divSintomasSeleccionados.appendChild(chip);
     });
     
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('delete-sintoma')) {
-            console.log('ID del elemento:', e.target.id);
             valores = valores.filter((s) =>  s.id !== e.target.id);
-
             const chip = e.target.closest('.badge');
             if (chip) {
                 chip.remove();
@@ -244,9 +247,21 @@
         const formData = new FormData(e.target);      
 
         if (await validarForm(formData)) {
-            formData.append('sintomas', JSON.stringify(valores));
+
+            // Crear input hidden
+            const inputSintomas = document.createElement('input');
+            inputSintomas.type = 'hidden';
+            inputSintomas.name = 'sintomas';
+            inputSintomas.value = JSON.stringify(valores);
+            this.appendChild(inputSintomas);
+
+            const inputPatologia = document.createElement('input');
+            inputPatologia.type = 'hidden';
+            inputPatologia.name = 'patologia_nombre';
+            inputPatologia.value = patologiaSelect.querySelector(`option[value="${formData.get('patologia')}"]`).innerHTML;
+            this.appendChild(inputPatologia);
+
             this.submit(); // Envía el formulario
-            alert("Formulario enviado!");
         };     
      });
 

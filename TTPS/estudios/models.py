@@ -18,7 +18,8 @@ class SampleSet(models.Model):
 
 class Enfermedad(models.Model):
     id_enfermedad = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50) 
+    nombre = models.CharField(max_length=50)
+    gen = models.CharField(max_length=15)
 
     def __str__(self):
         return f"Enfermedad #{self.nombre}"

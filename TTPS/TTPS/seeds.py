@@ -281,23 +281,28 @@ def run_seeds():
 
     #Patologias
     patologia1 = Enfermedad.objects.create(
-        nombre= "ASMD"
+        nombre= "ASMD",
+        gen = "SMPD1"
     )
 
     patologia2 = Enfermedad.objects.create(
-        nombre= "GAUCHER"
+        nombre= "GAUCHER",
+        gen = "GBA"
     )
 
     patologia3 = Enfermedad.objects.create(
-        nombre= "MPSI"
+        nombre= "MPSI",
+        gen = "IDUA"
     )
 
     patologia4 = Enfermedad.objects.create(
-        nombre= "FABRY"
+        nombre= "FABRY",
+        gen = "GLA"
     )
 
     patologia5 = Enfermedad.objects.create(
-        nombre= "POMPE"
+        nombre= "POMPE",
+        gen = "GAA"
     )
 
     #Crear Estudios y Presupuestos
@@ -498,7 +503,7 @@ def run_seeds():
         id_interno="1275_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
-        patologia_id = patologia2.id_enfermedad,
+        patologia_id = patologia1.id_enfermedad,
         paciente_id = paciente7.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.ENVIADA_EXTERIOR,

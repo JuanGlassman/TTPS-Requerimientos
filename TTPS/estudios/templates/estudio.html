@@ -40,11 +40,26 @@
     <dt class="col-5 fw-medium">Tipo de estudio</dt>
     <dd class="col-7 fw-light">{{ estudio.tipo_estudio }}</dd>
 
+    <dt class="col-5 fw-medium">Patología</dt>
+    <dd class="col-7 fw-light">{{ estudio.patologia.nombre }}</dd>
+
+    <dt class="col-5 fw-medium">Gen</dt>
+    <dd class="col-7 fw-light">{{ estudio.patologia.gen }}</dd>
+
+    <dt class="col-5 fw-medium">Sintomas</dt>
+    <dd class="col-7 fw-light">
+        {% for sintoma in estudio.sintomas.all %}
+            {{ sintoma.nombre }} -
+        {% endfor %}
+    </dd>
+
     <dt class="col-5 fw-medium">Tipo de sospecha</dt>
     <dd class="col-7 fw-light">{%  if estudio.tipo_sospecha == 0 %} Puntual {% else %} Familiar {% endif %}</dd>
 
-    <dt class="col-5 fw-medium">Sintomas</dt>
-    <dd class="col-7 fw-light">-</dd>
+    {% if estudio.tipo_sospecha == 1 %}
+        <dt class="col-5 fw-medium">Parentesco</dt>
+        <dd class="col-7 fw-light">{{ estudio.parentesco }}</dd>
+    {% endif %}
 
     <dt class="col-5 fw-medium">Estado</dt>
     <dd class="col-7 fw-light">

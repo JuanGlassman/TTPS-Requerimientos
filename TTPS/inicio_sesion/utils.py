@@ -31,6 +31,7 @@ PERMISOS_POR_ROL = {
         "cargar_muestra", "lista_sample_set", "enviar_sample_set", 
         "lista_estudios_set", "eliminar_estudios_set", "agregar_estudios_set", 
         "pedido_create", "ruta_create", "pedido_update", "ruta_update",
+        "presupuestar", "pagar_estudio", "cancelar_estudio", "cargar_resultado"
     ],
     "medico": [
         "lista_pacientes", "paciente_create", "paciente_update", "paciente_destroy", "paciente_show",
