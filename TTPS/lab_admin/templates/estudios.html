@@ -71,7 +71,7 @@
                     {% elif estudio.estado == estados.CENTRALIZADA %}
                         <a class="btn btn-primary btn-sm">Ver Sample Set</a>
                     {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
-                        <a class="btn btn-primary btn-sm" href="{% url 'lab_admin:caragar_resultado' estudio.id_estudio %}">Cargar resultados</a>
+                        <a class="btn btn-primary btn-sm" href="{% url 'lab_admin:form_resultado' estudio.id_estudio %}">Cargar resultados</a>
                     {% endif %}
                     
                     {% if estudio.estado == estados.INICIADO or estudio.estado == estados.PRESUPUESTADO %}

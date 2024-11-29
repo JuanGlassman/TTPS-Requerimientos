@@ -1,19 +1,27 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Medico
 from inicio_sesion.models import Usuario
-from estudios.models import Estudio, Enfermedad
+from estudios.models import Estudio, Enfermedad, Sintoma
 from lab_admin.models import Presupuesto
 from pacientes.models import Paciente
 from datetime import date
 import requests, random, string
 from estudios import views as estudio_views
 from .validaciones import validar_inicio_estudio
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from inicio_sesion.views import permission_required
 
+@login_required
+@permission_required('lista_pacientes')
 def pacientes(request):
     pacientes = Paciente.objects.order_by("id_paciente")
     return render(request, "pacientes.html", {"pacientes": pacientes})
 
+@login_required
+@permission_required('iniciar_estudio')
 def iniciar_estudio_paciente(request, paciente_id):        
     paciente = get_object_or_404(Paciente, id_paciente=paciente_id)
 
@@ -34,40 +42,27 @@ def get_genes():
         data = response.json()
     return data
 
-# def get_gener_analizar():
-#     response = requests.get('https://api.claudioraverta.com/genes-analizar/Pompe/')
-    # print(f"{response.status_code}")
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     return render(request, "iniciar_estudio.html", {
-    #         "paciente": paciente,
-    #         "api_data": data
-    #     })
-
-    # else:
-    #     # Manejar error de la API
-    #     return render(request, "iniciar_estudio.html", {
-    #         "paciente": paciente,
-    #         "error": f"Error API: {response.status_code}"
-    #     })
-
+@login_required
+@permission_required('iniciar_estudio')
 def iniciar_estudio(request):    
     try:            
+        sintomas = json.loads(request.POST.get('sintomas', '[]'))
         patologia = request.POST.get('patologia')
         tipo_estudio = request.POST.get('tipo_estudio')
-        sintomas = request.POST.getlist('sintomas')
         sospecha = request.POST.get('sospecha')
+        parentesco = request.POST.get('parentesco')
         id_paciente = request.POST.get('id_paciente')
         hallazgos_secundarios = request.POST.get('hallazgo') == 'on'
         genes = request.POST.getlist('genes')
         paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
 
         if not validar_inicio_estudio(request):
-            return redirect('medicos:pacientes')
-
-        medico = get_object_or_404(Medico, usuario_id=request.user)
+            messages.wa(request, "Hubo problemas para validar el formulario. Intente de nuevo.")
+            return redirect('medicos:iniciar_estudio_paciente', int(id_paciente))
         
-        #Crear el estudio
+        medico = get_object_or_404(Medico, usuario_id=request.user)        
+
+        # #Crear el estudio
         estudio = Estudio.objects.create(
             id_interno = generar_id_interno(paciente),
             fecha=date.today(),
@@ -75,11 +70,26 @@ def iniciar_estudio(request):
             patologia_id = patologia,
             paciente_id = id_paciente,
             medico_id = medico.id_medico,
-            tipo_sospecha = int(sospecha),
-            hallazgos_secundarios = hallazgos_secundarios
-        ) 
+            tipo_sospecha = int(sospecha),            
+            hallazgos_secundarios = hallazgos_secundarios,
+            parentesco = parentesco
+        )
+
+        # #Asignar los sintomas. Si no existen, se dan de alta.
+        for sintoma in sintomas:
+            try:
+                sintomaAux = Sintoma.objects.get(id_sintoma_api=sintoma.get('id'))
+                print(sintomaAux)
+                estudio.sintomas.add(sintomaAux)          
+            except:
+                sintomaNuevo = Sintoma.objects.create(
+                    id_sintoma_api = sintoma.get('id'),
+                    nombre = sintoma.get('nombre')
+                )
+                estudio.sintomas.add(sintomaNuevo)
         
         estudio_views.estudio_iniciado(estudio)
+        
         presupuesto = Presupuesto.objects.create(
             estudio_id = estudio.id_estudio,
             costo_exoma = 500.0,
@@ -92,9 +102,8 @@ def iniciar_estudio(request):
             
     except Exception as e:
         print(e)
-        return redirect('medicos:pacientes')
+        return redirect('home')
     
-
 def generar_id_interno(paciente) -> str:
     num_aleatorio = ''.join(random.choices(string.digits, k=4))
 
