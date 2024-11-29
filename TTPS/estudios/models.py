@@ -2,7 +2,7 @@ from django.db import models
 from pacientes.models import Paciente
 from medicos.models import Medico
 from django.core.validators import MinValueValidator
-from datetime import datetime
+from django.utils import timezone
 
 class SampleSet(models.Model):
     id_sample_set = models.AutoField(primary_key=True)
@@ -97,5 +97,5 @@ class HistorialEstudio(models.Model):
         choices=EstadoEstudio.choices,
         null=False
     )
-    fecha_inicio = models.DateTimeField(null=False, default=datetime.now())
+    fecha_inicio = models.DateTimeField(null=False, default=timezone.now)
     fecha_fin = models.DateTimeField(null=True)

@@ -132,7 +132,7 @@
 
     function submitForm(action) {
         if (!validarForm()) {
-            return;
+            return false;
         }
         document.getElementById('formAction').value = action;
         document.getElementById('presupuestoForm').submit();

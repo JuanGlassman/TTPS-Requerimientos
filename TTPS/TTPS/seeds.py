@@ -1,4 +1,4 @@
-from estudios.models import Estudio, EstadoEstudio, Enfermedad
+from estudios.models import Estudio, EstadoEstudio, Enfermedad, HistorialEstudio
 from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
 from medicos.models import Medico
@@ -433,6 +433,11 @@ def run_seeds():
         medico_id = medico.id_medico,
         estado = EstadoEstudio.TURNO_CONFIRMADO,
         tipo_sospecha = 0
+    )
+
+    historial_estudio7 = HistorialEstudio.objects.create(
+        estudio_id = estudio7.id_estudio,
+        estado = EstadoEstudio.TURNO_CONFIRMADO
     )
 
     turno_estudio7 = Turno.objects.create(

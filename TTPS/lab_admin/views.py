@@ -134,8 +134,8 @@ def realizar_estudio(request, estudio_id):
         response = agregar_estudio_a_pedido(estudio_id)
         res, estudio = estudio_estado.estudio_realizado(estudio)
         estudio.save()
-        messages.warning(request, "El estudio tiene la muestra realizada.")
-        return redirect('lab_admin:estudios')
+        messages.success(request, "El estudio tiene la muestra realizada.")
+        return redirect("estudios:estudio_detalle", estudio.id_estudio) 
     
     except Exception as e:
         messages.warning(request, "Hubo un problema al realizar la muestra del estudio.")
