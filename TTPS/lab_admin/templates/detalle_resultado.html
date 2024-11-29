@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Presupuesto</title>
+</head>
+<body>
+    <h1>Hola {{ nombre_paciente }},</h1>
+    <p>Te informamos que el resultado de tu estudio {{ id_estudio }} esta disponible:</p>
+    <ul>
+        <li><strong>Resultado:</strong> ${{ resultado }}</li>
+    </ul>
+    <p>Puedes ver el detalle del estudio haciendo clic en el siguiente botón:</p>
+    <a href="{% url 'estudios:estudio_detalle', id_estudio %}" style="padding: 10px 15px; background-color: #6a0dad; color: white; text-decoration: none; border-radius: 5px;">Ver detalle</a>
+    <p>Gracias por confiar en nosotros.</p>
+</body>
+</html>

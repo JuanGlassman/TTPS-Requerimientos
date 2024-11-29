@@ -24,7 +24,7 @@ def form_presupuesto(request, estudio_id):
         })
     else:
         #informar que no se puede presupuestar un estudio que no esta en estado iniciado
-        return redirect('estudios')
+        return redirect('lab_admin:estudios')
     
 def enviar_correo_presupuesto(email, context):
     """Envía un correo electrónico al paciente con el detalle del presupuesto."""
@@ -59,11 +59,10 @@ def presupuestar(request):
             'costo_genes_extra': presupuesto.costo_genes_extra,
             'costo_hallazgos_secundarios': presupuesto.costo_hallazgos_secundarios,
             'total': presupuesto.total,
-            'url_pago': f"https://example.com/pago/{presupuesto.id_presupuesto}",
         }
         enviar_correo_presupuesto(paciente_email, context)
 
-    return redirect(f'/estudios/{estudio.id_estudio}')
+    return redirect('estudios:estudio_detalle', estudio.id_estudio)
 
 def pagar_admin(request, estudio_id):
     estudio = get_object_or_404(Estudio, id_estudio=estudio_id)
@@ -88,3 +87,14 @@ def realizar_estudio(request, estudio_id):
     res, estudio = estudio_estado.estudio_realizado(estudio)
     estudio.save()
     return redirect('lab_admin:estudios')
+
+def cargar_resultados(email, context):
+    print ("pipupipu")
+
+def enviar_correo_resultado(email, context):
+    """Envía un correo electrónico al paciente con el detalle del resultado de un estudio."""
+    subject = "Detalle del Resultado"
+    body = render_to_string("emails/detalle_resultado.html", context)
+    email_message = EmailMessage(subject, body, to=[email])
+    email_message.content_subtype = "html"  # Indica que el contenido es HTML
+    email_message.send()
