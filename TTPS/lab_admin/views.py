@@ -34,11 +34,15 @@ def form_presupuesto(request, estudio_id):
     
 def enviar_correo_presupuesto(email, context):
     """Envía un correo electrónico al paciente con el detalle del presupuesto."""
-    subject = "Detalle del Presupuesto"
-    body = render_to_string("emails/detalle_presupuesto.html", context)
-    email_message = EmailMessage(subject, body, to=[email])
-    email_message.content_subtype = "html"  # Indica que el contenido es HTML
-    email_message.send()
+    try:
+        # Implementa la lógica de envío de correo
+        subject = "Detalle del Presupuesto"
+        body = render_to_string("emails/detalle_presupuesto.html", context)
+        email_message = EmailMessage(subject, body, to=[email])
+        email_message.content_subtype = "html"  # Indica que el contenido es HTML
+        email_message.send()
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
 
 def guardar_presupuesto(exoma, genes, hallazgos, id_presupuesto):
     presupuesto = get_object_or_404(Presupuesto, id_presupuesto=id_presupuesto)
@@ -61,11 +65,13 @@ def presupuestar(request):
 
         if action == 'guardar':
             guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, id_presupuesto)
-            return redirect('estudios')
+            return redirect('lab_admin:estudios')
         elif action == 'confirmar':
             presupuesto = guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, id_presupuesto)
             estudio = get_object_or_404(Estudio, id_estudio=presupuesto.estudio_id)
+            
             res, estudio = estudio_view.estudio_presupuestado(estudio)
+            
             if (res):
                 estudio.save()
                 paciente_email = estudio.paciente.usuario.email
