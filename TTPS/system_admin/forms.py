@@ -13,12 +13,18 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['dni', 'first_name', 'last_name', 'fecha_nacimiento', 'email']
+        widgets = {
+            'dni': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
     def save(self, commit=True, rol=None):
         usuario = super().save(commit=False)
         usuario.username = usuario.dni
         usuario.rol = rol
-        usuario.set_password(usuario.dni)
+        usuario.set_password(str(usuario.dni))
         
         if commit:
             usuario.save()
@@ -34,12 +40,18 @@ class UsuarioRolForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['dni', 'first_name', 'last_name', 'fecha_nacimiento', 'email', 'rol']
+        widgets = {
+            'dni': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
     
     def save(self, commit=True, rol=None):
         usuario = super().save(commit=False)
         usuario.username = usuario.dni
         usuario.rol = rol
-        usuario.set_password(usuario.dni)
+        usuario.set_password(str(usuario.dni))
         
         if commit:
             usuario.save()

@@ -9,8 +9,6 @@ from .models import Rol
 from django.core.exceptions import PermissionDenied
 from functools import wraps
 from .utils import PERMISOS_POR_ROL
-from medicos.models import Medico
-from pacientes.models import Paciente
 
 def permission_required(permiso_requerido):
     def decorator(view_func):

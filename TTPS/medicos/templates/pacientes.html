@@ -4,13 +4,20 @@
 {% block content %}
 <h1>Listado de pacientes</h1>
 
-<!-- Barra de búsqueda -->
-<form method="get" class="mb-3">
-    <input type="text" name="search" placeholder="Buscar por nombre o apellido" value="{{ search_query }}" class="form-control" />
-    <button type="submit" class="btn btn-primary mt-2">Buscar</button>
-</form>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="text" name="search" placeholder="Buscar por nombre o apellido" value="{{ search_query }}" class="form-control" style="max-width: 300px;"/>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    
+    {% if user.rol.nombre == "medico" %}
+    <a href="{% url 'medicos:crear_paciente' %}" class="btn btn-violet">
+        Crear nuevo paciente
+    </a>
+    {% endif %}
+</div>
 
-<!-- Tabla de pacientes -->
 <table class="table table-striped table-hover">
     <thead>
         <tr>
