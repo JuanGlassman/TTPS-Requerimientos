@@ -8,6 +8,37 @@
     <h1>Listado de estudios</h1>
 </div>
 
+<div class="mb-2 d-flex justify-content-between align-items-center">
+    
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="text" name="search" placeholder="Buscar por ID" value="{{ search_query }}" class="form-control" />
+        
+        <!-- Selector de estado -->
+        <select name="estado" class="form-select">
+            <option value="">Todos los estados</option>
+            {% for estado, display in estados.choices %}
+                <option value="{{ estado }}" {% if estado == selected_estado %}selected{% endif %}>
+                    {{ display }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Botón de búsqueda -->
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</div>
+
+<div class="mb-3">
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="search" value="{{ search_query }}" />
+        <input type="hidden" name="estado" value="{{ selected_estado }}" />
+        <select name="order" class="form-select" onchange="this.form.submit()">
+            <option value="asc" {% if order == 'asc' %}selected{% endif %}>Presupuesto Ascendente</option>
+            <option value="desc" {% if order == 'desc' %}selected{% endif %}>Presupuesto Descendente</option>
+        </select>
+    </form>
+</div>
+
 <table class="table table-striped table-hover">
     <thead>
         <tr>
@@ -18,14 +49,12 @@
         </tr>
     </thead>
     <tbody>
-        {% for estudio in estudios %}
+        {% for estudio in page_obj  %}
         <tr>
             <td>{{ estudio.id_interno }}</td>
-            
             <td>
                 {{ estudio.presupuesto.total }}
             </td>
-            
             <td>
                 {% if estudio.estado == estados.PAGADO %}
                     <span class="badge rounded-pill text-bg-primary" 
@@ -99,5 +128,25 @@
         {% endfor %}
     </tbody>
 </table>
+<!-- Paginación -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort_by={{ sort_by }}&order={{ order }}"><</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort_by={{ sort_by }}&order={{ order }}">></a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
 
 {% endblock %}

@@ -11,11 +11,44 @@ from inicio_sesion.views import permission_required
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
+from django.core.paginator import Paginator
+from django.db.models import Q
+
 @login_required
 @permission_required('lista_estudios_set')
 def estudios(request):
-    estudios = Estudio.objects.order_by("fecha")
-    return render(request, "estudios.html", { "estudios": estudios, "estados": EstadoEstudio })
+    # Obtener parámetros de búsqueda y filtro
+    search_query = request.GET.get('search', '').strip()
+    selected_estado = request.GET.get('estado', '')
+    order = request.GET.get('order', 'asc')  # Orden ascendente por defecto
+    
+    # Base de la consulta
+    estudios_queryset = Estudio.objects.select_related('presupuesto').all()
+
+    # Filtros de búsqueda y estado
+    if search_query:
+        estudios_queryset = estudios_queryset.filter(
+            Q(id_interno__icontains=search_query)
+        )
+    if selected_estado:
+        estudios_queryset = estudios_queryset.filter(estado=selected_estado)
+    
+    estudios_queryset = estudios_queryset.order_by(f"{'' if order == 'asc' else '-'}presupuesto__total")
+    
+    # Paginación
+    paginator = Paginator(estudios_queryset, 10)  # 10 estudios por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "estudios.html", {
+        "page_obj": page_obj,
+        "search_query": search_query,
+        "selected_estado": selected_estado,
+        "order": order,
+        "estados": EstadoEstudio,
+    })
+
+
 
 @login_required
 @permission_required('presupuestar')
