@@ -186,7 +186,7 @@ def crear_paciente(request):
                 paciente.save()
 
                 messages.success(request, "Paciente creado exitosamente.")
-                return redirect('medicos:listar_pacientes')  # Cambia a la URL que desees después de crear
+                return redirect('medicos:listar_pacientes') 
             except Exception as e:
                 messages.error(request, f"Error al crear el paciente: {e}")
         else:

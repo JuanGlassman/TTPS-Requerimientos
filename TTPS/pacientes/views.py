@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.http import FileResponse
 import os
 from TTPS.settings import BASE_DIR
+from estudios.views import estudio_confirmado, estudio_autorizado
 
 @login_required
 def paciente_detalle(request, paciente_id):
@@ -53,12 +54,20 @@ def sacar_turno(request, id_estudio):
 
         form = TurnoForm(request.POST, request.FILES, horarios_disponibles=horarios_disponibles)
         if form.is_valid():
-            turno = form.save(commit=False)
-            turno.usuario = request.user
-            turno.estudio = estudio
-            turno.save()
-            messages.success(request, "Turno reservado correctamente.")
-            return redirect('pacientes:confirmacion_turno', turno_id=turno.id_turno)
+            try:
+                turno = form.save(commit=False)
+                turno.usuario = request.user
+                turno.estudio = estudio
+                turno.save()
+                res, estudio = estudio_autorizado(estudio)
+                if (res):
+                    res, estudio = estudio_confirmado(estudio)
+                if (res):
+                    estudio.save()
+                    messages.success(request, "Turno reservado correctamente.")
+                return redirect('pacientes:confirmacion_turno', turno_id=turno.id_turno)
+            except Exception as e:
+                    messages.error(request, f"Error al crear el paciente: {e}")
         else:
             messages.error(request, f"Hubo un problema con el formulario: {form.errors.as_text()}")
     else:

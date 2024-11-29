@@ -58,6 +58,7 @@ def estudio_pagado(estudio):
         return True, estudio
     else:
         return False, estudio
+        
 
 def estudio_autorizado(estudio):
     if estudio_terminado(estudio):
