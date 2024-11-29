@@ -101,7 +101,7 @@
                     {% tiene_permiso user "lista_pacientes" as puede_ver %}
                     {% if puede_ver %}
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="{% url 'medicos:pacientes' %}">Pacientes</a>
+                            <a class="nav-link text-white" href="{% url 'medicos:listar_pacientes' %}">Pacientes</a>
                         </li>
                     {% endif %}
 

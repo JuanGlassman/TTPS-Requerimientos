@@ -14,9 +14,9 @@ import os
 from TTPS.settings import BASE_DIR
 
 @login_required
-def paciente(request, paciente_id):
+def paciente_detalle(request, paciente_id):
     paciente = get_object_or_404(Paciente, id_paciente=paciente_id)
-    return render(request, "paciente.html", {"paciente": paciente})
+    return render(request, "ver_detalle.html", {"paciente": paciente})
 
 @login_required
 @permission_required("historial_estudios_paciente")

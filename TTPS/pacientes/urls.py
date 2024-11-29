@@ -4,7 +4,7 @@ from pacientes import views as paciente_view
 app_name = 'pacientes'
 
 urlpatterns = [
-    path("<int:paciente_id>/", paciente_view.paciente, name="paciente_detalle"),
+    path("ver_detalle/<int:paciente_id>/", paciente_view.paciente_detalle, name="paciente_detalle"),
     path("mis_estudios/", paciente_view.mis_estudios, name="historial_estudios_paciente"),
     path("turnos/sacar_turno/<int:id_estudio>/", paciente_view.sacar_turno, name="sacar_turno"),
     path("turnos/confirmacion_turno/<int:turno_id>/", paciente_view.confirmacion_turno, name="confirmacion_turno"),
