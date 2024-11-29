@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h1>Crear Paciente</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h3>Datos del Usuario</h3>
+        {{ usuario_form.as_p }}
+        
+        
+        <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+        
+            <div class="mb-3">
+                <label for="antecedentes" class="form-label"><strong>Antecedentes médicos</strong></label>
+                {{ paciente_form.antecedentes }}
+            </div>
+        
+            <div class="mb-3">
+                <label for="historial_medico" class="form-label"><strong>Historial médico</strong></label>
+                {{ paciente_form.historial_medico }}
+            </div>
+        
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary">Guardar Paciente</button>
+                <a href="{% url 'medicos:listar_pacientes' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+        
+    </form>
+</div>
+{% endblock %}
+

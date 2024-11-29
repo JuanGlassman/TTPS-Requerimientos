@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-center">
+        <div class="card shadow p-4" style="width: 100%; max-width: 500px;">
+            <h2 class="text-center mb-4" style="color: #6a0dad;">Perfil de {{ paciente.usuario.first_name }}</h2>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>DNI:</strong> {{ paciente.usuario.dni }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Nombre:</strong> {{ paciente.usuario.first_name }} {{ paciente.usuario.last_name }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Fecha de Nacimiento:</strong> 
+                        {{ user.fecha_nacimiento|date:"d/m/Y" }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Género:</strong> 
+                        {% if user.genero == 'M' %} Masculino 
+                        {% elif user.genero == 'F' %} Femenino 
+                        {% else %} Otro 
+                        {% endif %}
+                    </li>
+
+                    <li class="list-group-item">
+                        <strong>Antecedentes:</strong> {{ paciente.antecedentes }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Historial Médico:</strong> {{ paciente.historial_medico }}
+                    </li>
+                </ul>
+            </div>
+            <a href="{% url 'medicos:estudios_paciente' paciente.id_paciente %}" class="btn btn-outline-violet">Ver su Historial de estudios</a>  
+        </div>
+    </div>
+</div>
+<a href="{% url 'medicos:listar_pacientes' %}" class="btn btn-outline-violet">Volver</a>  
+{% endblock %}

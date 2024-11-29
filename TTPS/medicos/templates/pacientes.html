@@ -2,9 +2,21 @@
 {% load static %}
 
 {% block content %}
-{% load static %}
+<h1>Listado de pacientes</h1>
 
-<h1>Listado de pacientes </h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="text" name="search" placeholder="Buscar por nombre o apellido" value="{{ search_query }}" class="form-control" style="max-width: 300px;"/>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    
+    {% if user.rol.nombre == "medico" %}
+    <a href="{% url 'medicos:crear_paciente' %}" class="btn btn-violet">
+        Crear nuevo paciente
+    </a>
+    {% endif %}
+</div>
 
 <table class="table table-striped table-hover">
     <thead>
@@ -16,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for paciente in pacientes %}
+        {% for paciente in page_obj %}
         <tr>
             <td>{{ paciente.id_paciente }}</td>
             <td>{{ paciente.usuario.first_name }}</td>
@@ -36,4 +48,40 @@
     </tbody>
 </table>
 
+<!-- Paginador -->
+<div class="d-flex justify-content-center">
+    <nav>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}">Anterior</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&search={{ search_query }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}">Siguiente</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Siguiente</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
 {% endblock %}

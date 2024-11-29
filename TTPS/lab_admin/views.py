@@ -8,6 +8,8 @@ from estudios import views as estudio_view
 from transportista.views import agregar_estudio_a_pedido
 from django.contrib.auth.decorators import login_required
 from inicio_sesion.views import permission_required
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 @login_required
 @permission_required('lista_estudios_set')
@@ -28,7 +30,19 @@ def form_presupuesto(request, estudio_id):
         })
     else:
         #informar que no se puede presupuestar un estudio que no esta en estado iniciado
-        return redirect('estudios')
+        return redirect('lab_admin:estudios')
+    
+def enviar_correo_presupuesto(email, context):
+    """Envía un correo electrónico al paciente con el detalle del presupuesto."""
+    try:
+        # Implementa la lógica de envío de correo
+        subject = "Detalle del Presupuesto"
+        body = render_to_string("emails/detalle_presupuesto.html", context)
+        email_message = EmailMessage(subject, body, to=[email])
+        email_message.content_subtype = "html"  # Indica que el contenido es HTML
+        email_message.send()
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
 
 def guardar_presupuesto(exoma, genes, hallazgos, id_presupuesto):
     presupuesto = get_object_or_404(Presupuesto, id_presupuesto=id_presupuesto)
@@ -51,14 +65,25 @@ def presupuestar(request):
 
         if action == 'guardar':
             guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, id_presupuesto)
-            return redirect('estudios')
+            return redirect('lab_admin:estudios')
         elif action == 'confirmar':
             presupuesto = guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, id_presupuesto)
             estudio = get_object_or_404(Estudio, id_estudio=presupuesto.estudio_id)
+            
             res, estudio = estudio_view.estudio_presupuestado(estudio)
+            
             if (res):
                 estudio.save()
-            return redirect(f'/estudios/{estudio.id_estudio}')
+                paciente_email = estudio.paciente.usuario.email
+                context = {
+                    'nombre_paciente':  estudio.paciente.usuario.first_name,
+                    'costo_exoma': costo_exoma,
+                    'costo_genes_extra': costo_genes_extra,
+                    'costo_hallazgos_secundarios': costo_hallazgos_secundario,
+                    'total': presupuesto.total,
+                }
+                enviar_correo_presupuesto(paciente_email, context)
+            return redirect("estudios:estudio_detalle", estudio.id_estudio) 
         
     except Exception as e:
         print(e)
@@ -92,6 +117,15 @@ def realizar_estudio(request, estudio_id):
     estudio.save()
     return redirect('lab_admin:estudios')
 
+def enviar_correo_resultado(email, context):
+    """Envía un correo electrónico al paciente con el detalle del resultado de un estudio."""
+    subject = "Detalle del Resultado"
+    body = render_to_string("emails/detalle_resultado.html", context)
+    email_message = EmailMessage(subject, body, to=[email])
+    email_message.content_subtype = "html"  # Indica que el contenido es HTML
+    email_message.send()
+
+    
 @login_required
 @permission_required('cargar_resultado')
 def form_resultado(request, estudio_id):

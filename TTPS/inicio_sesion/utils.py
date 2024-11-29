@@ -35,7 +35,7 @@ PERMISOS_POR_ROL = {
     ],
     "medico": [
         "lista_pacientes", "paciente_create", "paciente_update", "paciente_destroy", "paciente_show",
-        "iniciar_estudio", "historial_estudios_paciente", "estudio_show", 
+        "iniciar_estudio", "historial_estudios_paciente", "estudio_show", "usuario_create"
     ],
     "paciente": [
         "historial_estudios_paciente", "elegir_turno", "estudio_show", "dar_concentimiento", "nav_bar_mis_estudios"

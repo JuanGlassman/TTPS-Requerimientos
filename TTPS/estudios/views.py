@@ -7,16 +7,26 @@ def estudio_terminado(estudio):
     return estudio.estado in [EstadoEstudio.CANCELADO, EstadoEstudio.FINALIZADO]
 
 def registrar_historial(estudio, estado_anterior, estado_nuevo):
-    h = get_object_or_404(HistorialEstudio,
-        estudio_id = estudio.id_estudio,
-        estado = estado_anterior
-    )
-    h.fecha_fin = datetime.now()
-    h.save()
-    HistorialEstudio.objects.create(
-        estudio_id = estudio.id_estudio,
-        estado = estado_nuevo
-    )
+    try:
+        historial = HistorialEstudio.objects.filter(
+            estudio_id=estudio.id_estudio,
+            estado=estado_anterior
+        ).first()
+
+        if historial:
+            historial.fecha_fin = datetime.now()
+            historial.save()
+        else:
+            print(f"No se encontró un historial para el estudio {estudio.id_estudio} con estado {estado_anterior}.")
+
+
+        HistorialEstudio.objects.create(
+            estudio_id = estudio.id_estudio,
+            estado = estado_nuevo
+        )
+    except Exception as e:
+        print(f"Error al registrar el historial: {e}")
+        raise
 
 def estudio_iniciado(estudio):
     if estudio_terminado(estudio):
@@ -29,12 +39,13 @@ def estudio_iniciado(estudio):
     return True, estudio
 
 def estudio_presupuestado(estudio):
+    res = True
     if estudio_terminado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.INICIADO):
         estudio.estado = EstadoEstudio.PRESUPUESTADO
         registrar_historial(estudio, EstadoEstudio.INICIADO, EstadoEstudio.PRESUPUESTADO)
-        return True, estudio
+        return res, estudio
     else:
         return False, estudio
 
