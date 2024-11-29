@@ -127,12 +127,9 @@
         const backButton = document.getElementById('back-button');
         const referrer = document.referrer;
 
-        // Verificar si la URL anterior contiene "medicos/iniciar_estudio"
         if (referrer.includes('medicos/iniciar_estudio')) {
-            // Cambiar el enlace para redirigir a la lista de pacientes
             backButton.setAttribute('href', '/medicos/pacientes');
         } else {
-            // Volver al historial anterior
             backButton.setAttribute('href', 'javascript:history.back()');
         }
     });
