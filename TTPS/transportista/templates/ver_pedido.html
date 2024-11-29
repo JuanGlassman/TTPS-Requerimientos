@@ -14,9 +14,9 @@
       </a>
         <div class="message" id="status-message">
           {% if pedido.estado == 'pendiente' %}
-            <p>Si no se pudo hacer entrega, aclararlo en Observaciones.</p>
+            <p>Si no se pudo recoger el pedido, aclararlo en Observaciones.</p>
           {% elif pedido.estado == 'finalizado' %}
-            <p>Este pedido ha sido entregado.</p>
+            <p>Este pedido ha sido recogido.</p>
           {% endif %}
         </div>
 
@@ -25,6 +25,8 @@
             <div>
               <p><strong>Centro:</strong> {{ pedido.centro.nombre }}</p>
               <p><strong>Dirección:</strong> {{ pedido.centro.direccion }}</p>
+              <p><strong>Telefono:</strong> {{ pedido.centro.telefono }}</p>
+              <p><strong>Email:</strong> {{ pedido.centro.email }}</p>
             </div>
           </div>
         </div>
@@ -44,7 +46,7 @@
                   <textarea id="observations" class="observations-input" rows="4" placeholder="Escribe las observaciones aquí..."></textarea>
               </div>
             </div>
-            <a class="btn-transportista" onclick="entregarPedido()">Entregar</a>
+            <a class="btn-transportista" onclick="entregarPedido()">Recoger</a>
         {% endif %}
     </div>
     {% else %}
@@ -145,12 +147,12 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert('Pedido entregado correctamente');
+          alert('Pedido modificado correctamente');
         } else {
           if (data.status === 404) {
             alert('No existe el pedido en la base de datos');
           } else {
-            alert('Error al entregar el pedido');
+            alert('Error al cambiar estado el pedido');
           }
         }
         var urlPedidos = "{% url 'transportista:lista_pedidos' %}";
