@@ -23,9 +23,7 @@
                         <button class="btn btn-primary" type="submit">Pagado</button>
                     </form>
                 {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
-                    <a class="btn btn-primary">Muestra realizada</a>
-                {% elif estudio.estado == estados.REALIZADA %}
-                    <a class="btn btn-primary">Enviar al Centro</a>
+                    <a class="btn btn-primary" href="{% url 'lab_admin:realizar' estudio.id_estudio %}" >Realizar muestra</a>                
                 {% elif estudio.estado == estados.CENTRALIZADA %}
                     <a class="btn btn-primary">Ver Sample Set</a>
                 {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
@@ -62,7 +60,7 @@
     {% endif %}
 
     <dt class="col-5 fw-medium">Estado</dt>
-    <dd class="col-7 fw-light">
+    <dd class="col-7 fw-light">        
         {% if estudio.estado == estados.PAGADO %}
             <span class="badge rounded-pill text-bg-primary" 
             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe que firmar consentimiento">
@@ -95,14 +93,14 @@
     <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_genes_extra }}</dd>
 
     <dt class="col-5 fw-medium">Costo Hallazgos secundarios</dt>
-    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_hallazgos_secundarios }}</dd>
-
-    <hr> 
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_hallazgos_secundarios }}</dd>    
     
-    <dt class="col-5 fw-medium">Costo total</dt>
-    <dd class="col-7 fw-light">{{ estudio.presupuesto.total }}</dd>
+    <dt class="col-5 fw-medium"><b>Costo total</b></dt>
+    <dd class="col-7 fw-light"><b>{{ estudio.presupuesto.total }}</b></dd>
     
 </dl>
+
+<hr> 
 
 <div class="card shadow-sm" style="width: 18rem;">
     <div class="card-body text-center">

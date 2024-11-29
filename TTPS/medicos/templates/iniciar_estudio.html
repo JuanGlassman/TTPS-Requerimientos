@@ -173,21 +173,21 @@
                 id: e.target.value,
                 nombre: sintomasSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML
             };
-            valores.push(nuevoSintoma);
+            valores.push(nuevoSintoma);        
+
+            const chip = document.createElement('span');
+            chip.className = "badge rounded-pill text-bg-primary me-2";
+            chip.textContent = sintomasSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML;
+
+            const closeBtn = document.createElement('a');
+            const icon = document.createElement('i');
+            icon.className = "bi bi-x-lg ml-2 delete-sintoma";
+            icon.id = e.target.value;
+
+            closeBtn.appendChild(icon)
+            chip.appendChild(closeBtn)
+            divSintomasSeleccionados.appendChild(chip);
         }
-
-        const chip = document.createElement('span');
-        chip.className = "badge rounded-pill text-bg-primary me-2";
-        chip.textContent = sintomasSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML;
-
-        const closeBtn = document.createElement('a');
-        const icon = document.createElement('i');
-        icon.className = "bi bi-x-lg ml-2 delete-sintoma";
-        icon.id = e.target.value;
-
-        closeBtn.appendChild(icon)
-        chip.appendChild(closeBtn)
-        divSintomasSeleccionados.appendChild(chip);
     });
     
     document.addEventListener('click', function(e) {

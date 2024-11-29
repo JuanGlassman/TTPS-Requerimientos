@@ -23,7 +23,7 @@ def paciente(request, paciente_id):
 def mis_estudios(request):
     paciente = request.user.paciente
     #estudios_list = Estudio.objects.filter(paciente_id=paciente.id_paciente).order_by("fecha")
-    estudios_list = Estudio.objects.order_by("fecha") 
+    estudios_list = Estudio.objects.filter(paciente_id=paciente.id_paciente).order_by("fecha") 
     paginator = Paginator(estudios_list, 10) 
 
     page_number = request.GET.get('page')
