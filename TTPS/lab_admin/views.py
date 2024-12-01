@@ -190,7 +190,7 @@ def enviar_correo_resultado(email, context):
     """Envía un correo electrónico al paciente con el detalle del resultado de un estudio utilizando SendGrid."""
     try:
         subject = "Detalle del Resultado"
-        body = render_to_string("emails/detalle_resultado.html", context)
+        body = render_to_string("detalle_resultado.html", context)
 
         message = Mail(
             from_email='laboratorios_laplata@hotmail.com',  
