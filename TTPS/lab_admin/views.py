@@ -124,8 +124,7 @@ def presupuestar(request):
             if (res):
                 estudio.save()
                 messages.success(request, "El estudio se presupuestó de forma exitosa.") 
-                #paciente_email = estudio.paciente.usuario.email
-                paciente_email = "juanignacioglassman@gmail.com"
+                paciente_email = estudio.paciente.usuario.email
                 context = {
                     'nombre_paciente':  estudio.paciente.usuario.first_name,
                     'costo_exoma': costo_exoma,
@@ -236,8 +235,7 @@ def cargar_resultado(request):
         res, estudio = estudio_estado.estudio_finalizado(estudio)
         if (res):
             estudio.save()
-            #paciente_email = estudio.paciente.usuario.email
-            paciente_email = "juanignacioglassman@gmail.com"
+            paciente_email = estudio.paciente.usuario.email
             context = {
                 'nombre_paciente': estudio.paciente.usuario.first_name,
                 'resultado': resultado,
