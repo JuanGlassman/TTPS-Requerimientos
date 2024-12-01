@@ -11,9 +11,11 @@ from inicio_sesion.views import permission_required
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from django.core.paginator import Paginator
 from django.db.models import Q
+from TTPS.settings import EMAIL_HOST_PASSWORD
 
 @login_required
 @permission_required('lista_estudios_set')
@@ -69,12 +71,23 @@ def form_presupuesto(request, estudio_id):
 def enviar_correo_presupuesto(email, context):
     """Envía un correo electrónico al paciente con el detalle del presupuesto."""
     try:
-        # Implementa la lógica de envío de correo
         subject = "Detalle del Presupuesto"
-        body = render_to_string("emails/detalle_presupuesto.html", context)
-        email_message = EmailMessage(subject, body, to=[email])
-        email_message.content_subtype = "html"  # Indica que el contenido es HTML
-        email_message.send()
+        body = render_to_string("detalle_presupuesto.html", context)
+
+        message = Mail(
+            from_email='laboratorios_laplata@hotmail.com', 
+            to_emails=email,
+            subject=subject,
+            html_content=body
+        )
+
+        sg = SendGridAPIClient(EMAIL_HOST_PASSWORD)  
+        response = sg.send(message)
+
+        print(f"Correo enviado con código de estado: {response.status_code}")
+        if response.body:
+            print(f"Respuesta del servidor: {response.body}")
+
     except Exception as e:
         print(f"Error al enviar correo: {e}")
 
@@ -94,15 +107,12 @@ def presupuestar(request):
         costo_exoma = request.POST.get('costo_exoma')
         costo_genes_extra = request.POST.get('costo_genes_extra')
         costo_hallazgos_secundario = request.POST.get('costo_hallazgos_secundarios')
-        print(costo_hallazgos_secundario)
         id_presupuesto = request.POST.get('id_presupuesto')
         id_estudio = request.POST.get('id_estudio')
         action = request.POST.get('action')
 
         if action == 'guardar':
-            print("Llega a guardar")
             guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, int(id_presupuesto))
-            print("se guardó")
             messages.success(request, "El presupuesto se guardó de forma exitosa.")  
             return redirect("estudios:estudio_detalle", int(id_estudio))
         elif action == 'confirmar':
@@ -114,13 +124,15 @@ def presupuestar(request):
             if (res):
                 estudio.save()
                 messages.success(request, "El estudio se presupuestó de forma exitosa.") 
-                paciente_email = estudio.paciente.usuario.email
+                #paciente_email = estudio.paciente.usuario.email
+                paciente_email = "juanignacioglassman@gmail.com"
                 context = {
                     'nombre_paciente':  estudio.paciente.usuario.first_name,
                     'costo_exoma': costo_exoma,
                     'costo_genes_extra': costo_genes_extra,
                     'costo_hallazgos_secundarios': costo_hallazgos_secundario,
                     'total': presupuesto.total,
+                    'estudio': estudio
                 }
                 enviar_correo_presupuesto(paciente_email, context)
             return redirect("estudios:estudio_detalle", estudio.id_estudio) 
@@ -175,12 +187,27 @@ def realizar_estudio(request, estudio_id):
         return redirect('home')
 
 def enviar_correo_resultado(email, context):
-    """Envía un correo electrónico al paciente con el detalle del resultado de un estudio."""
-    subject = "Detalle del Resultado"
-    body = render_to_string("emails/detalle_resultado.html", context)
-    email_message = EmailMessage(subject, body, to=[email])
-    email_message.content_subtype = "html"  # Indica que el contenido es HTML
-    email_message.send()
+    """Envía un correo electrónico al paciente con el detalle del resultado de un estudio utilizando SendGrid."""
+    try:
+        subject = "Detalle del Resultado"
+        body = render_to_string("emails/detalle_resultado.html", context)
+
+        message = Mail(
+            from_email='laboratorios_laplata@hotmail.com',  
+            to_emails=email,
+            subject=subject,
+            html_content=body
+        )
+
+        sg = SendGridAPIClient(EMAIL_HOST_PASSWORD)
+        response = sg.send(message)
+
+        print(f"Correo enviado con código de estado: {response.status_code}")
+        if response.body:
+            print(f"Respuesta del servidor: {response.body}")
+
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
 
     
 @login_required
@@ -207,7 +234,17 @@ def cargar_resultado(request):
         resultado = get_resultado(estudio, variantes) #buscar el resultado en backend
         estudio.resultado = resultado
         res, estudio = estudio_estado.estudio_finalizado(estudio)
-        estudio.save()
+        if (res):
+            estudio.save()
+            #paciente_email = estudio.paciente.usuario.email
+            paciente_email = "juanignacioglassman@gmail.com"
+            context = {
+                'nombre_paciente': estudio.paciente.usuario.first_name,
+                'resultado': resultado,
+                'estudio': estudio,
+            }
+            enviar_correo_resultado(paciente_email, context)
+        
         messages.success(request, "El resultado del estudio se cargó de forma existosa.")
         return redirect("estudios:estudio_detalle", estudio.id_estudio) 
     except Exception as e:
