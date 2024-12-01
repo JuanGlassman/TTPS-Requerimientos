@@ -125,6 +125,7 @@ def iniciar_estudio(request):
             total = 500.0 + len(genes) * 30 + (200.0 if hallazgos_secundarios else 0)
         )
         
+        messages.success(request, "El estudio se ha iniciado con éxito.")
         return redirect("estudios:estudio_detalle", estudio.id_estudio)
             
     except Exception as e:

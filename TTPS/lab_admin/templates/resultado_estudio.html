@@ -13,6 +13,8 @@
 </div>
 
 <h2 class="mb-4">Estudio: {{ estudio.id_interno }} </h2>
+<h4>Patología: {{estudio.patologia.nombre}}</h3>
+<h4 class="mb-4">Gen: {{estudio.patologia.gen}}</h3>
 
 <form action="{% url 'lab_admin:cargar_resultado' %}" method="post">
     {% csrf_token %}

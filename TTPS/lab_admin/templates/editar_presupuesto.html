@@ -14,36 +14,131 @@
 
 <h2 class="mb-4">Presupuesto del estudio: {{ estudio.id_interno }} </h2>
 
-<form action="{% url 'lab_admin:presupuestar' %}" method="post">
+<form action="{% url 'lab_admin:presupuestar' %}" method="post" id="presupuestoForm">
     {% csrf_token %}
     <input hidden value="{{ presupuesto.id_presupuesto }}" name="id_presupuesto" />
+    <input hidden value="{{ estudio.id_estudio }}" name="id_estudio" />
     <input hidden value="" name="action" id="formAction"/>
     <div class="row align-items-center mb-4">
-        <div class="col-md-6">
-                <label class="form-label">Precio Exoma</label>
-                <input value="{{ presupuesto.costo_exoma }}" name="costo_exoma" class="form-control"/>
+        <div class="row">
+            <div class="col-md-6">
+                    <label class="form-label">Precio Exoma</label>
+                    <input value="{{ presupuesto.costo_exoma }}" name="costo_exoma" class="form-control" id="input-exoma"/>
+                    <div class="invalid-feedback" id="error-exoma" style="display: none;"></div>
+            </div>        
+            <div class="col-md-6">
+                    <label class="form-label">Precio genes extra</label>
+                    <input value="{{ presupuesto.costo_genes_extra }}" name="costo_genes_extra" class="form-control" id="input-genes"/>
+                    <div class="invalid-feedback" id="error-genes" style="display: none;"></div>
+            </div>
         </div>
-        <div class="col-md-6">
-                <label class="form-label">Precio genes extra</label>
-                <input value="{{ presupuesto.costo_genes_extra }}" name="costo_genes_extra" class="form-control"/>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Precio Hallazgos secundarios</label>
-            <input value="{{ presupuesto.costo_hallazgos_secundarios }}" name="costo_hallazgos_secundarios" class="form-control"/>
+        {% if estudio.hallazgos_secundarios == 1 %}
+            <div class="col-md-6">
+                <label class="form-label">Precio Hallazgos secundarios</label>
+                <input value="{{ presupuesto.costo_hallazgos_secundarios }}" name="costo_hallazgos_secundarios" class="form-control" id="input-hallazgos"/>
+                <div class="invalid-feedback" id="error-hallazgos" style="display: none;"></div>
+        {% endif %}
     </div>
     </div>
     <div class="d-flex justify-content-center gap-2">
-        <button class="btn btn-primary" onclick="submitForm('guardar')">Guardar presupuesto</button>
+        <button class="btn btn-secondary" onclick="submitForm('guardar')">Guardar presupuesto</button>
         <button class="btn btn-primary" onclick="submitForm('confirmar')">Confirmar presupuesto</button>
-        <a class="btn btn-light">Cancelar</a>
+        <a class="btn btn-light" href="javascript:history.back()">Cancelar</a>
     </div>
 </form>
 
 <script>
+    const exoma = document.getElementById('input-exoma')
+    const errorExoma = document.getElementById('error-exoma')
+    const genes = document.getElementById('input-genes')
+    const errorGenes = document.getElementById('error-genes')
+    const hallazgo = document.getElementById('input-hallazgos')
+    const errorHallazgos = document.getElementById('error-hallazgos')
+
+    function validarFlotante(value) {
+        if (!/^\d*\.?\d+$/.test(value)) {
+            return false;
+        }
+        return true;
+    }
+    
+    function validarVacio(value) {
+        if (value === '') {
+            console.log("Es vacio")
+            return false;
+        }
+        return true;
+    }
+
+    function validarExoma() {
+        if (!validarVacio(exoma.value)) {
+            exoma.className = "form-control is-invalid"
+            errorExoma.style = "display: block;";
+            errorExoma.innerHTML = "El valor del Exoma es requerido."
+            return false
+        }     
+        if (!validarFlotante(exoma.value)) {
+            exoma.className = "form-control is-invalid"
+            errorExoma.style = "display: block;";
+            errorExoma.innerHTML = "El valor del Exoma debe ser un número."
+            return false
+        } 
+        exoma.className = "form-select is-valid"
+        errorExoma.style = "display: none;";
+        return true        
+    }
+    
+    function validarGenes() {
+        if (!validarVacio(genes.value)) {
+            errorGenes.style = "display: block;";
+            errorGenes.innerHTML = "El valor de los genes es requerido."
+            return false
+        }     
+        if (!validarFlotante(genes.value)) {
+            errorGenes.style = "display: block;";
+            errorGenes.innerHTML = "El valor de los genes debe ser un número."
+            return false
+        } 
+        genes.className = "form-select is-valid"
+        errorGenes.style = "display: none;";
+        return true     
+    }
+
+    function validarHallazgos() {
+        if (hallazgo != undefined) {             
+            if (!validarVacio(hallazgo.value)) {
+                errorHallazgos.style = "display: block;";
+                errorHallazgos.innerHTML = "El valor de los hallazgos secundarios es requerido."
+                return false
+            }     
+            if (!validarFlotante(hallazgo.value)) {
+                errorHallazgos.style = "display: block;";
+                errorHallazgos.innerHTML = "El valor de los hallazgos secundarios debe ser un número."
+                return false
+            }
+            hallazgo.className = "form-select is-valid"
+            errorHallazgos.style = "display: none;"; 
+            return true
+        }
+        return true     
+    }
+
+    function validarForm() {
+        if (!validarExoma()) return false;
+        if (!validarGenes()) return false;
+        if (!validarHallazgos()) return false;
+        return true
+    }
+    
+
     function submitForm(action) {
+        if (!validarForm()) {
+            return false;
+        }
         document.getElementById('formAction').value = action;
         document.getElementById('presupuestoForm').submit();
     }
+    
 </script>
 
 {% endblock %}
