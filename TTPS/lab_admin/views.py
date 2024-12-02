@@ -1,21 +1,23 @@
 import json
 from django.shortcuts import render, get_object_or_404, redirect
 import requests
-from estudios.models import Estudio, EstadoEstudio
+from estudios.models import Estudio, EstadoEstudio, SampleSet
 from estudios import views as estudio_estado
 from .models import Presupuesto
-from estudios import views as estudio_view
+from estudios.views import estudio_presupuestado, estudio_enviado_exterior
 from transportista.views import agregar_estudio_a_pedido
 from django.contrib.auth.decorators import login_required
 from inicio_sesion.views import permission_required
 from django.contrib import messages
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.core.paginator import Paginator
 from django.db.models import Q
 from TTPS.settings import EMAIL_HOST_PASSWORD
+from django.db.models import Count
+from django.utils import timezone
+
 
 @login_required
 @permission_required('lista_estudios_set')
@@ -119,7 +121,7 @@ def presupuestar(request):
             presupuesto = guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, id_presupuesto)
             estudio = get_object_or_404(Estudio, id_estudio=presupuesto.estudio_id)
             
-            res, estudio = estudio_view.estudio_presupuestado(estudio)
+            res, estudio = estudio_presupuestado(estudio)
             
             if (res):
                 estudio.save()
@@ -286,3 +288,51 @@ def get_resultado(estudio, variantes):
     if not data['valido']:
         return "negativo"
     return "positivo"
+
+
+@login_required
+@permission_required("lista_estudios_set")
+def sample_set_list(request):
+    search_query = request.GET.get('search', '').strip()
+
+    sample_sets_queryset = SampleSet.objects.annotate(estudio_count=Count('estudios')).all()
+    if search_query:
+        sample_sets_queryset = sample_sets_queryset.filter(id_sample_set__icontains=search_query)
+
+    paginator = Paginator(sample_sets_queryset, 10)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "sample_set_list.html", {
+        "page_obj": page_obj,
+    })
+
+@login_required
+@permission_required("lista_estudios_set")
+def sample_set_detalle(request, id_sample_set):
+    sample_set = get_object_or_404(SampleSet, id_sample_set=id_sample_set)
+    estudios = sample_set.estudios.all()
+
+    return render(request, "sample_set_detalle.html", {
+        "sample_set": sample_set,
+        "estudios": estudios,
+    })
+
+@login_required
+@permission_required("enviar_sample_set")
+def enviar_sample_set(request, id_sample_set):
+    sample_set = get_object_or_404(SampleSet, id_sample_set=id_sample_set)
+
+    estudios = sample_set.estudios.all()
+    for estudio in estudios:
+        estudio_enviado_exterior(estudio)
+
+    sample_set.fecha_envio = timezone.now()
+    sample_set.save()
+
+    messages.success(request, f"Sample Set #{sample_set.id_sample_set} enviado con éxito.")
+    return redirect("lab_admin:sample_set_list")
+
+
+
+

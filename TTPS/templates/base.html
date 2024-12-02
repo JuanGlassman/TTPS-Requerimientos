@@ -108,6 +108,13 @@
                             <a class="nav-link text-white" href="{% url 'transportista:lista_pedidos' %}">Pedidos</a>
                         </li>
                     {% endif %}
+
+                    {% tiene_permiso user "lista_estudios_set" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'lab_admin:sample_set_list' %}">Sample Set</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 {% if user.is_authenticated %}
                     <div class="dropdown">

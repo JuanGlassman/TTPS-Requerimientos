@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Detalle del Sample Set #{{ sample_set.id_sample_set }}</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID Estudio</th>
+            <th>Tipo Estudio</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for estudio in estudios %}
+        <tr>
+            <td>{{ estudio.id_interno }}</td>
+            <td>{{ estudio.tipo_estudio }}</td>
+            <td>{{ estudio.fecha }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'lab_admin:sample_set_list' %}" class="btn btn-secondary">Volver</a>
+{% endblock %}

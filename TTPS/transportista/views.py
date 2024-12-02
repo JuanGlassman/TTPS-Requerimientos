@@ -8,6 +8,7 @@ from datetime import date, time, timedelta
 from estudios.models import Estudio
 from lab_admin.models import Centro, Turno
 import base64, json
+from estudios.views import estudio_centralizado
 
 @login_required
 @permission_required('transportista')
@@ -98,11 +99,18 @@ def iniciar_recorrido(request, hoja_id):
     cambiar_estado_hoja(hoja, 'en_curso')
     return redirect('transportista:lista_pedidos')
 
+def cargar_resultados(hoja):
+    for pedido in hoja.pedidos.all():
+        for estudio in pedido.estudios.all():
+            estudio_centralizado(estudio)
+
+
 @login_required
 @permission_required('transportista')
 def finalizar_recorrido(request, hoja_id):
     hoja = get_object_or_404(HojaDeRuta, id_hoja_de_ruta=hoja_id)
     cambiar_estado_hoja(hoja, 'finalizada')
+    cargar_resultados(hoja)
     return redirect('transportista:lista_pedidos')
 
 def cambiar_estado_hoja(hoja_de_ruta, estado):

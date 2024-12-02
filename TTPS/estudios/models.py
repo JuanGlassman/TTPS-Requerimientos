@@ -6,9 +6,9 @@ from django.utils import timezone
 
 class SampleSet(models.Model):
     id_sample_set = models.AutoField(primary_key=True)
-    cantidad_muestras = models.IntegerField(validators=[MinValueValidator(1)])
     fecha_envio = models.DateField(null=True, blank=True)
     fecha_devolucion = models.DateField(null=True, blank=True)
+    estudios = models.ManyToManyField('Estudio', blank=True)
 
     def __str__(self):
         return f"Sample Set #{self.id_sample_set}"

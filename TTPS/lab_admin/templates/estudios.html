@@ -13,7 +13,6 @@
     <form method="get" class="d-flex align-items-center gap-2">
         <input type="text" name="search" placeholder="Buscar por ID" value="{{ search_query }}" class="form-control" />
         
-        <!-- Selector de estado -->
         <select name="estado" class="form-select">
             <option value="">Todos los estados</option>
             {% for estado, display in estados.choices %}
@@ -23,7 +22,6 @@
             {% endfor %}
         </select>
 
-        <!-- Botón de búsqueda -->
         <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
 </div>
@@ -91,7 +89,7 @@
                     {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
                         <a href="{% url 'lab_admin:realizar' estudio.id_estudio %}" class="btn btn-primary btn-sm">Realizar muestra</a>
                     {% elif estudio.estado == estados.CENTRALIZADA %}
-                        <a class="btn btn-primary btn-sm">Ver Sample Set</a>
+                        <a href="{% url 'lab_admin:sample_set_detalle' estudio.sample_set.id_sample_set %}" class="btn btn-primary btn-sm">Ver Sample Set</a>
                     {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
                         <a class="btn btn-primary btn-sm" href="{% url 'lab_admin:form_resultado' estudio.id_estudio %}">Cargar resultados</a>
                     {% endif %}
