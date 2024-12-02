@@ -63,7 +63,6 @@
     
     function validarVacio(value) {
         if (value === '') {
-            console.log("Es vacio")
             return false;
         }
         return true;
@@ -132,11 +131,13 @@
 
     function submitForm(action) {
         if (!validarForm()) {
-            return false;
+            return;
         }
         document.getElementById('formAction').value = action;
         document.getElementById('presupuestoForm').submit();
     }
+
+    
     
 </script>
 
