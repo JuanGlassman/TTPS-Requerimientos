@@ -323,7 +323,9 @@ def enviar_sample_set(request, id_sample_set):
 
     estudios = sample_set.estudios.all()
     for estudio in estudios:
-        estudio_enviado_exterior(estudio)
+        res, estudio = estudio_enviado_exterior(estudio)
+        if (res):
+            estudio.save()
 
     sample_set.fecha_envio = timezone.now()
     sample_set.save()
