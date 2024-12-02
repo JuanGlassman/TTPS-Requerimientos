@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-center bg-light">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4" style="color: #6a0dad;">Iniciar sesión</h2>
+        
+
+        <form method="post" action="{% url 'inicio_sesion:login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <div class="d-grid">
+                <button class="btn btn-violet" type="submit">Iniciar sesión</button>
+            </div>
+        </form>
+    </div>
+</div>
+<a href="{% url 'home' %}" class="btn btn-outline-violet">Volver</a>  
+{% endblock %}

@@ -1,0 +1,19 @@
+<!-- editar_lab_admin.html -->
+{% extends 'base.html' %}
+
+{% block title %}Editar de Admin. Laboratorio{% endblock %}
+
+{% block content %}
+
+  <h2>Editar Admin. Laboratorio</h2>
+
+  <form method="post">
+      {% csrf_token %}
+      {{ usuario_form.as_p }}
+      {{ lab_admin_form.as_p }}
+
+      <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+      <a href="{% url 'system_admin:lista_lab_admins' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+
+{% endblock %}

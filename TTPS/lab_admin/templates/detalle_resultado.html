@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Presupuesto</title>
+</head>
+<body>
+    <h1>Hola {{ nombre_paciente }},</h1>
+    <p>Te informamos que el resultado de tu estudio {{ estudio.id_interno }} es:</p>
+    {% if resultado == "positivo" %}
+        <h1 style="color: green">{{ resultado }}</h1> 
+    {% else %}
+        <h1 style="color: red">{{ resultado }}</h1> 
+    {% endif %}
+    <p>Puedes ver el detalle del estudio en la sección de Mis estudios.</p>
+    <p>¡Gracias por confiar en nosotros!</p>
+</body>
+</html>

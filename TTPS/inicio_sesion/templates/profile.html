@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-center">
+        <div class="card shadow p-4" style="width: 100%; max-width: 500px;">
+            <h2 class="text-center mb-4" style="color: #6a0dad;">Perfil de {{user.first_name}}</h2>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>DNI:</strong> {{ user.dni }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Nombre:</strong> {{ user.first_name }} {{ user.last_name }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Fecha de Nacimiento:</strong> 
+                        {{ user.fecha_nacimiento|date:"d/m/Y" }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Género:</strong> 
+                        {% if user.genero == 'M' %} Masculino 
+                        {% elif user.genero == 'F' %} Femenino 
+                        {% else %} Otro 
+                        {% endif %}
+                    </li>
+                    {% if user.rol.nombre == "medico" %}
+                        <li class="list-group-item">
+                            <strong>Especialidad:</strong> {{ medico.especialidad }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Matrícula:</strong> {{ medico.matricula }}
+                        </li>
+                    {% endif %}
+
+                    {% if user.rol.nombre == "paciente" %}
+                        <li class="list-group-item">
+                            <strong>Antecedentes:</strong> {{ paciente.antecedentes }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Historial Médico:</strong> {{ paciente.historial_medico }}
+                        </li>
+                    {% endif %}
+                </ul>
+                <div class="mt-4 d-grid">
+                    <a href="{% url 'inicio_sesion:editar' %}" class="btn btn-violet" >Editar Perfil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a href="{% url 'home' %}" class="btn btn-outline-violet">Volver</a>  
+{% endblock %}

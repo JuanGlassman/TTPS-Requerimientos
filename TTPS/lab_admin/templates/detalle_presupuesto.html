@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Presupuesto</title>
+</head>
+<body>
+    <h1>Hola {{ nombre_paciente }},</h1>
+    <p>Te informamos que el presupuesto para tu estudio ha sido generado:</p>
+    <ul>
+        <li><strong>Costo Exoma:</strong> ${{ costo_exoma }}</li>
+        <li><strong>Costo Genes Extra:</strong> ${{ costo_genes_extra }}</li>
+        <li><strong>Costo Hallazgos Secundarios:</strong> ${{ costo_hallazgos_secundarios|default:0 }}</li>
+        <br>
+        <li><strong>Total:</strong> ${{ total }}</li>
+    </ul>
+    <p>Puedes realizar el pago acercandote al laboratorio más cercano.</p>
+    <p>¡Gracias por confiar en nosotros!</p>
+</body>
+</html>

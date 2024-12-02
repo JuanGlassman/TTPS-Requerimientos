@@ -1,0 +1,67 @@
+<!-- lista_centros.html -->
+{% extends 'base.html' %}
+
+{% block title %}Lista de Centros{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load permisos_tags %}
+    {% if activated %}
+        <h2>Lista de Centros</h2>
+    {% else %}
+        <h2>Lista de Centros Desactivados</h2>
+    {% endif %}
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Longitud</th>
+                <th>Latitud</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for centro in object_list %}
+            <tr>
+                <td>{{ centro.nombre }}</td>
+                <td>{{ centro.longitud }}</td>
+                <td>{{ centro.latitud }}</td>
+                <td>{{ centro.telefono }}</td>
+                <td>{{ centro.email }}</td>
+                <td>
+                    {% tiene_permiso user "centro_update" as puede_ver %}
+                    {% if puede_ver %}
+                        <a class="btn btn-secondary" href="{% url 'system_admin:editar_centro' centro.pk %}">Editar</a>
+                    {% endif %}
+                    {% if centro.is_deleted %}
+                        {% tiene_permiso user "centro_destroy" as puede_ver %}
+                        {% if puede_ver %}
+                            <a class="btn btn-danger" href="{% url 'system_admin:eliminar_centro' centro.pk %}" onclick="return confirm('¿Estás seguro de eliminar este centro?')">Eliminar</a>
+                        {% endif %}
+                    {% else %}
+                        {% tiene_permiso user "centro_update" as puede_ver %}
+                        {% if puede_ver %}
+                            <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">No hay centros para mostrar.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% tiene_permiso user "centro_create" as puede_ver %}
+    {% if puede_ver %}
+        <a class="btn btn-primary" href="{% url 'system_admin:crear_centro' %}">Agregar nuevo centro</a>
+    {% endif %}
+    {% tiene_permiso user "centro_create" as puede_ver %}
+    {% if puede_ver %}
+        <a class="btn btn-secondary" href="{% url 'system_admin:centros_desactivados' %}">Centros desactivados</a>
+    {% endif %}
+{% endblock %}

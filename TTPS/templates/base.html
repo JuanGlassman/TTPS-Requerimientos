@@ -1,49 +1,171 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/favicon.ico'%}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Página Base </title>
-    <!-- Enlace al CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
     <style>
-        /* Color violeta para el navbar */
-        .navbar-custom {
-            background-color: #6a0dad;
+        /* Evita el desbordamiento horizontal */
+        body, html {
+            overflow-x: hidden;
         }
+        
+        .btn-outline-violet {
+            color: #6a0dad;
+            border-color: #6a0dad;
+        }
+
+        .btn-outline-violet:hover {
+            background-color: #6a0dad;
+            color: white;
+        }
+
+        .btn-violet {
+            background-color: #6a0dad;
+            border-color: #6a0dad;
+            color: white;
+        }
+
+        .btn-violet:hover {
+            background-color: #6a0dad;
+            color: white;
+        }
+
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    {% load static %}
+    {% load permisos_tags %}
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
+    <nav class="navbar navbar-expand-lg navbar-custom" style="background-color: #6a0dad;">
+        {% block navbar %}
         <div class="container-fluid">
             <!-- Imagen en el navbar -->
-            <a class="navbar-brand" href="#">
-                <img src="{% static 'Logo.jpg'%}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+            <a class="navbar-brand ms-4" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png'%}" alt="Logo" style="height: 50px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <!-- Enlace a Inicio -->
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Inicio</a>
-                    </li>
+            <div class="collapse navbar-collapse " id="navbarNav" style>
+                <ul class="navbar-nav mx-auto mt-2 mt-lg-0">
+                    {% tiene_permiso user "lista_estudios_set" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'lab_admin:estudios' %}">Estudios</a>
+                        </li>
+                    {% endif %}
+
+                    {% tiene_permiso user "lista_usuarios" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_usuarios' %}">Usuarios</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% tiene_permiso user "lista_lab_admin" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_lab_admins' %}">Admistradores de laboratorio</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% tiene_permiso user "lista_medicos" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_medicos' %}">Medicos</a>
+                        </li>
+                    {% endif %}
+
+                    {% tiene_permiso user "lista_centros" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'system_admin:lista_centros' %}">Centros</a>
+                        </li>
+                    {% endif %}
+
+                    
+                    {% tiene_permiso user "lista_pacientes" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'medicos:listar_pacientes' %}">Pacientes</a>
+                        </li>
+                    {% endif %}
+
+                    {% tiene_permiso user "nav_bar_mis_estudios" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'pacientes:historial_estudios_paciente' %}">Mis estudios</a>
+                        </li>
+                    {% endif %}
+                    {% tiene_permiso user "transportista" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'transportista:lista_pedidos' %}">Pedidos</a>
+                        </li>
+                    {% endif %}
+
+                    {% tiene_permiso user "lista_estudios_set" as puede_ver %}
+                    {% if puede_ver %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'lab_admin:sample_set_list' %}">Sample Set</a>
+                        </li>
+                    {% endif %}
                 </ul>
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> {{ user.first_name }}
+                        </button>
+                        <!-- Ajuste de posición y ancho del dropdown -->
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="max-width: 200px;">
+                            <li><a href="{% url 'inicio_sesion:perfil' %}" class="dropdown-item">Mi Perfil</a></li> 
+                            <li><a href="{% url 'inicio_sesion:cambiar_contrasena' %}" class="dropdown-item">Cambiar Contraseña</a></li>
+                            <li><a href="{% url 'inicio_sesion:logout' %}" class="dropdown-item">Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'inicio_sesion:login' %}" class="btn btn-outline-light">Iniciar Sesión</a>
+                {% endif %}
             </div>
         </div>
+        {% endblock %}
     </nav>
-
-    <!-- Contenido principal -->
-    <div class="container mt-5">
-        <h1>Bienvenido a LabCenter</h1>
-        <p>Este es un ejemplo de texto inicial.</p>
+    <main>
+    
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 
+    </main>
+    <div id="container" class="container mt-4 p-4 bg-light rounded shadow-sm flex-grow-1">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block footer %}
+    <footer class="footer text-white text-center mt-4 py-3" style="background-color: #6a0dad;">
+        <div class="container">
+            <p>© 2024 UNLP. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    {% endblock %}
+
+    
     <!-- Scripts de Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    {% block  scripts %}
+    {% endblock %}
 </body>
 </html>

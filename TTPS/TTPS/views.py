@@ -1,6 +1,9 @@
 from django.shortcuts import render
 
-# Create your views here.
+def acceso_denegado_view(request, exception=None):
+    return render(request, 'error_403.html', status=403)
 
-def base(request):
-    return render(request, 'base.html')
+
+
+def home(request):
+    return render(request, 'home.html')

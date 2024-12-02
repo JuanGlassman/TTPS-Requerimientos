@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,11 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'inicio_sesion',
+    'estudios',
     'lab_admin',
     'medicos',
     'pacientes',
     'system_admin',
+    'inicio_sesion',
+    'transportista',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +89,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'inicio_sesion.Usuario'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -111,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 USE_I18N = True
 
@@ -121,23 +125,34 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-MEDIA_URL = '/media/' #esto es para que las fotos vayan a esta carpeta
-MEDIA_ROOT = os.path.join(BASE_DIR,'static','media')
+MEDIA_URL = '/media/images/' #esto es para que las fotos vayan a esta carpeta
+MEDIA_ROOT = os.path.join(BASE_DIR,'static','media', "images")
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'inicio_sesion/static'),
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'estudios/static'),
     os.path.join(BASE_DIR, 'lab_admin/static'),
     os.path.join(BASE_DIR, 'medicos/static'),
     os.path.join(BASE_DIR, 'pacientes/static'),
     os.path.join(BASE_DIR, 'system_admin/static'),
+    os.path.join(BASE_DIR, 'inicio_sesion/static'),
+    os.path.join(BASE_DIR, 'transportista/static'),
     ]
 
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'  # Siempre debe ser 'apikey'
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+
+

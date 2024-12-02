@@ -1,0 +1,230 @@
+.container-transportista {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px;
+  box-sizing: border-box; /* Asegura que padding no rompa el diseño */
+}
+
+/* Info section styles */
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 1em;
+}
+
+/* Button styles */
+.btn-transportista {
+  width: calc(100% - 20px); /* Deja un pequeño margen lateral */
+  max-width: 400px; /* No exceder un ancho */
+  background-color: #6a0dad;
+  color: white;
+  border: none;
+  padding: 15px;
+  text-align: center;
+  font-size: 1em;
+  margin: 10px auto; /* Centra el botón */
+  cursor: pointer;
+  border-radius: 5px; /* Bordes redondeados */
+  display: block;
+  text-decoration: none; /* Elimina subrayado */
+}
+
+/* Button styles */
+.btn-hora {
+  width: calc(100% - 20px); /* Deja un pequeño margen lateral */
+  max-width: 400px; /* No exceder un ancho */
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  border: 2px solid black;
+  padding: 15px;
+  text-align: center;
+  font-size: 1em;
+  margin: 10px auto; /* Centra el botón */
+  cursor: default;
+  border-radius: 5px; /* Bordes redondeados */
+  display: block;
+  text-decoration: none; /* Elimina subrayado */
+}
+
+/* Dynamic message styles */
+.message {
+  text-align: center;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* List styles */
+.pedido-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.pedido-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Asegura que texto y botón estén alineados */
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.pedido-item:last-child {
+  border-bottom: none;
+}
+
+.pedido-item div {
+  flex: 1; /* El texto ocupa el máximo espacio */
+}
+
+.pedido-item a {
+  background-color: #6a0dad;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9em;
+  border-radius: 5px;
+  margin-left: 10px; /* Espacio entre texto y botón */
+  flex-shrink: 0; /* El botón no se reduce */
+  text-decoration: none; /* Elimina subrayado */
+}
+
+/* Footer button styles */
+.boton-abajo-transportista {
+  width: calc(100% - 20px);
+  max-width: 400px;
+  padding: 15px;
+  font-size: 1em;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background-color: #6a0dad;
+  color: white;
+  margin: 10px auto; /* Centrado */
+  border-radius: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .info {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+  }
+
+  .pedido-item {
+      flex-direction: row; /* Mantiene los elementos en fila */
+      justify-content: space-between; /* Espacio uniforme */
+      align-items: center; /* Botón y texto a la misma altura */
+  }
+
+  .pedido-item div {
+      text-align: left;
+  }
+
+  .pedido-item button {
+      width: auto; /* El botón tiene ancho según su contenido */
+      margin-top: 0; /* Sin espacio adicional */
+  }
+}
+
+/* Área de firma digital */
+.signature-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.signature-label {
+  font-size: 1em;
+  margin-bottom: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.signature-canvas {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 400px;
+  height: 150px;
+  background-color: #fff;
+  cursor: crosshair;
+}
+
+.clear-signature-btn {
+  background-color: #6a0dad;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 0.9em;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Campo de observaciones */
+.observations-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.observations-label {
+  font-size: 1em;
+  margin-bottom: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.observations-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  resize: none; /* Evita redimensionar el campo */
+}
+
+.pedido-item button {
+  width: calc(100% - 20px); /* Deja un pequeño margen lateral */
+  max-width: 100px; /* No exceder un ancho */
+  background-color: #1ccf49;
+  color: rgb(0, 0, 0);
+  border: 2px solid black;
+  padding: 15px;
+  text-align: center;
+  font-size: 1em;
+  margin: 10px auto; /* Centra el botón */
+  cursor: default;
+  border-radius: 5px; /* Bordes redondeados */
+  display: block;
+  text-decoration: none; /* Elimina subrayado */
+}
+
+.btn-finalizado {
+  width: calc(100% - 20px); /* Deja un pequeño margen lateral */
+  max-width: 400px; /* No exceder un ancho */
+  background-color: #7ac08c;
+  color: rgb(0, 0, 0);
+  border: 2px solid black;
+  padding: 15px;
+  text-align: center;
+  font-size: 1em;
+  margin: 10px auto; /* Centra el botón */
+  cursor: default;
+  border-radius: 5px; /* Bordes redondeados */
+  display: block;
+  text-decoration: none; /* Elimina subrayado */
+}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load permisos_tags %}
+
+{% block content %}
+{% load static %}
+
+<div class="d-flex justify-content-between">
+    <h1 class="mb-2">Estudio {{ estudio.id_interno}} </h1>    
+
+    <div class="d-flex gap-2">
+            {% tiene_permiso user "cambiar_estado" as puede_ver %}
+            {% if puede_ver %}
+            <div>  
+                {% if estudio.estado == estados.INICIADO %}
+                    <a class="btn btn-primary" href="{% url 'lab_admin:form_presupuesto' estudio.id_estudio %}">Editar Presupuesto</a>
+                {% elif estudio.estado == estados.PRESUPUESTADO %}
+                    <form action="{% url 'lab_admin:pagar_admin' estudio.id_estudio %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit">Pagado</button>
+                    </form>
+                {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
+                    <a class="btn btn-primary" href="{% url 'lab_admin:realizar' estudio.id_estudio %}" >Realizar muestra</a>                
+                {% elif estudio.estado == estados.CENTRALIZADA %}
+                    <a class="btn btn-primary">Ver Sample Set</a>
+                {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
+                    <a class="btn btn-primary">Cargar resultados</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<dl class="row row-gap-3 row-gap-lg-2">
+    <dt class="col-5 fw-medium">Tipo de estudio</dt>
+    <dd class="col-7 fw-light">{{ estudio.tipo_estudio }}</dd>
+
+    <dt class="col-5 fw-medium">Patología</dt>
+    <dd class="col-7 fw-light">{{ estudio.patologia.nombre }}</dd>
+
+    <dt class="col-5 fw-medium">Gen</dt>
+    <dd class="col-7 fw-light">{{ estudio.patologia.gen }}</dd>
+
+    <dt class="col-5 fw-medium">Sintomas</dt>
+    <dd class="col-7 fw-light">
+        {% for sintoma in estudio.sintomas.all %}
+            {{ sintoma.nombre }} -
+        {% endfor %}
+    </dd>
+
+    <dt class="col-5 fw-medium">Tipo de sospecha</dt>
+    <dd class="col-7 fw-light">{%  if estudio.tipo_sospecha == 0 %} Puntual {% else %} Familiar {% endif %}</dd>
+
+    {% if estudio.tipo_sospecha == 1 %}
+        <dt class="col-5 fw-medium">Parentesco</dt>
+        <dd class="col-7 fw-light">{{ estudio.parentesco }}</dd>
+    {% endif %}
+
+    <dt class="col-5 fw-medium">Estado</dt>
+    <dd class="col-7 fw-light">        
+        {% if estudio.estado == estados.PAGADO %}
+            <span class="badge rounded-pill text-bg-primary" 
+            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe que firmar consentimiento">
+                PAGADO
+            </span>
+        {% elif estudio.estado == estados.AUTORIZADO %}
+            <span type="button" class="badge rounded-pill text-bg-primary" 
+            data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="El paciente debe confirmar un turno">
+                AUTORIZADO
+            </span>         
+        {% elif estudio.estado == estados.FINALIZADO %}
+            <span class="badge rounded-pill text-bg-success">FINALIZADO</span>
+        {% elif estudio.estado == estados.CANCELADO %}
+            <span class="badge rounded-pill text-bg-danger">CANCELADO</span>
+        {% else %}
+            <span class="badge rounded-pill text-bg-primary">{{ estudio.estado|upper }}</span>
+        {% endif %}
+    </dd>
+
+    <dt class="col-5 fw-medium">Hallazgos secundarios</dt>
+    <dd class="col-7 fw-light">{% if estudio.hallazgos_secundarios %} Si {% else %} No {% endif %}</dd>
+</dl>
+
+<h3>Presupuesto</h3>
+<dl class="row row-gap-3 row-gap-lg-2">
+    <dt class="col-5 fw-medium">Costo Exoma</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_exoma}}</dd>
+
+    <dt class="col-5 fw-medium">Costo Genes extra</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_genes_extra }}</dd>
+
+    <dt class="col-5 fw-medium">Costo Hallazgos secundarios</dt>
+    <dd class="col-7 fw-light">{{ estudio.presupuesto.costo_hallazgos_secundarios }}</dd>    
+    
+    <dt class="col-5 fw-medium"><b>Costo total</b></dt>
+    <dd class="col-7 fw-light"><b>{{ estudio.presupuesto.total }}</b></dd>
+    
+</dl>
+
+<hr> 
+
+<div class="card shadow-sm" style="width: 18rem;">
+    <div class="card-body text-center">
+        <h5 class="card-title">Resultado del Estudio</h5>
+        <p class="card-text">
+            {% if estudio.resultado %}
+                {% if estudio.resultado == "positivo" %}
+                    <span class="badge rounded-pill text-bg-success">Positivo</span>
+                {% elif estudio.resultado == "negativo" %}
+                    <span class="badge rounded-pill text-bg-danger">Negativo</span>
+                {% endif %}
+            {% else %}
+                <span class="badge rounded-pill text-bg-secondary">No cargado</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
