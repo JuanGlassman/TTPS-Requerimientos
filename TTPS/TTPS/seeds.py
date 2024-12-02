@@ -349,11 +349,6 @@ def run_seeds():
     res, estudio = estudios_estado.estudio_confirmado(estudio)
     estudio.save()
 
-    transportista_view.agregar_estudio_a_pedido(estudio.id_estudio)
-
-    res, estudio = estudios_estado.estudio_realizado(estudio)
-    estudio.save()
-
 
     estudio2 = Estudio.objects.create(
         id_interno="1245_LIR_ROD",
@@ -396,12 +391,6 @@ def run_seeds():
     res, estudio = estudios_estado.estudio_confirmado(estudio)
     estudio.save()
 
-    transportista_view.agregar_estudio_a_pedido(estudio.id_estudio)
-
-    res, estudio = estudios_estado.estudio_realizado(estudio)
-    estudio.save()
-    
-
     estudio3 = Estudio.objects.create(
         id_interno="1245_LIR_ROD",
         fecha=date.today(),
@@ -442,12 +431,6 @@ def run_seeds():
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
     estudio.save()
-
-    transportista_view.agregar_estudio_a_pedido(estudio.id_estudio)
-
-    res, estudio = estudios_estado.estudio_realizado(estudio)
-    estudio.save()
-
     
     estudio4 = Estudio.objects.create(
         id_interno="5965_VER_SOF",
@@ -489,13 +472,7 @@ def run_seeds():
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
     estudio.save()
-
-    transportista_view.agregar_estudio_a_pedido(estudio.id_estudio)
-
-    res, estudio = estudios_estado.estudio_realizado(estudio)
-    estudio.save()
     
-
     estudio5 = Estudio.objects.create(
         id_interno="1275_REY_VAL",
         fecha=date.today(),
@@ -537,12 +514,6 @@ def run_seeds():
     res, estudio = estudios_estado.estudio_confirmado(estudio)
     estudio.save()
 
-    transportista_view.agregar_estudio_a_pedido(estudio.id_estudio)
-
-    res, estudio = estudios_estado.estudio_realizado(estudio)
-    estudio.save()
-
-
     estudio6 = Estudio.objects.create(
         id_interno="1275_LIR_VAL",
         fecha=date.today(),
@@ -582,11 +553,6 @@ def run_seeds():
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
-    estudio.save()
-
-    transportista_view.agregar_estudio_a_pedido(estudio.id_estudio)
-
-    res, estudio = estudios_estado.estudio_realizado(estudio)
     estudio.save()
   
     # estudio8 = Estudio.objects.create(
