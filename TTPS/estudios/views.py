@@ -138,7 +138,7 @@ def estudio(request, estudio_id):
 def asignar_a_sample_set(estudio):
     sample_set = SampleSet.objects.annotate(estudio_count=Count('estudios')).filter(
         fecha_envio__isnull=True,
-        estudio_count__lt=100
+        estudio_count__lt=5 #100
     ).first()
 
     if not sample_set:
