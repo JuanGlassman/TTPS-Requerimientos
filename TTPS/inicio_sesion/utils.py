@@ -24,7 +24,7 @@ PERMISOS_POR_ROL = {
         "lista_centros", "centro_create", "centro_update", "centro_destroy",
         "lista_usuarios", "usuario_create", "usuario_update", "usuario_destroy",
         "pedido_create", "ruta_create", "pedido_update", "ruta_update",
-        "transportista", "transportista_update", "transportista_destroy", "transportista_create",
+        "transportista", "transportista_update", "transportista_destroy", "transportista_create", "ver_historial_estados"
     ],
     "lab_admin": [
         "lista_medicos", "medico_create", "medico_update", "medico_destroy",
@@ -32,14 +32,14 @@ PERMISOS_POR_ROL = {
         "cargar_muestra", "lista_sample_set", "enviar_sample_set", 
         "lista_estudios_set", "eliminar_estudios_set", "agregar_estudios_set", 
         "pedido_create", "ruta_create", "pedido_update", "ruta_update",
-        "presupuestar", "pagar_estudio", "cancelar_estudio", "cargar_resultado"
+        "presupuestar", "pagar_estudio", "cancelar_estudio", "cargar_resultado", "ver_historial_estados"
     ],
     "medico": [
         "lista_pacientes", "paciente_create", "paciente_update", "paciente_destroy", "paciente_show",
-        "iniciar_estudio", "historial_estudios_paciente", "estudio_show", "usuario_create"
+        "iniciar_estudio", "historial_estudios_paciente", "estudio_show", "usuario_create", "ver_historial_estados"
     ],
     "paciente": [
-        "historial_estudios_paciente", "elegir_turno", "estudio_show", "dar_concentimiento", "nav_bar_mis_estudios"
+        "historial_estudios_paciente", "elegir_turno", "estudio_show", "dar_concentimiento", "nav_bar_mis_estudios", "ver_historial_estados"
     ],
     "transportista": [
         "transportista", "transportista_update", "transportista_destroy", "transportista_create"
