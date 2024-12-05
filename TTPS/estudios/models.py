@@ -3,6 +3,8 @@ from pacientes.models import Paciente
 from medicos.models import Medico
 from django.core.validators import MinValueValidator
 from django.utils import timezone
+from datetime import datetime
+from django.utils.timezone import is_naive, make_aware, now
 
 class SampleSet(models.Model):
     id_sample_set = models.AutoField(primary_key=True)
@@ -99,3 +101,20 @@ class HistorialEstudio(models.Model):
     )
     fecha_inicio = models.DateTimeField(null=False, default=timezone.now)
     fecha_fin = models.DateTimeField(null=True)
+
+    @property
+    def tiempo_en_estado(self):
+        """
+        Calcula el tiempo que el estudio estuvo en un estado.
+        Si no tiene fecha_fin, calcula el tiempo desde fecha_inicio hasta ahora.
+        """
+        inicio = self.fecha_inicio
+        fin = self.fecha_fin or now()
+
+        # Asegurarse de que ambas fechas sean aware
+        if is_naive(inicio):
+            inicio = make_aware(inicio)
+        if is_naive(fin):
+            fin = make_aware(fin)
+
+        return fin - inicio

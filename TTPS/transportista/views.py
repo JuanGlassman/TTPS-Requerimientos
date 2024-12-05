@@ -40,13 +40,14 @@ def crear_pedido(estudio, centro_id):
 
 def crear_hoja_de_ruta(pedido):
     transportista_id = Transportista.objects.first().id_transportista
-    hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today() + timedelta(days=1), estado='pendiente')
+    # hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today() + timedelta(days=1), estado='pendiente')
+    hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today(), estado='pendiente')
     hoja_de_ruta.pedidos.add(pedido)
     hoja_de_ruta.save()
     return hoja_de_ruta
 
 def agregar_pedido_a_hoja_de_ruta(pedido, hoja_de_ruta_id):
-    hoja_de_ruta = HojaDeRuta.objects.get(id=hoja_de_ruta_id)
+    hoja_de_ruta = HojaDeRuta.objects.get(id_hoja_de_ruta=hoja_de_ruta_id)
     hoja_de_ruta.pedidos.add(pedido)
     hoja_de_ruta.save()
     return hoja_de_ruta
@@ -62,7 +63,8 @@ def agregar_estudio_a_pedido(estudio_id):
     estudio = Estudio.objects.get(id_estudio=estudio_id)
     turno = Turno.objects.get(estudio=estudio)
     centro_id = turno.centro.id_centro
-    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today() + timedelta(days=1)).first()
+    # hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today() + timedelta(days=1)).first()
+    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today()).first()
     if not hoja_de_ruta:
         pedido = crear_pedido(estudio, centro_id)
         hoja_de_ruta = crear_hoja_de_ruta(pedido)

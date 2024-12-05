@@ -34,7 +34,18 @@
                     </li>
                 </ul>
             </div>
-            <a href="{% url 'medicos:estudios_paciente' paciente.id_paciente %}" class="btn btn-outline-violet">Ver su Historial de estudios</a>  
+            <div class="btn-group" role="group">
+                <a href="{% url 'medicos:estudios_paciente' paciente.id_paciente %}" 
+                   class="btn btn-outline-violet">
+                   Ver su Historial de estudios
+                </a>
+        
+                <a href="{% url 'medicos:editar_paciente' paciente.id_paciente %}" 
+                   class="btn btn-secondary">
+                   Editar
+                </a>
+            </div>
+            
         </div>
     </div>
 </div>
