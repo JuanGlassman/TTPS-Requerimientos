@@ -5,7 +5,6 @@ app_name = 'system_admin'
 
 urlpatterns = [
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
-    path('usuarios/crear', views.crear_usuario, name='crear_usuario'),
     path('usuarios/<int:pk>/editar/', views.editar_usuario, name='editar_usuario'),
     path('usuarios/eliminar/<int:pk>', views.eliminar_usuario, name='eliminar_usuario'),
     path('usuarios/activar/<int:pk>', views.activar_usuario, name='activar_usuario'),

@@ -7,16 +7,6 @@
 {% load static %}
 {% load permisos_tags %}
     {% if activated %}
-        {% tiene_permiso user "lista_usuarios" as puede_ver %}
-        {% if puede_ver %}
-        <a class="btn btn-secondary" href="{% url 'system_admin:lista_usuarios' %}">Usuarios</a>
-        {% endif %}
-    
-        {% tiene_permiso user "lista_medicos" as puede_ver %}
-        {% if puede_ver %}
-        <a class="btn btn-secondary" href="{% url 'system_admin:lista_medicos' %}">Medicos</a>
-        {% endif %}
-    <hr>
     <h2>Lista de Admin. Laboratorio</h2>
     {% else %}
     <h2>Lista de Admin. Laboratorio Desactivados</h2>

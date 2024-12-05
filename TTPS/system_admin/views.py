@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django import forms
 from django.db import transaction
-from inicio_sesion.models import Usuario
-from inicio_sesion.models import Rol
+from inicio_sesion.models import Usuario, Rol
 from medicos.models import Medico
 from lab_admin.models import LabAdmin
 from lab_admin.models import Centro
@@ -21,7 +19,7 @@ from TTPS.settings import EMAIL_HOST_PASSWORD
 @login_required
 @permission_required('lista_usuarios')
 def lista_usuarios(request):
-    usuarios = Usuario.objects.filter(is_deleted=False).order_by('dni')  # Ordena por DNI
+    usuarios = Usuario.objects.filter(is_deleted=False).exclude(dni=1).order_by('dni')  # Ordena por DNI
     paginator = Paginator(usuarios, 10)  # 10 usuarios por página
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -35,32 +33,6 @@ def lista_usuarios_desactivados(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'lista_usuarios.html', {'object_list': page_obj, 'activated': False})
-
-@login_required
-@permission_required('usuario_create')
-def crear_usuario(request):
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
-            usuario, password = form.save()
-            enviar_correo_nuevo_usuario(usuario, password)
-            return redirect('system_admin:lista_usuarios')
-    else:
-        form = UsuarioForm()
-    return render(request, 'formulario_usuario.html', {'form': form})
-
-@login_required
-@permission_required('usuario_update')
-def editar_usuario(request, pk):
-    usuario = get_object_or_404(Usuario, pk=pk)
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            return redirect('system_admin:lista_usuarios')
-    else:
-        form = UsuarioForm(instance=usuario)
-    return render(request, 'formulario_usuario.html', {'form': form})
 
 @login_required
 @permission_required('usuario_destroy')
@@ -103,15 +75,16 @@ def lista_medicos_desactivados(request):
 @transaction.atomic
 def crear_medico_view(request):
     if request.method == 'POST':
-        usuario_form = UsuarioForm(request.POST, rol_required=False)
+        usuario_form = UsuarioForm(request.POST)
         medico_form = MedicoForm(request.POST)
 
         if usuario_form.is_valid() and medico_form.is_valid():
             rol = get_object_or_404(Rol, nombre='medico')
-            usuario = usuario_form.save(rol=rol)
+            usuario, password = usuario_form.save(rol=rol)
             medico = medico_form.save(commit=False)
             medico.usuario = usuario
             medico.save()
+            enviar_correo_nuevo_usuario(usuario, password)
             return redirect('system_admin:lista_medicos')
 
     else:
@@ -167,17 +140,17 @@ def lista_lab_admins_desactivados(request):
 @permission_required('lab_admin_create')
 def crear_lab_admin_view(request):
     if request.method == 'POST':
-        usuario_form = UsuarioForm(request.POST, rol_required=False)
+        usuario_form = UsuarioForm(request.POST)
 
         if usuario_form.is_valid():
-            usuario = usuario_form.save(commit=False)
+            usuario, password = usuario_form.save(commit=False)
             rol = get_object_or_404(Rol, nombre='lab_admin')
             usuario.username = usuario.dni
             usuario.rol = rol
             usuario.save()
             lab_admin = LabAdmin(usuario=usuario)
             lab_admin.save()
-            enviar_correo_nuevo_usuario(usuario)
+            enviar_correo_nuevo_usuario(usuario, password)
             return redirect('system_admin:lista_lab_admins')
 
     else:
@@ -294,3 +267,17 @@ def enviar_correo_nuevo_usuario(usuario, password):
 
         except Exception as e:
             print(f"Error al enviar correo: {e}")
+
+
+@login_required
+@permission_required('usuario_update')
+def editar_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('system_admin:lista_usuarios')
+    else:
+        form = UsuarioForm(instance=usuario)
+    return render(request, 'formulario_usuario.html', {'form': form})
