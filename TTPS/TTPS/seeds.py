@@ -351,11 +351,11 @@ def run_seeds():
 
 
     estudio2 = Estudio.objects.create(
-        id_interno="1245_LIR_ROD",
+        id_interno="1245_VER_SOF",
         fecha=date.today(),
         tipo_estudio="Exoma",
         patologia_id=patologia1.id_enfermedad,
-        paciente_id = paciente1.id_paciente,
+        paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.INICIADO,
         tipo_sospecha = 0
@@ -392,11 +392,11 @@ def run_seeds():
     estudio.save()
 
     estudio3 = Estudio.objects.create(
-        id_interno="1245_LIR_ROD",
+        id_interno="3245_REY_VAL",
         fecha=date.today(),
         tipo_estudio="Exoma",
         patologia_id = patologia3.id_enfermedad,
-        paciente_id = paciente1.id_paciente,
+        paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.INICIADO,
         tipo_sospecha = 0
