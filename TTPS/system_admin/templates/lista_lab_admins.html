@@ -18,7 +18,6 @@
                 <th>DNI</th>
                 <th>Nombre</th>
                 <th>Email</th>
-                <th>Rol</th>
                 <th>Operaciones</th>
             </tr>
         </thead>
@@ -28,7 +27,6 @@
                 <td>{{ lab_admin.usuario.dni }}</td>
                 <td>{{ lab_admin.usuario.first_name }} {{ lab_admin.usuario.last_name }}</td>
                 <td>{{ lab_admin.usuario.email }}</td>
-                <td>{{ lab_admin.usuario.rol }}</td>
                 <td>
                     {% tiene_permiso user "lab_admin_update" as puede_ver %}
                     {% if puede_ver %}

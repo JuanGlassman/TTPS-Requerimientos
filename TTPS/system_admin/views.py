@@ -17,6 +17,40 @@ from sendgrid.helpers.mail import Mail
 from TTPS.settings import EMAIL_HOST_PASSWORD
 
 @login_required
+@permission_required('transportista_create')
+@transaction.atomic
+def crear_usuario(request):
+    if request.method == 'POST':
+        usuario_form = UsuarioForm(request.POST)
+        if usuario_form.is_valid():
+            rol = get_object_or_404(Rol, nombre='transportista')
+            usuario, password = usuario_form.save(rol=rol)
+            enviar_correo_nuevo_usuario(usuario, password)
+            return redirect('system_admin:lista_usuarios')
+    else:
+        usuario_form = UsuarioForm()
+        
+    return render(request, 'formulario_usuario.html', 
+                  {'usuario_form': usuario_form, 
+                    'titulo': "Crear Transportista"})
+
+
+@login_required
+@permission_required('transportista_update')
+def editar_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('system_admin:lista_usuarios')
+    else:
+        form = UsuarioForm(instance=usuario)
+    return render(request, 'formulario_usuario.html', 
+                  {'usuario_form': form, 
+                    'titulo': "Editar Transportista"})
+
+@login_required
 @permission_required('lista_usuarios')
 def lista_usuarios(request):
     usuarios = Usuario.objects.filter(is_deleted=False).exclude(dni=1).order_by('dni')  # Ordena por DNI
@@ -268,16 +302,3 @@ def enviar_correo_nuevo_usuario(usuario, password):
         except Exception as e:
             print(f"Error al enviar correo: {e}")
 
-
-@login_required
-@permission_required('usuario_update')
-def editar_usuario(request, pk):
-    usuario = get_object_or_404(Usuario, pk=pk)
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            return redirect('system_admin:lista_usuarios')
-    else:
-        form = UsuarioForm(instance=usuario)
-    return render(request, 'formulario_usuario.html', {'form': form})

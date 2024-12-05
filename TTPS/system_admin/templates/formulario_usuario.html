@@ -1,16 +1,16 @@
 <!-- formulario_usuario.html -->
 {% extends 'base.html' %}
 
-{% block title %}Formulario de Usuario{% endblock %}
+{% block title %}Formulario de Transportista{% endblock %}
 
 {% block content %}
-    <h2>{% if form.instance.pk %}Editar Usuario{% else %}Crear Usuario{% endif %}</h2>
+    <h1>{{ titulo }}</h1>
 
     <form method="POST" class="p-4 rounded border border-light bg-light shadow-sm">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ usuario_form.as_p }}
 
-        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
+        <button type="submit" class="btn btn-primary">Guardar Transportista</button>
     </form>
 
     <a class="btn btn-secondary" href="{% url 'system_admin:lista_usuarios' %}">Volver</a>
