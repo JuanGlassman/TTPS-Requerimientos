@@ -8,7 +8,7 @@
   
     <form method="get" class="d-flex align-items-center gap-2">
         <input type="text" name="search" placeholder="Buscar por nombre o apellido" value="{{ search_query }}" class="form-control" style="max-width: 300px;"/>
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <button type="submit" class="btn btn-violet">Buscar</button>
     </form>
     
     {% if user.rol.nombre == "medico" %}
@@ -34,13 +34,19 @@
             <td>{{ paciente.usuario.first_name }}</td>
             <td>{{ paciente.usuario.last_name }}</td>
             <td>
-                <a class="btn btn-secondary" href="{% url 'pacientes:paciente_detalle' paciente.id_paciente %}">Detalle paciente</a>
+                <a class="btn btn-outline-violet" href="{% url 'pacientes:paciente_detalle' paciente.id_paciente %}">
+                    Detalle paciente
+                </a>
                 {% if paciente.estudio_set.all %}
                     {% with ultimo_estudio=paciente.estudio_set.last %}
-                        <a class="btn btn-secondary" href="{% url 'estudios:estudio_detalle' ultimo_estudio.id_estudio %}">Detalle estudio</a>
+                        <a class="btn btn-warning" href="{% url 'estudios:estudio_detalle' ultimo_estudio.id_estudio %}">
+                            Detalle estudio
+                        </a>
                     {% endwith %}
                 {% else %}
-                    <a class="btn btn-primary" href="{% url 'medicos:iniciar_estudio_paciente' paciente.id_paciente %}">Iniciar estudio</a>
+                    <a class="btn btn-success" href="{% url 'medicos:iniciar_estudio_paciente' paciente.id_paciente %}">
+                        Iniciar estudio
+                    </a>
                 {% endif %}
             </td>
         </tr>
@@ -48,7 +54,6 @@
     </tbody>
 </table>
 
-<!-- Paginador -->
 <div class="d-flex justify-content-center">
     <nav>
         <ul class="pagination">

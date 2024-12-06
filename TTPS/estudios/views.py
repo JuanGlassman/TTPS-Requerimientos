@@ -1,7 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from estudios.models import Estudio, EstadoEstudio, HistorialEstudio
+from django.shortcuts import render, get_object_or_404
+from estudios.models import Estudio, EstadoEstudio, HistorialEstudio, SampleSet
 from datetime import datetime
+from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from inicio_sesion.views import permission_required
 
 def estudio_terminado(estudio):
     return estudio.estado in [EstadoEstudio.CANCELADO, EstadoEstudio.FINALIZADO]
@@ -96,6 +98,7 @@ def estudio_centralizado(estudio):
         return False, estudio
     if (estudio.estado == EstadoEstudio.REALIZADA):
         estudio.estado = EstadoEstudio.CENTRALIZADA
+        asignar_a_sample_set(estudio)
         registrar_historial(estudio, EstadoEstudio.REALIZADA, EstadoEstudio.CENTRALIZADA)
         return True, estudio
     else:
@@ -130,3 +133,36 @@ def estudio_cancelado(estudio):
 def estudio(request, estudio_id):
     estudio = get_object_or_404(Estudio, id_estudio=estudio_id)
     return render(request, "estudio.html", {"estudio": estudio, "estados": EstadoEstudio})
+
+
+
+def asignar_a_sample_set(estudio):
+    sample_set = SampleSet.objects.annotate(estudio_count=Count('estudios')).filter(
+        fecha_envio__isnull=True,
+        estudio_count__lt=5 #100
+    ).first()
+
+    if not sample_set:
+        sample_set = SampleSet.objects.create()
+
+    estudio.sample_set = sample_set
+    estudio.save()
+
+    sample_set.estudios.add(estudio)
+    sample_set.save()
+
+    return sample_set
+
+
+
+@login_required
+@permission_required('ver_historial_estados')
+def historial_estudio_view(request, id_estudio):
+    estudio = get_object_or_404(Estudio, id_estudio=id_estudio)
+    historial = HistorialEstudio.objects.filter(estudio=estudio).order_by('fecha_inicio')
+
+    context = {
+        'estudio': estudio,
+        'historial': historial,
+    }
+    return render(request, 'historial_estudios.html', context)

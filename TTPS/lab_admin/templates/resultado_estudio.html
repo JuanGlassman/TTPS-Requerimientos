@@ -6,9 +6,10 @@
 
 <div class="mb-2 d-flex justify-content-between">
     <h1>Cargar resultado de estudio.</h1>
-    <a href="javascript:history.back()">
-        <button class="btn btn-secondary">Volver</button>
-    </a>
+    
+    <a href="{% url 'lab_admin:estudios' %}">
+        <button class="btn btn-outline-violet">Volver</button>
+    </a> 
 </div>
 
 <h2 class="mb-4">Estudio: {{ estudio.id_interno }} </h2>

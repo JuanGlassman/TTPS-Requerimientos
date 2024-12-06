@@ -86,6 +86,7 @@ target/
 db.sqlite3
 local_settings.py
 
+sendgrid.env
 .env
 db.sqlite3
 

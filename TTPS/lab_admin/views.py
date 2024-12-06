@@ -1,22 +1,59 @@
 import json
 from django.shortcuts import render, get_object_or_404, redirect
 import requests
-from estudios.models import Estudio, EstadoEstudio
+from estudios.models import Estudio, EstadoEstudio, SampleSet
 from estudios import views as estudio_estado
 from .models import Presupuesto
-from estudios import views as estudio_view
+from estudios.views import estudio_presupuestado, estudio_enviado_exterior
 from transportista.views import agregar_estudio_a_pedido
 from django.contrib.auth.decorators import login_required
 from inicio_sesion.views import permission_required
 from django.contrib import messages
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+from django.core.paginator import Paginator
+from django.db.models import Q
+from TTPS.settings import EMAIL_HOST_PASSWORD
+from django.db.models import Count
+from django.utils import timezone
+
 
 @login_required
 @permission_required('lista_estudios_set')
 def estudios(request):
-    estudios = Estudio.objects.order_by("fecha")
-    return render(request, "estudios.html", { "estudios": estudios, "estados": EstadoEstudio })
+    # Obtener parámetros de búsqueda y filtro
+    search_query = request.GET.get('search', '').strip()
+    selected_estado = request.GET.get('estado', '')
+    order = request.GET.get('order', 'asc')  # Orden ascendente por defecto
+    
+    # Base de la consulta
+    estudios_queryset = Estudio.objects.select_related('presupuesto').all()
+
+    # Filtros de búsqueda y estado
+    if search_query:
+        estudios_queryset = estudios_queryset.filter(
+            Q(id_interno__icontains=search_query)
+        )
+    if selected_estado:
+        estudios_queryset = estudios_queryset.filter(estado=selected_estado)
+    
+    estudios_queryset = estudios_queryset.order_by(f"{'' if order == 'asc' else '-'}presupuesto__total")
+    
+    # Paginación
+    paginator = Paginator(estudios_queryset, 10)  # 10 estudios por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "estudios.html", {
+        "page_obj": page_obj,
+        "search_query": search_query,
+        "selected_estado": selected_estado,
+        "order": order,
+        "estados": EstadoEstudio,
+    })
+
+
 
 @login_required
 @permission_required('presupuestar')
@@ -36,12 +73,23 @@ def form_presupuesto(request, estudio_id):
 def enviar_correo_presupuesto(email, context):
     """Envía un correo electrónico al paciente con el detalle del presupuesto."""
     try:
-        # Implementa la lógica de envío de correo
         subject = "Detalle del Presupuesto"
-        body = render_to_string("emails/detalle_presupuesto.html", context)
-        email_message = EmailMessage(subject, body, to=[email])
-        email_message.content_subtype = "html"  # Indica que el contenido es HTML
-        email_message.send()
+        body = render_to_string("detalle_presupuesto.html", context)
+
+        message = Mail(
+            from_email='laboratorios_laplata@hotmail.com', 
+            to_emails=email,
+            subject=subject,
+            html_content=body
+        )
+
+        sg = SendGridAPIClient(EMAIL_HOST_PASSWORD)  
+        response = sg.send(message)
+
+        print(f"Correo enviado con código de estado: {response.status_code}")
+        if response.body:
+            print(f"Respuesta del servidor: {response.body}")
+
     except Exception as e:
         print(f"Error al enviar correo: {e}")
 
@@ -61,22 +109,19 @@ def presupuestar(request):
         costo_exoma = request.POST.get('costo_exoma')
         costo_genes_extra = request.POST.get('costo_genes_extra')
         costo_hallazgos_secundario = request.POST.get('costo_hallazgos_secundarios')
-        print(costo_hallazgos_secundario)
         id_presupuesto = request.POST.get('id_presupuesto')
         id_estudio = request.POST.get('id_estudio')
         action = request.POST.get('action')
 
         if action == 'guardar':
-            print("Llega a guardar")
             guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, int(id_presupuesto))
-            print("se guardó")
             messages.success(request, "El presupuesto se guardó de forma exitosa.")  
             return redirect("estudios:estudio_detalle", int(id_estudio))
         elif action == 'confirmar':
             presupuesto = guardar_presupuesto(costo_exoma, costo_genes_extra, costo_hallazgos_secundario, id_presupuesto)
             estudio = get_object_or_404(Estudio, id_estudio=presupuesto.estudio_id)
             
-            res, estudio = estudio_view.estudio_presupuestado(estudio)
+            res, estudio = estudio_presupuestado(estudio)
             
             if (res):
                 estudio.save()
@@ -88,6 +133,7 @@ def presupuestar(request):
                     'costo_genes_extra': costo_genes_extra,
                     'costo_hallazgos_secundarios': costo_hallazgos_secundario,
                     'total': presupuesto.total,
+                    'estudio': estudio
                 }
                 enviar_correo_presupuesto(paciente_email, context)
             return redirect("estudios:estudio_detalle", estudio.id_estudio) 
@@ -142,12 +188,27 @@ def realizar_estudio(request, estudio_id):
         return redirect('home')
 
 def enviar_correo_resultado(email, context):
-    """Envía un correo electrónico al paciente con el detalle del resultado de un estudio."""
-    subject = "Detalle del Resultado"
-    body = render_to_string("emails/detalle_resultado.html", context)
-    email_message = EmailMessage(subject, body, to=[email])
-    email_message.content_subtype = "html"  # Indica que el contenido es HTML
-    email_message.send()
+    """Envía un correo electrónico al paciente con el detalle del resultado de un estudio utilizando SendGrid."""
+    try:
+        subject = "Detalle del Resultado"
+        body = render_to_string("detalle_resultado.html", context)
+
+        message = Mail(
+            from_email='laboratorios_laplata@hotmail.com',  
+            to_emails=email,
+            subject=subject,
+            html_content=body
+        )
+
+        sg = SendGridAPIClient(EMAIL_HOST_PASSWORD)
+        response = sg.send(message)
+
+        print(f"Correo enviado con código de estado: {response.status_code}")
+        if response.body:
+            print(f"Respuesta del servidor: {response.body}")
+
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
 
     
 @login_required
@@ -174,7 +235,16 @@ def cargar_resultado(request):
         resultado = get_resultado(estudio, variantes) #buscar el resultado en backend
         estudio.resultado = resultado
         res, estudio = estudio_estado.estudio_finalizado(estudio)
-        estudio.save()
+        if (res):
+            estudio.save()
+            paciente_email = estudio.paciente.usuario.email
+            context = {
+                'nombre_paciente': estudio.paciente.usuario.first_name,
+                'resultado': resultado,
+                'estudio': estudio,
+            }
+            enviar_correo_resultado(paciente_email, context)
+        
         messages.success(request, "El resultado del estudio se cargó de forma existosa.")
         return redirect("estudios:estudio_detalle", estudio.id_estudio) 
     except Exception as e:
@@ -216,3 +286,53 @@ def get_resultado(estudio, variantes):
     if not data['valido']:
         return "negativo"
     return "positivo"
+
+
+@login_required
+@permission_required("lista_estudios_set")
+def sample_set_list(request):
+    search_query = request.GET.get('search', '').strip()
+
+    sample_sets_queryset = SampleSet.objects.annotate(estudio_count=Count('estudios')).all()
+    if search_query:
+        sample_sets_queryset = sample_sets_queryset.filter(id_sample_set__icontains=search_query)
+
+    paginator = Paginator(sample_sets_queryset, 10)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "sample_set_list.html", {
+        "page_obj": page_obj,
+    })
+
+@login_required
+@permission_required("lista_estudios_set")
+def sample_set_detalle(request, id_sample_set):
+    sample_set = get_object_or_404(SampleSet, id_sample_set=id_sample_set)
+    estudios = sample_set.estudios.all()
+
+    return render(request, "sample_set_detalle.html", {
+        "sample_set": sample_set,
+        "estudios": estudios,
+    })
+
+@login_required
+@permission_required("enviar_sample_set")
+def enviar_sample_set(request, id_sample_set):
+    sample_set = get_object_or_404(SampleSet, id_sample_set=id_sample_set)
+
+    estudios = sample_set.estudios.all()
+    for estudio in estudios:
+        res, estudio = estudio_enviado_exterior(estudio)
+        if (res):
+            estudio.save()
+
+    sample_set.fecha_envio = timezone.now()
+    sample_set.save()
+
+    messages.success(request, f"Sample Set #{sample_set.id_sample_set} enviado con éxito.")
+    return redirect("lab_admin:sample_set_list")
+
+
+
+

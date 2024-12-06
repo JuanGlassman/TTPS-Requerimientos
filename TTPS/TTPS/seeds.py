@@ -1,10 +1,12 @@
 from estudios.models import Estudio, EstadoEstudio, Enfermedad, HistorialEstudio
+from estudios import views as estudios_estado
 from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
 from medicos.models import Medico
 from lab_admin.models import Presupuesto
 from lab_admin.models import LabAdmin
 from transportista.models import Transportista, HojaDeRuta, Pedido
+from transportista import views as transportista_view
 from lab_admin.models import Centro, Turno
 from datetime import date, time, timedelta
 
@@ -317,22 +319,66 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    res, estudio = estudios_estado.estudio_iniciado(estudio1)
+    print(estudio)
+    estudio.save()
+
     presupuesto1 = Presupuesto.objects.create(
         estudio_id = estudio1.id_estudio,
         costo_exoma = 500,
         total = 500.0
     )
 
+    res, estudio = estudios_estado.estudio_presupuestado(estudio)
+    estudio.save()
+
+    res, estudio = estudios_estado.estudio_pagado(estudio)
+    res, estudio.save()
+
+    res, estudio = estudios_estado.estudio_autorizado(estudio)
+    estudio.save()
+
+    turno_estudio1 = Turno.objects.create(
+        usuario_id = usuario5.id_usuario,
+        estudio_id = estudio1.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro1.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
+    res, estudio = estudios_estado.estudio_confirmado(estudio)
+    estudio.save()
+
+
     estudio2 = Estudio.objects.create(
-        id_interno="1245_LIR_ROD",
+        id_interno="1245_VER_SOF",
         fecha=date.today(),
         tipo_estudio="Exoma",
         patologia_id=patologia1.id_enfermedad,
-        paciente_id = paciente1.id_paciente,
+        paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.FINALIZADO,
+        estado = EstadoEstudio.INICIADO,
         tipo_sospecha = 0
     )
+
+    res, estudio = estudios_estado.estudio_iniciado(estudio2)
+    print(estudio)
+    estudio.save()
+
+    presupuesto2 = Presupuesto.objects.create(
+        estudio_id = estudio2.id_estudio,
+        costo_exoma = 500,
+        total = 500.0
+    )
+
+    res, estudio = estudios_estado.estudio_presupuestado(estudio)
+    estudio.save()
+
+    res, estudio = estudios_estado.estudio_pagado(estudio)
+    res, estudio.save()
+
+    res, estudio = estudios_estado.estudio_autorizado(estudio)
+    estudio.save()
 
     turno_estudio2 = Turno.objects.create(
         usuario_id = usuario1.id_usuario,
@@ -342,22 +388,23 @@ def run_seeds():
         horario = time(hour=14, minute=30, second=0)
     )
 
-    presupuesto2 = Presupuesto.objects.create(
-        estudio_id = estudio2.id_estudio,
-        costo_exoma = 500,
-        total = 500.0
-    )
+    res, estudio = estudios_estado.estudio_confirmado(estudio)
+    estudio.save()
 
     estudio3 = Estudio.objects.create(
-        id_interno="1245_LIR_ROD",
+        id_interno="3245_REY_VAL",
         fecha=date.today(),
         tipo_estudio="Exoma",
         patologia_id = patologia3.id_enfermedad,
-        paciente_id = paciente1.id_paciente,
+        paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.CANCELADO,
+        estado = EstadoEstudio.INICIADO,
         tipo_sospecha = 0
     )
+
+    res, estudio = estudios_estado.estudio_iniciado(estudio3)
+    print(estudio)
+    estudio.save()
 
     presupuesto3 = Presupuesto.objects.create(
         estudio_id = estudio3.id_estudio,
@@ -365,6 +412,26 @@ def run_seeds():
         total = 500.0
     )
 
+    res, estudio = estudios_estado.estudio_presupuestado(estudio)
+    estudio.save()
+
+    res, estudio = estudios_estado.estudio_pagado(estudio)
+    res, estudio.save()
+
+    res, estudio = estudios_estado.estudio_autorizado(estudio)
+    estudio.save()
+
+    turno_estudio3 = Turno.objects.create(
+        usuario_id = usuario1.id_usuario,
+        estudio_id = estudio3.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro3.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
+    res, estudio = estudios_estado.estudio_confirmado(estudio)
+    estudio.save()
+    
     estudio4 = Estudio.objects.create(
         id_interno="5965_VER_SOF",
         fecha=date.today(),
@@ -376,12 +443,36 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    res, estudio = estudios_estado.estudio_iniciado(estudio4)
+    print(estudio)
+    estudio.save()
+
     presupuesto4 = Presupuesto.objects.create(
         estudio_id = estudio4.id_estudio,
         costo_exoma = 500,
         total = 500.0
     )
 
+    res, estudio = estudios_estado.estudio_presupuestado(estudio)
+    estudio.save()
+
+    res, estudio = estudios_estado.estudio_pagado(estudio)
+    res, estudio.save()
+
+    res, estudio = estudios_estado.estudio_autorizado(estudio)
+    estudio.save()
+
+    turno_estudio4 = Turno.objects.create(
+        usuario_id = usuario1.id_usuario,
+        estudio_id = estudio4.id_estudio,
+        fecha = date.today() + timedelta(days=5),
+        centro_id = centro2.id_centro,
+        horario = time(hour=14, minute=30, second=0)
+    )
+
+    res, estudio = estudios_estado.estudio_confirmado(estudio)
+    estudio.save()
+    
     estudio5 = Estudio.objects.create(
         id_interno="1275_REY_VAL",
         fecha=date.today(),
@@ -393,141 +484,151 @@ def run_seeds():
         tipo_sospecha = 0
     )
 
+    res, estudio = estudios_estado.estudio_iniciado(estudio5)
+    print(estudio)
+    estudio.save()
+
     presupuesto5 = Presupuesto.objects.create(
         estudio_id = estudio5.id_estudio,
         costo_exoma = 500,
         total = 500.0
     )
 
-    estudio6 = Estudio.objects.create(
-        id_interno="1275_CEN_RUB",
-        fecha=date.today(),
-        tipo_estudio="Exoma",
-        patologia_id=patologia1.id_enfermedad,
-        paciente_id = paciente4.id_paciente,
-        medico_id = medico.id_medico,
-        estado = EstadoEstudio.AUTORIZADO,
-        tipo_sospecha = 0
-    )
+    res, estudio = estudios_estado.estudio_presupuestado(estudio)
+    estudio.save()
 
-    turno_estudio6 = Turno.objects.create(
-        usuario_id = usuario4.id_usuario,
-        estudio_id = estudio6.id_estudio,
+    res, estudio = estudios_estado.estudio_pagado(estudio)
+    res, estudio.save()
+
+    res, estudio = estudios_estado.estudio_autorizado(estudio)
+    estudio.save()
+
+    turno_estudio4 = Turno.objects.create(
+        usuario_id = usuario1.id_usuario,
+        estudio_id = estudio5.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro2.id_centro,
         horario = time(hour=14, minute=30, second=0)
     )
 
-    presupuesto6 = Presupuesto.objects.create(
-        estudio_id = estudio6.id_estudio,
-        costo_exoma = 500,
-        total = 500.0
-    )
+    res, estudio = estudios_estado.estudio_confirmado(estudio)
+    estudio.save()
 
-    estudio7 = Estudio.objects.create(
+    estudio6 = Estudio.objects.create(
         id_interno="1275_LIR_VAL",
         fecha=date.today(),
         tipo_estudio="Exoma",
         patologia_id=patologia5.id_enfermedad,
         paciente_id = paciente5.id_paciente,
         medico_id = medico.id_medico,
-        estado = EstadoEstudio.TURNO_CONFIRMADO,
+        estado = EstadoEstudio.INICIADO,
         tipo_sospecha = 0
     )
 
-    historial_estudio7 = HistorialEstudio.objects.create(
-        estudio_id = estudio7.id_estudio,
-        estado = EstadoEstudio.TURNO_CONFIRMADO
-    )
-
-    turno_estudio7 = Turno.objects.create(
-        usuario_id = usuario5.id_usuario,
-        estudio_id = estudio7.id_estudio,
-        fecha = date.today() + timedelta(days=5),
-        centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
-    )
+    res, estudio = estudios_estado.estudio_iniciado(estudio6)
+    print(estudio)
+    estudio.save()
 
     presupuesto7 = Presupuesto.objects.create(
-        estudio_id = estudio7.id_estudio,
+        estudio_id = estudio6.id_estudio,
         costo_exoma = 500,
         total = 500.0
     )
 
-    estudio8 = Estudio.objects.create(
-        id_interno="1275_LIR_ROD",
-        fecha=date.today(),
-        tipo_estudio="Exoma",
-        patologia_id=patologia2.id_enfermedad,
-        paciente_id = paciente6.id_paciente,
-        medico_id = medico.id_medico,
-        estado = EstadoEstudio.REALIZADA,
-        tipo_sospecha = 0
-    )
+    res, estudio = estudios_estado.estudio_presupuestado(estudio)
+    estudio.save()
 
-    turno_estudio8 = Turno.objects.create(
-        usuario_id = usuario6.id_usuario,
-        estudio_id = estudio8.id_estudio,
+    res, estudio = estudios_estado.estudio_pagado(estudio)
+    res, estudio.save()
+
+    res, estudio = estudios_estado.estudio_autorizado(estudio)
+    estudio.save()
+
+    turno_estudio6 = Turno.objects.create(
+        usuario_id = usuario5.id_usuario,
+        estudio_id = estudio6.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro2.id_centro,
         horario = time(hour=14, minute=30, second=0)
     )
 
-    presupuesto8 = Presupuesto.objects.create(
-        estudio_id = estudio8.id_estudio,
-        costo_exoma = 500,
-        total = 500.0
-    )
+    res, estudio = estudios_estado.estudio_confirmado(estudio)
+    estudio.save()
+  
+    # estudio8 = Estudio.objects.create(
+    #     id_interno="1275_LIR_ROD",
+    #     fecha=date.today(),
+    #     tipo_estudio="Exoma",
+    #     patologia_id=patologia2.id_enfermedad,
+    #     paciente_id = paciente6.id_paciente,
+    #     medico_id = medico.id_medico,
+    #     estado = EstadoEstudio.REALIZADA,
+    #     tipo_sospecha = 0
+    # )
 
-    estudio9 = Estudio.objects.create(
-        id_interno="1275_HUM_ROD",
-        fecha=date.today(),
-        tipo_estudio="Exoma",
-        patologia_id=patologia1.id_enfermedad,
-        paciente_id = paciente8.id_paciente,
-        medico_id = medico.id_medico,
-        estado = EstadoEstudio.CENTRALIZADA,
-        tipo_sospecha = 0
-    )
+    # turno_estudio8 = Turno.objects.create(
+    #     usuario_id = usuario6.id_usuario,
+    #     estudio_id = estudio8.id_estudio,
+    #     fecha = date.today() + timedelta(days=5),
+    #     centro_id = centro2.id_centro,
+    #     horario = time(hour=14, minute=30, second=0)
+    # )
 
-    turno_estudio9 = Turno.objects.create(
-        usuario_id = usuario8.id_usuario,
-        estudio_id = estudio9.id_estudio,
-        fecha = date.today() + timedelta(days=5),
-        centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
-    )
+    # presupuesto8 = Presupuesto.objects.create(
+    #     estudio_id = estudio8.id_estudio,
+    #     costo_exoma = 500,
+    #     total = 500.0
+    # )
 
-    presupuesto9 = Presupuesto.objects.create(
-        estudio_id = estudio9.id_estudio,
-        costo_exoma = 500,
-        total = 500.0
-    )
+    # estudio9 = Estudio.objects.create(
+    #     id_interno="1275_HUM_ROD",
+    #     fecha=date.today(),
+    #     tipo_estudio="Exoma",
+    #     patologia_id=patologia1.id_enfermedad,
+    #     paciente_id = paciente8.id_paciente,
+    #     medico_id = medico.id_medico,
+    #     estado = EstadoEstudio.CENTRALIZADA,
+    #     tipo_sospecha = 0
+    # )
 
-    estudio10 = Estudio.objects.create(
-        id_interno="1275_LIR_ROD",
-        fecha=date.today(),
-        tipo_estudio="Exoma",
-        patologia_id = patologia1.id_enfermedad,
-        paciente_id = paciente7.id_paciente,
-        medico_id = medico.id_medico,
-        estado = EstadoEstudio.ENVIADA_EXTERIOR,
-        tipo_sospecha = 0
-    )
+    # turno_estudio9 = Turno.objects.create(
+    #     usuario_id = usuario8.id_usuario,
+    #     estudio_id = estudio9.id_estudio,
+    #     fecha = date.today() + timedelta(days=5),
+    #     centro_id = centro2.id_centro,
+    #     horario = time(hour=14, minute=30, second=0)
+    # )
 
-    turno_estudio10 = Turno.objects.create(
-        usuario_id = usuario7.id_usuario,
-        estudio_id = estudio10.id_estudio,
-        fecha = date.today() + timedelta(days=5),
-        centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
-    )
+    # presupuesto9 = Presupuesto.objects.create(
+    #     estudio_id = estudio9.id_estudio,
+    #     costo_exoma = 500,
+    #     total = 500.0
+    # )
 
-    presupuesto10 = Presupuesto.objects.create(
-        estudio_id = estudio10.id_estudio,
-        costo_exoma = 500,
-        total = 500.0
-    )
+    # estudio10 = Estudio.objects.create(
+    #     id_interno="1275_LIR_ROD",
+    #     fecha=date.today(),
+    #     tipo_estudio="Exoma",
+    #     patologia_id = patologia1.id_enfermedad,
+    #     paciente_id = paciente7.id_paciente,
+    #     medico_id = medico.id_medico,
+    #     estado = EstadoEstudio.ENVIADA_EXTERIOR,
+    #     tipo_sospecha = 0
+    # )
+
+    # turno_estudio10 = Turno.objects.create(
+    #     usuario_id = usuario7.id_usuario,
+    #     estudio_id = estudio10.id_estudio,
+    #     fecha = date.today() + timedelta(days=5),
+    #     centro_id = centro1.id_centro,
+    #     horario = time(hour=14, minute=30, second=0)
+    # )
+
+    # presupuesto10 = Presupuesto.objects.create(
+    #     estudio_id = estudio10.id_estudio,
+    #     costo_exoma = 500,
+    #     total = 500.0
+    # )
 
     # Crear 10 pacientes adicionales
     usuario10 = Usuario.objects.create(
@@ -716,224 +817,3 @@ def run_seeds():
         antecedentes="Fibromialgia",
         historial_medico="Bajo tratamiento sintomático"
     )
-
-    # Crear estudios en estado PAGADO
-    # estudio_pagado1 = Estudio.objects.create(
-    #     id_interno="2345_FER_MAT",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id= patologia2.id_enfermedad,
-    #     paciente_id=paciente10.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.PAGADO,
-    #     tipo_sospecha=0
-    # )
-    # presupuesto_pagado1 = Presupuesto.objects.create(
-    #     estudio_id=estudio_pagado1.id_estudio,
-    #     costo_exoma=500,
-    #     total = 500.0
-    # )
-
-    # estudio_pagado2 = Estudio.objects.create(
-    #     id_interno="2346_GOM_LUC",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id= patologia3.id_enfermedad,
-    #     paciente_id=paciente11.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.PAGADO,
-    #     tipo_sospecha=0
-    # )
-    # presupuesto_pagado2 = Presupuesto.objects.create(
-    #     estudio_id=estudio_pagado2.id_estudio,
-    #     costo_exoma=500,
-    #     total = 500.0
-    # )
-
-    # estudio_pagado3 = Estudio.objects.create(
-    #     id_interno="2348_RIO_MAR",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia4.id_enfermedad,
-    #     paciente_id=paciente14.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.PAGADO,
-    #     tipo_sospecha=0
-    # )
-    # presupuesto_pagado3 = Presupuesto.objects.create(
-    #     estudio_id=estudio_pagado3.id_estudio,
-    #     costo_exoma=500,
-    #     total = 500.0
-    # )
-
-    # # Crear estudios en estado REALIZADA y sus turnos
-    # estudio_realizado1 = Estudio.objects.create(
-    #     id_interno="2347_LOP_AND",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id = patologia4.id_enfermedad,
-    #     paciente_id=paciente12.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado1 = Turno.objects.create(
-    #     usuario_id=paciente12.usuario.id_usuario,
-    #     estudio_id=estudio_realizado1.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro1.id_centro,
-    #     horario=time(hour=9, minute=30)
-    # )
-
-    # estudio_realizado2 = Estudio.objects.create(
-    #     id_interno="2348_PER_JUA",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia5.id_enfermedad,
-    #     paciente_id=paciente13.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado2 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado2.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=10, minute=45)
-    # )
-
-    # estudio_realizado3 = Estudio.objects.create(
-    #     id_interno="2349_MAR_CAR",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia1.id_enfermedad,
-    #     paciente_id=paciente15.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado3 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado3.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=11, minute=00)
-    # )
-
-    # estudio_realizado4 = Estudio.objects.create(
-    #     id_interno="2350_FER_PAU",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia3.id_enfermedad,
-    #     paciente_id=paciente16.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado4 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado4.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=11, minute=15)
-    # )
-
-    # estudio_realizado5 = Estudio.objects.create(
-    #     id_interno="2351_GAR_MAR",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia3.id_enfermedad,
-    #     paciente_id=paciente17.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado5 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado5.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=11, minute=15)
-    # )
-
-    # estudio_realizado6 = Estudio.objects.create(
-    #     id_interno="2352_LUN_JUA",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia5.id_enfermedad,
-    #     paciente_id=paciente18.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado6 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado6.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=11, minute=15)
-    # )
-
-    # estudio_realizado7 = Estudio.objects.create(
-    #     id_interno="2353_MOR_GUS",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia1.id_enfermedad,
-    #     paciente_id=paciente19.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado7 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado7.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=11, minute=15)
-    # )
-
-    # estudio_realizado8 = Estudio.objects.create(
-    #     id_interno="2354_VEG_MAR",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia2.id_enfermedad,
-    #     paciente_id=paciente20.id_paciente,
-    #     medico_id=medico.id_medico,
-    #     estado=EstadoEstudio.REALIZADA,
-    #     tipo_sospecha=0
-    # )
-    # turno_realizado8 = Turno.objects.create(
-    #     usuario_id=paciente13.usuario.id_usuario,
-    #     estudio_id=estudio_realizado8.id_estudio,
-    #     fecha=date.today() - timedelta(days=2),
-    #     centro_id=centro2.id_centro,
-    #     horario=time(hour=11, minute=15)
-    # )
-
-    # Crear pedidos manualmente
-    # pedido1 = Pedido.objects.create(
-    #     centro_id=centro1.id_centro,
-    #     estado="pendiente"
-    # )
-    # pedido1.estudios.add(estudio_realizado1, estudio_realizado3, estudio_realizado5)
-
-    # pedido2 = Pedido.objects.create(
-    #     centro_id=centro2.id_centro,
-    #     estado="pendiente"
-    # )
-    # pedido2.estudios.add(estudio_realizado2, estudio_realizado4, estudio_realizado6)
-
-    # pedido3 = Pedido.objects.create(
-    #     centro_id=centro3.id_centro,
-    #     estado="pendiente"
-    # )
-    # pedido3.estudios.add(estudio_realizado8, estudio_realizado7)
-
-    # # Crear hoja de ruta manualmente
-    # hoja_de_ruta = HojaDeRuta.objects.create(
-    #     fecha=date.today(),
-    #     transportista_id=transportista.id_transportista,
-    #     estado="pendiente"
-    # )
-    # hoja_de_ruta.pedidos.add(pedido1, pedido2, pedido3)

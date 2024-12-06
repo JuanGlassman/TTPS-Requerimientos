@@ -6,31 +6,53 @@
 
 <div class="mb-2 d-flex justify-content-between">
     <h1>Listado de estudios</h1>
-    <a href="javascript:history.back()">
-        <button class="btn btn-secondary">Volver</button>
-    </a>
+</div>
+
+<div class="mb-2 d-flex justify-content-between align-items-center">
+    
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="text" name="search" placeholder="Buscar por ID" value="{{ search_query }}" class="form-control" />
+        
+        <select name="estado" class="form-select">
+            <option value="">Todos los estados</option>
+            {% for estado, display in estados.choices %}
+                <option value="{{ estado }}" {% if estado == selected_estado %}selected{% endif %}>
+                    {{ display }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</div>
+
+<div class="mb-3">
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="search" value="{{ search_query }}" />
+        <input type="hidden" name="estado" value="{{ selected_estado }}" />
+        <select name="order" class="form-select" onchange="this.form.submit()">
+            <option value="asc" {% if order == 'asc' %}selected{% endif %}>Presupuesto Ascendente</option>
+            <option value="desc" {% if order == 'desc' %}selected{% endif %}>Presupuesto Descendente</option>
+        </select>
+    </form>
 </div>
 
 <table class="table table-striped table-hover">
     <thead>
         <tr>
             <th>ID Estudio</th>
-            <th>Tipo estudio</th>
             <th>Presupuesto</th>
             <th>Estado</th>
             <th style="text-align:end">Operaciones</th>
         </tr>
     </thead>
     <tbody>
-        {% for estudio in estudios %}
+        {% for estudio in page_obj  %}
         <tr>
             <td>{{ estudio.id_interno }}</td>
-            <td>{{ estudio.tipo_estudio }}</td>
-            
             <td>
                 {{ estudio.presupuesto.total }}
             </td>
-            
             <td>
                 {% if estudio.estado == estados.PAGADO %}
                     <span class="badge rounded-pill text-bg-primary" 
@@ -67,7 +89,7 @@
                     {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
                         <a href="{% url 'lab_admin:realizar' estudio.id_estudio %}" class="btn btn-primary btn-sm">Realizar muestra</a>
                     {% elif estudio.estado == estados.CENTRALIZADA %}
-                        <a class="btn btn-primary btn-sm">Ver Sample Set</a>
+                        <a href="{% url 'lab_admin:sample_set_detalle' estudio.sample_set.id_sample_set %}" class="btn btn-primary btn-sm">Ver Sample Set</a>
                     {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
                         <a class="btn btn-primary btn-sm" href="{% url 'lab_admin:form_resultado' estudio.id_estudio %}">Cargar resultados</a>
                     {% endif %}
@@ -94,6 +116,7 @@
                         <a class="btn btn-secondary btn-sm" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
                             <i class="bi bi-eye-fill"></i>
                         </a>
+                        
                     </div>
                              
                 </div>
@@ -102,5 +125,25 @@
         {% endfor %}
     </tbody>
 </table>
+<!-- Paginación -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort_by={{ sort_by }}&order={{ order }}"><</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort_by={{ sort_by }}&order={{ order }}">></a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
 
 {% endblock %}

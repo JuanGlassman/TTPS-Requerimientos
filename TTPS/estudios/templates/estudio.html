@@ -9,9 +9,6 @@
     <h1 class="mb-2">Estudio {{ estudio.id_interno}} </h1>    
 
     <div class="d-flex gap-2">
-        <a id="back-button">
-            <button class="btn btn-secondary">Volver</button>
-        </a>
             {% tiene_permiso user "cambiar_estado" as puede_ver %}
             {% if puede_ver %}
             <div>  
@@ -29,6 +26,9 @@
                 {% elif estudio.estado == estados.ENVIADA_EXTERIOR %}
                     <a class="btn btn-primary">Cargar resultados</a>
                 {% endif %}
+            </div>
+            <div>   
+                <a class="btn btn-violet" href="{% url 'estudios:historial_estudio' estudio.id_estudio %}">Historial Estados</a>
             </div>
         {% endif %}
     </div>
@@ -120,21 +120,6 @@
 </div>
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const backButton = document.getElementById('back-button');
-        const referrer = document.referrer;
-
-        // Verificar si la URL anterior contiene "medicos/iniciar_estudio"
-        if (referrer.includes('medicos/iniciar_estudio')) {
-            // Cambiar el enlace para redirigir a la lista de pacientes
-            backButton.setAttribute('href', '/medicos/pacientes');
-        } else {
-            // Volver al historial anterior
-            backButton.setAttribute('href', 'javascript:history.back()');
-        }
-    });
-</script>
 
 {% endblock %}
 

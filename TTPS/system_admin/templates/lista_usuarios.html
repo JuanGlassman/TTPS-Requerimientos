@@ -7,16 +7,6 @@
 {% load static %}
 {% load permisos_tags %}
     {% if activated %}
-        {% tiene_permiso user "lista_medicos" as puede_ver %}
-        {% if puede_ver %}
-        <a class="btn btn-secondary" href="{% url 'system_admin:lista_medicos' %}">Medicos</a>
-        {% endif %}
-    
-        {% tiene_permiso user "lista_lab_admin" as puede_ver %}
-        {% if puede_ver %}
-        <a class="btn btn-secondary" href="{% url 'system_admin:lista_lab_admins' %}">Administradores laboratorio</a>
-        {% endif %}
-    <hr>
     <h2>Lista de Usuarios</h2>
     {% else %}
     <h2>Lista de Usuarios Desactivados</h2>
@@ -42,7 +32,15 @@
                 <td>
                     {% tiene_permiso user "usuario_update" as puede_ver %}
                     {% if puede_ver %}
-                        <a class="btn btn-secondary" href="{% url 'system_admin:editar_usuario' usuario.pk %}">Editar</a>
+                        {% if usuario.rol.nombre == "medico" %}
+                            <a class="btn btn-secondary" href="{% url 'system_admin:editar_medico' usuario.medico.id_medico %}">Editar</a>
+                        {% elif usuario.rol.nombre == "paciente" %}
+                            <a class="btn btn-secondary" href="{% url 'medicos:editar_paciente' usuario.paciente.id_paciente %}">Editar</a>
+                        {% elif usuario.rol.nombre == "lab_admin" %}
+                            <a class="btn btn-secondary" href="{% url 'system_admin:editar_lab_admin' usuario.labadmin.id_lab_admin %}">Editar</a>
+                        {% elif usuario.rol.nombre == "transportista" %}
+                            <a class="btn btn-secondary" href="{% url 'system_admin:editar_usuario' usuario.id_usuario %}">Editar</a>
+                        {% endif %}
                     {% endif %}
                     {% if usuario.is_deleted %}
                         {% tiene_permiso user "usuario_update" as puede_ver %}
@@ -66,12 +64,32 @@
     </table>
     
     {% if activated %}
-        {% tiene_permiso user "usuario_create" as puede_ver %}
-        {% if puede_ver %}
-        <a class="btn btn-primary" href="{% url 'system_admin:crear_usuario' %}">Agregar nuevo usuario</a>
-        {% endif %}
     <a class="btn btn-secondary" href="{% url 'system_admin:usuarios_desactivados' %}">Usuarios desactivados</a>
     {% else %}
     <a class="btn btn-secondary" href="{% url 'system_admin:lista_usuarios' %}">Volver</a>
     {% endif %}
+    <a class="btn btn-warning" href="{% url 'system_admin:crear_usuario' %}">Crear Transportista</a>
+    
+<div class="d-flex justify-content-center">
+    <div class="pagination">
+        <ul class="pagination">
+            {% if object_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ object_list.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            {% for num in object_list.paginator.page_range %}
+            <li class="page-item {% if object_list.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if object_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ object_list.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
 {% endblock %}
+

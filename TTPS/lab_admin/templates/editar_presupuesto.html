@@ -6,8 +6,9 @@
 
 <div class="mb-2 d-flex justify-content-between">
     <h1>Editar presupuesto.</h1>
-    <a href="javascript:history.back()">
-        <button class="btn btn-secondary">Volver</button>
+    
+    <a href="{% url 'lab_admin:estudios' %}">
+        <button class="btn btn-outline-violet">Volver</button>
     </a>
 </div>
 
@@ -40,8 +41,8 @@
     </div>
     </div>
     <div class="d-flex justify-content-center gap-2">
-        <button class="btn btn-secondary" onclick="submitForm('guardar')">Guardar presupuesto</button>
-        <button class="btn btn-primary" onclick="submitForm('confirmar')">Confirmar presupuesto</button>
+        <button type="submit" class="btn btn-secondary" value="guardar">Guardar presupuesto</button>
+        <button type="submit" class="btn btn-primary" value="confirmar">Confirmar presupuesto</button>
         <a class="btn btn-light" href="javascript:history.back()">Cancelar</a>
     </div>
 </form>
@@ -73,71 +74,95 @@
             exoma.className = "form-control is-invalid"
             errorExoma.style = "display: block;";
             errorExoma.innerHTML = "El valor del Exoma es requerido."
-            return false
+            return false;
         }     
         if (!validarFlotante(exoma.value)) {
             exoma.className = "form-control is-invalid"
             errorExoma.style = "display: block;";
             errorExoma.innerHTML = "El valor del Exoma debe ser un número."
-            return false
+            return false;
         } 
         exoma.className = "form-select is-valid"
         errorExoma.style = "display: none;";
-        return true        
+        return true;        
     }
     
     function validarGenes() {
         if (!validarVacio(genes.value)) {
+            genes.className = "form-control is-invalid";
             errorGenes.style = "display: block;";
-            errorGenes.innerHTML = "El valor de los genes es requerido."
-            return false
+            errorGenes.innerHTML = "El valor de los genes es requerido.";
+            return false;
         }     
         if (!validarFlotante(genes.value)) {
+            genes.className = "form-control is-invalid";
             errorGenes.style = "display: block;";
-            errorGenes.innerHTML = "El valor de los genes debe ser un número."
-            return false
+            errorGenes.innerHTML = "El valor de los genes debe ser un número.";
+            return false;
         } 
-        genes.className = "form-select is-valid"
+        genes.className = "form-select is-valid";
         errorGenes.style = "display: none;";
-        return true     
+        return true;   
     }
 
     function validarHallazgos() {
         if (hallazgo != undefined) {             
             if (!validarVacio(hallazgo.value)) {
+                hallazgo.className = "form-control is-invalid";
                 errorHallazgos.style = "display: block;";
-                errorHallazgos.innerHTML = "El valor de los hallazgos secundarios es requerido."
-                return false
+                errorHallazgos.innerHTML = "El valor de los hallazgos secundarios es requerido.";
+                return false;
             }     
             if (!validarFlotante(hallazgo.value)) {
+                hallazgo.className = "form-control is-invalid";
                 errorHallazgos.style = "display: block;";
-                errorHallazgos.innerHTML = "El valor de los hallazgos secundarios debe ser un número."
-                return false
+                errorHallazgos.innerHTML = "El valor de los hallazgos secundarios debe ser un número.";
+                return false;
             }
-            hallazgo.className = "form-select is-valid"
+            hallazgo.className = "form-select is-valid";
             errorHallazgos.style = "display: none;"; 
-            return true
-        }
-        return true     
+            return true;
+        }     
     }
 
-    function validarForm() {
+    async function validarForm() {
+        
         if (!validarExoma()) return false;
         if (!validarGenes()) return false;
         if (!validarHallazgos()) return false;
-        return true
+        return true;
     }
     
 
-    function submitForm(action) {
-        if (!validarForm()) {
-            return;
+   /* function submitForm(action) { 
+        if (validarForm()) {
+            document.getElementById('formAction').value = action;
+            var form = document.getElementById('presupuestoForm');            
+            form.submit();
         }
-        document.getElementById('formAction').value = action;
-        document.getElementById('presupuestoForm').submit();
     }
+    */
 
-    
+    document.querySelector('form').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Detiene el envío del formulario
+     
+        const formData = new FormData(e.target);      
+
+        if (await validarForm()) {
+            document.getElementById('formAction').value = e.submitter.value;
+            this.submit(); // Envía el formulario
+        };     
+     });
+
+    document.getElementById('presupuestoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log(e.submitter.value);
+        if (validarForm()) {
+            document.getElementById('formAction').value = e.submitter.value;
+            this.submit();
+        }
+    });
+
     
 </script>
 
