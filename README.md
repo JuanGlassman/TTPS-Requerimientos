@@ -41,3 +41,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 - Para correr la apliacion
 ```~$ python manage.py runserver```
+
+- Para que funcione correctamente el envio de mail se debe crear un archivo llamado sendgrid.env en la carpeta TTPS a la altura de la Base de datos que contenga:
+export SENDGRID_API_KEY=''
+
+Comuniquese con el programador para completar lo que va entre comillas simples.
