@@ -34,7 +34,7 @@ class HojaDeRuta(models.Model):
     id_hoja_de_ruta = models.AutoField(primary_key=True)
     fecha = models.DateField()
     transportista = models.ForeignKey(Transportista, on_delete=models.PROTECT)
-    pedidos = models.ManyToManyField(Pedido, null=True)
+    pedidos = models.ManyToManyField(Pedido)
     estado = models.CharField(max_length=50)
     hora_comienzo = models.TimeField(null=True)
     hora_fin = models.TimeField(null=True)

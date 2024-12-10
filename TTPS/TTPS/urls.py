@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 from django.conf.urls import handler403
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'TTPS'
 
@@ -34,4 +36,5 @@ urlpatterns = [
     path("inicio_sesion/", include("inicio_sesion.urls")),
     path("estudios/", include('estudios.urls')),
     path("transportista/", include('transportista.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

@@ -1,7 +1,6 @@
 from django.db import models
 from inicio_sesion.models import Usuario
 from estudios.models import Estudio
-from django.core.validators import MinValueValidator
 
 class Presupuesto(models.Model):
     id_presupuesto = models.AutoField(primary_key=True)
@@ -48,7 +47,7 @@ class LabAdmin(models.Model):
 class Turno(models.Model):
     id_turno = models.AutoField(primary_key=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    estudio = models.ForeignKey('estudios.Estudio', on_delete=models.CASCADE)
+    estudio = models.OneToOneField(Estudio, on_delete=models.PROTECT, null=True, blank=True)
     fecha = models.DateField(null=True, blank=True)
     centro = models.ForeignKey(Centro, on_delete=models.CASCADE)
     horario = models.TimeField()  

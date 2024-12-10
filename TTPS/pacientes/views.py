@@ -57,6 +57,10 @@ def sacar_turno(request, id_estudio):
                 turno = form.save(commit=False)
                 turno.usuario = request.user
                 turno.estudio = estudio
+
+                if 'consentimiento' in request.FILES:
+                    turno.consentimiento = request.FILES['consentimiento']
+                    
                 turno.save()
                 res, estudio = estudio_autorizado(estudio)
                 if (res):

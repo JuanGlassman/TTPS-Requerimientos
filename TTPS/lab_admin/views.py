@@ -363,7 +363,6 @@ def enviar_sample_set(request, id_sample_set):
         response.raise_for_status()  # Lanza excepción si la respuesta no es 2xx
 
         pdf_content = response.content
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         pdf_name = f"sample_set_{sample_set.id_sample_set}.pdf"
         pdf_path = os.path.join(BASE_DIR, 'lab_admin', 'static', 'sample_sets', pdf_name)
 
@@ -387,5 +386,4 @@ def enviar_sample_set(request, id_sample_set):
 
     messages.success(request, f"Sample Set #{sample_set.id_sample_set} enviado con éxito.")
     return redirect("lab_admin:sample_set_list")
-
 
