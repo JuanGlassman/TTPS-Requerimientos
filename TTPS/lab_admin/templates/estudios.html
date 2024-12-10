@@ -113,10 +113,12 @@
                     {% endif %}      
 
                     <div>
-                        <a class="btn btn-secondary btn-sm" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
+                        <a class="btn btn-secondary btn-sm" title="Detalle" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
                             <i class="bi bi-eye-fill"></i>
                         </a>
-                        
+                        <a class="btn btn-success btn-sm" title="Descargar consentimiento informado" alt="Descargar consentimiento informado" href="{% static 'consentimientos/CI_' %}{{ estudio.id_interno }}.pdf" download>
+                            <i class="bi bi-capslock"></i>
+                        </a>
                     </div>
                              
                 </div>

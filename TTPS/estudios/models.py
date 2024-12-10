@@ -11,6 +11,7 @@ class SampleSet(models.Model):
     fecha_envio = models.DateField(null=True, blank=True)
     fecha_devolucion = models.DateField(null=True, blank=True)
     estudios = models.ManyToManyField('Estudio', blank=True)
+    archivo_pdf = models.FileField(upload_to='sample_sets/', null=True, blank=True)
 
     def __str__(self):
         return f"Sample Set #{self.id_sample_set}"

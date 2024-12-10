@@ -47,7 +47,6 @@ def sacar_turno(request, id_estudio):
     horarios_disponibles = []
 
     if request.method == 'POST':
-        # Obtener horarios disponibles según los datos enviados
         centro_id = request.POST.get('centro')
         fecha = request.POST.get('fecha')
         horarios_disponibles = generar_horarios_disponibles(centro_id, fecha)
