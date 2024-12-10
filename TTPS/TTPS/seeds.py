@@ -343,7 +343,8 @@ def run_seeds():
         estudio_id = estudio1.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos\CI_aux.pdf",
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
@@ -385,7 +386,8 @@ def run_seeds():
         estudio_id = estudio2.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos\CI_aux.pdf",
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
@@ -426,7 +428,8 @@ def run_seeds():
         estudio_id = estudio3.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro3.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos\CI_aux.pdf",
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
@@ -467,7 +470,8 @@ def run_seeds():
         estudio_id = estudio4.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos\CI_aux.pdf",
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
@@ -508,7 +512,8 @@ def run_seeds():
         estudio_id = estudio5.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos\CI_aux.pdf",
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
@@ -549,7 +554,8 @@ def run_seeds():
         estudio_id = estudio6.id_estudio,
         fecha = date.today() + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos\CI_aux.pdf",
     )
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
