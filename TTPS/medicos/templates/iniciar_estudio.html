@@ -80,20 +80,22 @@
     <div class="mb-4">
         <label class="form-label">Tipo de estudio</label>
         <select class="form-select" name="tipo_estudio">
-            <option value="exoma">Exoma</option>    
+            <option value="Exoma">Exoma</option>    
         </select>
     </div>
 
     <div class="mb-4">
         <label class="form-label">Elegir genes a analizar (opcional)</label>
-        {% if genes %}
-            <select class="form-select" name="genes" multiple>
-                {% for gen in genes %}
-                    <option>{{ gen.nombre }}</option>
-                {% endfor %}
-            </select>           
-          
+        <div id="genes-seleccionados" class="mb-3"></div>
+        <div class="row">
+            {% if genes %}
+                <select class="form-select" id="genes-select">
+                    {% for gen in genes %}
+                        <option value="{{ gen.id }}">{{ gen.nombre }}</option>
+                    {% endfor %}
+                </select>                   
         {% endif %}
+        </div>
     </div>
 
 

@@ -1,4 +1,3 @@
-
 const parentescoId = document.getElementById('parentescoId');
 const sospechaId = document.getElementById('sospechaId');
 
@@ -8,8 +7,7 @@ var statusCode;
 const sintomasInput = document.getElementById('buscador-sintomas')
 const sintomasSelect = document.getElementById('select-sintomas')
 const divSintomasSeleccionados = document.getElementById('sintomas-seleccionados')
-var valores = [];
-var sintoma = {}    
+var valores = [];  
 
 sintomasInput.addEventListener('input', function(e) {        
     if (sintomasInput.value.length > 3) {
@@ -123,6 +121,12 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         inputSintomas.value = JSON.stringify(valores);
         this.appendChild(inputSintomas);
 
+        const inputGenes = document.createElement('input');
+        inputSintomas.type = 'hidden';
+        inputSintomas.name = 'genes';
+        inputSintomas.value = JSON.stringify(genes);
+        this.appendChild(inputGenes);
+
         const inputPatologia = document.createElement('input');
         inputPatologia.type = 'hidden';
         inputPatologia.name = 'patologia_nombre';
@@ -137,9 +141,11 @@ async function validarForm(formData) {
     if (!validarSintomas()) return false
     if (!validarPatologia(formData.get('patologia'))) return false
     if (!validarSospecha(formData.get('sospecha'), formData.get('parentesco'))) return false
-    if (!await validarSintomasConPatologia(
-        patologiaSelect.querySelector(`option[value="${formData.get('patologia')}"]`).innerHTML)) 
-        return false
+    if (formData.get('sospecha') === "0") {
+        if (!await validarSintomasConPatologia(
+            patologiaSelect.querySelector(`option[value="${formData.get('patologia')}"]`).innerHTML)) 
+            return false
+    }
     return true;
 } 
 
@@ -212,4 +218,41 @@ async function validarSintomasConPatologia(patologia) {
     return true
 }
 
+const genesSelect = document.getElementById('genes-select');
+const divGenesSeleccionados = document.getElementById('genes-seleccionados');
+var genes = []
+
+genesSelect.addEventListener('change', function(e) {
+    e.preventDefault()
+    if (!genes.some(g => g.id === e.target.value)) {
+        const nuevoSintoma = {
+            id: e.target.value,
+            nombre: genesSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML
+        };
+        genes.push(nuevoSintoma);        
+
+        const chip = document.createElement('span');
+        chip.className = "badge rounded-pill text-bg-primary me-2";
+        chip.textContent = genesSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML;
+
+        const closeBtn = document.createElement('a');
+        const icon = document.createElement('i');
+        icon.className = "bi bi-x-lg ml-2 delete-gen";
+        icon.id = e.target.value;
+
+        closeBtn.appendChild(icon)
+        chip.appendChild(closeBtn)
+        divGenesSeleccionados.appendChild(chip);
+    }
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('delete-gen')) {
+        genes = genes.filter((s) =>  s.id !== e.target.id);
+        const chip = e.target.closest('.badge');
+        if (chip) {
+            chip.remove();
+        }
+    }
+});
  

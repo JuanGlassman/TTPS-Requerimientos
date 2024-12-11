@@ -8,7 +8,8 @@ def validar_inicio_estudio(request):
     if not validar_sintomas(sintomas): return False
     if not validar_patologia(request.POST.get('patologia')): return False
     if not validar_sospecha(request.POST.get('sospecha'), request.POST.get('parentesco')): return False
-    if not validar_sintomas_con_patologia(request.POST.get('patologia_nombre'), sintomas): return False
+    if request.POST.get('sospecha')  == '0':
+        if not validar_sintomas_con_patologia(request.POST.get('patologia_nombre'), sintomas): return False
     return True
 
 def validar_sintomas(sintomas):
