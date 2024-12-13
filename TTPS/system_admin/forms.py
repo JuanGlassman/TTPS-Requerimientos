@@ -61,12 +61,22 @@ class MedicoForm(forms.ModelForm):
 class CentroForm(forms.ModelForm):
     class Meta:
         model = Centro
-        fields = ['nombre', 'direccion', 'longitud', 'latitud', 'telefono', 'email']
+        fields = ['nombre', 'provincia', 'localidad','direccion', 'longitud', 'latitud', 'telefono', 'email']
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nombre del Centro',
                 'maxlength': '100',
+            }),
+            'provincia': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Provincia',
+                'maxlength': '150',
+            }),
+            'localidad': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Localidad',
+                'maxlength': '150',
             }),
             'direccion': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -95,6 +105,8 @@ class CentroForm(forms.ModelForm):
         }
         labels = {
             'nombre': 'Nombre del Centro',
+            'provincia': 'Provincia',
+            'localidad': 'Localidad',
             'direccion': 'Dirección',
             'longitud': 'Longitud (Geolocalización)',
             'latitud': 'Latitud (Geolocalización)',

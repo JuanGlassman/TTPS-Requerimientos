@@ -16,8 +16,9 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Longitud</th>
-                <th>Latitud</th>
+                <th>Provincia</th>
+                <th>Localidad</th>
+                <th>Dirección</th>
                 <th>Teléfono</th>
                 <th>Email</th>
                 <th>Operaciones</th>
@@ -27,8 +28,9 @@
         {% for centro in object_list %}
             <tr>
                 <td>{{ centro.nombre }}</td>
-                <td>{{ centro.longitud }}</td>
-                <td>{{ centro.latitud }}</td>
+                <td>{{ centro.provincia }}</td>
+                <td>{{ centro.localidad }}</td>
+                <td>{{ centro.direccion }}</td>
                 <td>{{ centro.telefono }}</td>
                 <td>{{ centro.email }}</td>
                 <td>
