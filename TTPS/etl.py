@@ -37,11 +37,9 @@ class ETL:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS DIM_FECHA (
                     fecha_id INTEGER PRIMARY KEY,
-                    fecha DATE,
-                    anio INTEGER,
-                    mes INTEGER,
-                    dia INTEGER,
-                    nombre_mes TEXT
+                    anio TEXT,
+                    mes TEXT,
+                    dia TEXT
                 )    
             """)
 
@@ -62,21 +60,42 @@ class ETL:
                     estado TEXT
                 )
             """)
+
+            # Crear dimensión estado
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS DIM_PATOLOGIA (
+                    patologia_id INTEGER PRIMARY KEY,
+                    patologia TEXT,
+                    gen TEXT
+                )
+            """)
             
             # Crear tabla de hechos
+            # conn.execute("""
+            #     CREATE TABLE IF NOT EXISTS HECHO_DEMORA_ESTUDIO (
+            #         id_hecho_demora INTEGER PRIMARY KEY,
+            #         estudio_id INTEGER,
+            #         fecha_id INTEGER,
+            #         lugar_id INTEGER,
+            #         estado_id INTEGER,
+            #         duracion_estado_dias INTEGER,
+            #         fecha_inicio_estado DATE,
+            #         fecha_fin_estado DATE,
+            #         FOREIGN KEY (fecha_id) REFERENCES DIM_FECHA (fecha_id),
+            #         FOREIGN KEY (lugar_id) REFERENCES DIM_LUGAR (lugar_id),
+            #         FOREIGN KEY (estado_id) REFERENCES DIM_ESTADO (estado_id)
+            #     )
+            # """)
+
+            # Crear hecho estudios
             conn.execute("""
-                CREATE TABLE IF NOT EXISTS HECHO_DEMORA_ESTUDIO (
-                    id_hecho_demora INTEGER PRIMARY KEY,
-                    estudio_id INTEGER,
-                    fecha_id INTEGER,
+                CREATE TABLE IF NOT EXISTS HECHO_ESTUDIOS (
+                    id_hecho_estudio INTEGER PRIMARY KEY,
                     lugar_id INTEGER,
+                    fecha_id INTEGER,
                     estado_id INTEGER,
-                    duracion_estado_dias INTEGER,
-                    fecha_inicio_estado DATE,
-                    fecha_fin_estado DATE,
-                    FOREIGN KEY (fecha_id) REFERENCES DIM_FECHA (fecha_id),
-                    FOREIGN KEY (lugar_id) REFERENCES DIM_LUGAR (lugar_id),
-                    FOREIGN KEY (estado_id) REFERENCES DIM_ESTADO (estado_id)
+                    patologia_id INTEGER,
+                    resultado TEXT
                 )
             """)
 
@@ -118,7 +137,7 @@ class ETL:
         
         self.destino_conn.commit()
 
-    # def transform_lugar(self):
+    def transform_lugar(self):
     #     """Transformar y cargar dimensión de lugar"""
     #     cursor_source = self.origen_conn.cursor()
     #     cursor_target = self.destino_conn.cursor()
@@ -133,6 +152,7 @@ class ETL:
     #         """, lugar)
         
     #     self.destino_conn.commit()
+        pass
 
     def transform_estado(self):
         """Transformar y cargar dimensión de estado"""
@@ -160,7 +180,7 @@ class ETL:
         fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
         return (fin - inicio).days
 
-    def transform_hechos(self):
+    def transform_hechos_demora(self):
         """Transformar y cargar tabla de hechos"""
         cursor_source = self.origen_conn.cursor()
         cursor_target = self.destino_conn.cursor()
@@ -204,6 +224,40 @@ class ETL:
             ))
         
         self.target_conn.commit()
+
+    def procesar_hecho_estudios(self):
+        cursor_source = self.origen_conn.cursor()
+        cursor_target = self.destino_conn.cursor()
+        
+        # Obtener los datos necesarios de las tablas fuente
+        cursor_source.execute("""
+            SELECT
+                e.fecha,
+                e.estado,
+                e.patologia,
+                e.resultado
+            FROM estudios e
+        """)
+        estudios_data = cursor_source.fetchall()
+
+        # Procesar cada registro
+        for estudio in estudios_data:
+            fecha, estado, patologia, resultado = estudio
+
+            # Insertar en tabla de hechos
+            cursor_target.execute("""
+                INSERT INTO HECHO_DEMORA_ESTUDIO (
+                    estudio_id, tiempo_id, lugar_id, estado_id,
+                    duracion_estado_dias, fecha_inicio_estado, fecha_fin_estado
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                fecha_id, lugar_id, estado_id,
+                duracion, fecha_inicio, fecha_fin
+            ))
+        
+        self.target_conn.commit()
+
+
 
     def run_etl(self):
         """Ejecutar proceso ETL completo"""
