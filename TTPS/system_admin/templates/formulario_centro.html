@@ -10,9 +10,11 @@
         {% csrf_token %}
 
         <h3>Información del Centro</h3>
-        {{ centro_form.as_p }}
+        <div class="mb-3">
+            {{ centro_form.nombre.label_tag }}
+            {{ centro_form.nombre }}
+        </div>
 
-        <h3>Información del Lugar</h3>
         <div class="mb-3">
             <input type="checkbox" id="use_existing_lugar" name="use_existing_lugar" {% if centro_form.instance.lugar %}checked{% endif %}>
             <label for="use_existing_lugar">Usar un lugar existente</label>
@@ -29,8 +31,8 @@
                 {% endfor %}
             </select>
         </div>
-
-        <div id="new-lugar-section" class="mb-4" style="{% if centro_form.instance.lugar %}display: none;{% endif %}">
+        
+        <div id="new-lugar-section" class="mb-3" style="{% if centro_form.instance.lugar %}display: none;{% endif %}">
             <div class="mb-3">
                 <label for="ciudad" class="form-label">Ciudad</label>
                 <input type="text" name="ciudad" id="ciudad" class="form-control" placeholder="Ingrese la ciudad">
@@ -45,6 +47,26 @@
             </div>
         </div>
 
+        <div class="mb-3">
+            {{ centro_form.direccion.label_tag }}
+            {{ centro_form.direccion }}
+        </div>
+        <div class="mb-3">
+            {{ centro_form.longitud.label_tag }}
+            {{ centro_form.longitud }}
+        </div>
+        <div class="mb-3">
+            {{ centro_form.latitud.label_tag }}
+            {{ centro_form.latitud }}
+        </div>
+        <div class="mb-3">
+            {{ centro_form.telefono.label_tag }}
+            {{ centro_form.telefono }}
+        </div>
+        <div class="mb-3">
+            {{ centro_form.email.label_tag }}
+            {{ centro_form.email }}
+        </div>
         <button type="submit" class="btn btn-primary">{% if centro_form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
     </form>
 

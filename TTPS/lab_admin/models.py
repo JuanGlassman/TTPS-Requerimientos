@@ -18,7 +18,7 @@ class Presupuesto(models.Model):
         db_table = 'presupuestos'
 
 class Lugar(models.Model):
-    id_lugar = models.AutoField(primary_key=True)
+    lugar_id = models.AutoField(primary_key=True)
     ciudad = models.CharField(max_length=100, blank=True)
     provincia = models.CharField(max_length=100)
     pais = models.CharField(max_length=100)
@@ -38,7 +38,7 @@ class Centro(models.Model):
     latitud = models.FloatField(null=True)
     telefono = models.CharField(max_length=50, blank=True)
     email = models.EmailField(max_length=150, blank=True)
-    lugar = models.ForeignKey(Lugar, on_delete=models.PROTECT, null=True) 
+    lugar = models.OneToOneField(Lugar, on_delete=models.PROTECT, null=True) 
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):

@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 from datetime import datetime
 from django.utils.timezone import is_naive, make_aware, now
+from lab_admin.models import Lugar
 
 class SampleSet(models.Model):
     id_sample_set = models.AutoField(primary_key=True)
@@ -84,6 +85,7 @@ class Estudio(models.Model):
     patologia = models.ForeignKey(Enfermedad, on_delete=models.PROTECT, null=True )
     genes = models.ManyToManyField(Gen)
     sintomas = models.ManyToManyField(Sintoma)
+    lugar = models.OneToOneField(Lugar, on_delete=models.PROTECT, null=True) 
 
     def __str__(self):
         return f"{self.id_interno} - {self.paciente}"
