@@ -1,17 +1,62 @@
-<!-- formulario_centro.html -->
 {% extends 'base.html' %}
 
 {% block title %}Formulario de Centro{% endblock %}
 
 {% block content %}
-    <h2>{% if form.instance.pk %}Editar Centro{% else %}Crear Centro{% endif %}</h2>
+<div class="container mt-5">
+    <h2>{% if centro_form.instance.pk %}Editar Centro{% else %}Crear Centro{% endif %}</h2>
 
     <form method="POST" class="p-4 rounded border border-light bg-light shadow-sm">
         {% csrf_token %}
-        {{ form.as_p }}
 
-        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
+        <h3>Información del Centro</h3>
+        {{ centro_form.as_p }}
+
+        <h3>Información del Lugar</h3>
+        <div class="mb-3">
+            <input type="checkbox" id="use_existing_lugar" name="use_existing_lugar" {% if centro_form.instance.lugar %}checked{% endif %}>
+            <label for="use_existing_lugar">Usar un lugar existente</label>
+        </div>
+
+        <div id="existing-lugar-section" class="mb-4" style="{% if not centro_form.instance.lugar %}display: none;{% endif %}">
+            <label for="lugar" class="form-label">Seleccionar Lugar</label>
+            <select name="lugar" id="lugar" class="form-select">
+                <option value="" disabled {% if not centro_form.instance.lugar %}selected{% endif %}>Seleccione un lugar</option>
+                {% for lugar in lugares %}
+                    <option value="{{ lugar.id_lugar }}" {% if centro_form.instance.lugar and lugar.id_lugar == centro_form.instance.lugar.id_lugar %}selected{% endif %}>
+                        {{ lugar.ciudad }}, {{ lugar.provincia }}, {{ lugar.pais }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div id="new-lugar-section" class="mb-4" style="{% if centro_form.instance.lugar %}display: none;{% endif %}">
+            <div class="mb-3">
+                <label for="ciudad" class="form-label">Ciudad</label>
+                <input type="text" name="ciudad" id="ciudad" class="form-control" placeholder="Ingrese la ciudad">
+            </div>
+            <div class="mb-3">
+                <label for="provincia" class="form-label">Provincia</label>
+                <input type="text" name="provincia" id="provincia" class="form-control" placeholder="Ingrese la provincia">
+            </div>
+            <div class="mb-3">
+                <label for="pais" class="form-label">País</label>
+                <input type="text" name="pais" id="pais" class="form-control" placeholder="Ingrese el país">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">{% if centro_form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
     </form>
 
-    <a class="btn btn-secondary" href="{% url 'system_admin:lista_centros' %}">Volver</a>
+    <a class="btn btn-secondary mt-3" href="{% url 'system_admin:lista_centros' %}">Volver</a>
+</div>
+
+<script>
+    document.getElementById('use_existing_lugar').addEventListener('change', function () {
+        const useExisting = this.checked;
+        document.getElementById('existing-lugar-section').style.display = useExisting ? 'block' : 'none';
+        document.getElementById('new-lugar-section').style.display = useExisting ? 'none' : 'block';
+    });
+</script>
 {% endblock %}
+

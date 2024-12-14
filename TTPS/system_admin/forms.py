@@ -1,6 +1,6 @@
 from inicio_sesion.models import Usuario
 from medicos.models import Medico
-from lab_admin.models import Centro
+from lab_admin.models import Centro, Lugar
 from django import forms
 import secrets
 import string
@@ -99,5 +99,33 @@ class CentroForm(forms.ModelForm):
             'longitud': 'Longitud (Geolocalización)',
             'latitud': 'Latitud (Geolocalización)',
             'telefono': 'Teléfono de Contacto',
-            'email': 'Correo Electrónico',
+            'email': 'Correo Electrónico'
+        }
+
+
+class LugarForm(forms.ModelForm):
+    class Meta:
+        model = Lugar
+        fields = ['ciudad', 'provincia', 'pais']
+        widgets = {
+            'ciudad': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ingrese la ciudad',
+                'maxlength': 100,
+            }),
+            'provincia': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ingrese la provincia',
+                'maxlength': 100,
+            }),
+            'pais': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ingrese el país',
+                'maxlength': 100,
+            }),
+        }
+        labels = {
+            'ciudad': 'Ciudad',
+            'provincia': 'Provincia',
+            'pais': 'País',
         }
