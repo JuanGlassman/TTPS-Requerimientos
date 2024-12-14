@@ -4,7 +4,7 @@ from django.urls import reverse
 from .models import Medico
 from estudios.models import Estudio, EstadoEstudio
 from django.core.paginator import Paginator
-from estudios.models import Estudio, Enfermedad, Sintoma, Gen
+from estudios.models import Estudio, Enfermedad, Sintoma, Gen, Lugar
 from lab_admin.models import Presupuesto
 from pacientes.models import Paciente
 from datetime import date
@@ -56,10 +56,13 @@ def iniciar_estudio_paciente(request, paciente_id):
 
     genes = get_genes()
     
+    lugares = Lugar.objects.all()
+    
     return render(request, "iniciar_estudio.html", {
         "paciente": paciente,
         "patologias": get_patologias(),
-        "genes": genes.get("results")
+        "genes": genes.get("results"),
+        "lugares": lugares,
         })
 
 def get_patologias():
@@ -74,7 +77,7 @@ def get_genes():
 @login_required
 @permission_required('iniciar_estudio')
 def iniciar_estudio(request):    
-    try:            
+    try:   
         sintomas = json.loads(request.POST.get('sintomas', '[]'))
         patologia = request.POST.get('patologia')
         tipo_estudio = request.POST.get('tipo_estudio')

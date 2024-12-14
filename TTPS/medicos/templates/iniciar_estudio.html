@@ -166,5 +166,11 @@
 
 <script src="{% static 'iniciar_estudio.js' %}"></script>
 
-
+<script>
+    document.getElementById('use_existing_lugar').addEventListener('change', function () {
+        const useExisting = this.checked;
+        document.getElementById('existing-lugar-section').style.display = useExisting ? 'block' : 'none';
+        document.getElementById('new-lugar-section').style.display = useExisting ? 'none' : 'block';
+    });
+</script>
 {% endblock %}
