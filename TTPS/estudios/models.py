@@ -5,7 +5,6 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 from datetime import datetime
 from django.utils.timezone import is_naive, make_aware, now
-from lab_admin.models import Lugar
 
 class SampleSet(models.Model):
     id_sample_set = models.AutoField(primary_key=True)
@@ -64,7 +63,20 @@ class EstadoEstudio(models.TextChoices):
     ENVIADA_EXTERIOR = 'Enviada al Exterior'
     FINALIZADO = 'Finalizado'
     CANCELADO = 'Cancelado'
-    
+
+class Lugar(models.Model):
+    lugar_id = models.AutoField(primary_key=True)
+    ciudad = models.CharField(max_length=100, blank=True)
+    provincia = models.CharField(max_length=100)
+    pais = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.ciudad}, {self.provincia}, {self.pais}"
+
+    class Meta:
+        db_table = 'lugares'
+        unique_together = ('ciudad', 'provincia', 'pais') 
+
 class Estudio(models.Model):
     id_estudio = models.AutoField(primary_key=True)
     id_interno = models.CharField(max_length=50)  # Formato: "1234_APE_NOM"

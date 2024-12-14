@@ -1,6 +1,6 @@
 from django.db import models
 from inicio_sesion.models import Usuario
-from estudios.models import Estudio
+from estudios.models import Estudio, Lugar
 from django.core.validators import MinValueValidator
 
 class Presupuesto(models.Model):
@@ -16,19 +16,6 @@ class Presupuesto(models.Model):
 
     class Meta:
         db_table = 'presupuestos'
-
-class Lugar(models.Model):
-    lugar_id = models.AutoField(primary_key=True)
-    ciudad = models.CharField(max_length=100, blank=True)
-    provincia = models.CharField(max_length=100)
-    pais = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.ciudad}, {self.provincia}, {self.pais}"
-
-    class Meta:
-        db_table = 'lugares'
-        unique_together = ('ciudad', 'provincia', 'pais') 
 
 class Centro(models.Model):
     id_centro = models.AutoField(primary_key=True)

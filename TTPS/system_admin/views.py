@@ -3,7 +3,8 @@ from django.db import transaction
 from inicio_sesion.models import Usuario, Rol
 from medicos.models import Medico
 from lab_admin.models import LabAdmin
-from lab_admin.models import Centro, Lugar
+from lab_admin.models import Centro
+from estudios.models import Lugar
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
