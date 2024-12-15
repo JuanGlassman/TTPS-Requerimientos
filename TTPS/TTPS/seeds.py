@@ -1,4 +1,4 @@
-from estudios.models import Estudio, EstadoEstudio, Enfermedad, HistorialEstudio
+from estudios.models import Estudio, EstadoEstudio, Enfermedad, HistorialEstudio, Lugar
 from estudios import views as estudios_estado
 from inicio_sesion.models import Rol, Usuario
 from pacientes.models import Paciente
@@ -307,8 +307,39 @@ def run_seeds():
         gen = "GAA"
     )
 
+    #Crear lugares
+    lugar1 = Lugar.objects.create(
+        ciudad = "La Plata",
+        provincia = "Buenos Aires",
+        pais = "Argentina"
+    )
+
+    lugar2 = Lugar.objects.create(
+        ciudad = "Ciudad de Autónoma de Buenos Aires",
+        provincia = "Buenos Aires",
+        pais = "Argentina"
+    )
+
+    lugar3 = Lugar.objects.create(
+        ciudad = "General Obligado",
+        provincia = "Santa Fe",
+        pais = "Argentina"
+    )
+
+    lugar4 = Lugar.objects.create(
+        ciudad = "Ciudad de Santa Fe",
+        provincia = "Santa Fe",
+        pais = "Argentina"
+    )
+
+    lugar5 = Lugar.objects.create(
+        ciudad = "Villa General Belgrano",
+        provincia = "Córdoba",
+        pais = "Argentina"
+    )
+
     #Crear Estudios y Presupuestos
-    estudio1 = Estudio.objects.create(
+    estudio1 = Estudio.objects.create( 
         id_interno="1234_LIR_ROD",
         fecha=date.today(),
         tipo_estudio="Exoma",
@@ -316,12 +347,14 @@ def run_seeds():
         paciente_id = paciente1.id_paciente,
         medico_id = medico.id_medico, 
         estado = EstadoEstudio.INICIADO,
-        tipo_sospecha = 0
+        tipo_sospecha = 0,
+        lugar_id = lugar1.lugar_id
     )
 
     res, estudio = estudios_estado.estudio_iniciado(estudio1)
-    print(estudio)
     estudio.save()
+
+
 
     presupuesto1 = Presupuesto.objects.create(
         estudio_id = estudio1.id_estudio,
@@ -358,7 +391,8 @@ def run_seeds():
         paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.INICIADO,
-        tipo_sospecha = 0
+        tipo_sospecha = 0,
+        lugar_id = lugar2.lugar_id
     )
 
     res, estudio = estudios_estado.estudio_iniciado(estudio2)
@@ -399,9 +433,10 @@ def run_seeds():
         paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.INICIADO,
-        tipo_sospecha = 0
+        tipo_sospecha = 0,
+        lugar_id = lugar3.lugar_id
     )
-
+    
     res, estudio = estudios_estado.estudio_iniciado(estudio3)
     print(estudio)
     estudio.save()
@@ -440,7 +475,8 @@ def run_seeds():
         paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PRESUPUESTADO,
-        tipo_sospecha = 0
+        tipo_sospecha = 0,
+        lugar_id = lugar4.lugar_id
     )
 
     res, estudio = estudios_estado.estudio_iniciado(estudio4)
@@ -481,7 +517,8 @@ def run_seeds():
         paciente_id = paciente3.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PAGADO,
-        tipo_sospecha = 0
+        tipo_sospecha = 0,
+        lugar_id = lugar5.lugar_id
     )
 
     res, estudio = estudios_estado.estudio_iniciado(estudio5)
@@ -522,7 +559,8 @@ def run_seeds():
         paciente_id = paciente5.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.INICIADO,
-        tipo_sospecha = 0
+        tipo_sospecha = 0,
+        lugar_id = lugar3.lugar_id
     )
 
     res, estudio = estudios_estado.estudio_iniciado(estudio6)
@@ -554,81 +592,6 @@ def run_seeds():
 
     res, estudio = estudios_estado.estudio_confirmado(estudio)
     estudio.save()
-  
-    # estudio8 = Estudio.objects.create(
-    #     id_interno="1275_LIR_ROD",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia2.id_enfermedad,
-    #     paciente_id = paciente6.id_paciente,
-    #     medico_id = medico.id_medico,
-    #     estado = EstadoEstudio.REALIZADA,
-    #     tipo_sospecha = 0
-    # )
-
-    # turno_estudio8 = Turno.objects.create(
-    #     usuario_id = usuario6.id_usuario,
-    #     estudio_id = estudio8.id_estudio,
-    #     fecha = date.today() + timedelta(days=5),
-    #     centro_id = centro2.id_centro,
-    #     horario = time(hour=14, minute=30, second=0)
-    # )
-
-    # presupuesto8 = Presupuesto.objects.create(
-    #     estudio_id = estudio8.id_estudio,
-    #     costo_exoma = 500,
-    #     total = 500.0
-    # )
-
-    # estudio9 = Estudio.objects.create(
-    #     id_interno="1275_HUM_ROD",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id=patologia1.id_enfermedad,
-    #     paciente_id = paciente8.id_paciente,
-    #     medico_id = medico.id_medico,
-    #     estado = EstadoEstudio.CENTRALIZADA,
-    #     tipo_sospecha = 0
-    # )
-
-    # turno_estudio9 = Turno.objects.create(
-    #     usuario_id = usuario8.id_usuario,
-    #     estudio_id = estudio9.id_estudio,
-    #     fecha = date.today() + timedelta(days=5),
-    #     centro_id = centro2.id_centro,
-    #     horario = time(hour=14, minute=30, second=0)
-    # )
-
-    # presupuesto9 = Presupuesto.objects.create(
-    #     estudio_id = estudio9.id_estudio,
-    #     costo_exoma = 500,
-    #     total = 500.0
-    # )
-
-    # estudio10 = Estudio.objects.create(
-    #     id_interno="1275_LIR_ROD",
-    #     fecha=date.today(),
-    #     tipo_estudio="Exoma",
-    #     patologia_id = patologia1.id_enfermedad,
-    #     paciente_id = paciente7.id_paciente,
-    #     medico_id = medico.id_medico,
-    #     estado = EstadoEstudio.ENVIADA_EXTERIOR,
-    #     tipo_sospecha = 0
-    # )
-
-    # turno_estudio10 = Turno.objects.create(
-    #     usuario_id = usuario7.id_usuario,
-    #     estudio_id = estudio10.id_estudio,
-    #     fecha = date.today() + timedelta(days=5),
-    #     centro_id = centro1.id_centro,
-    #     horario = time(hour=14, minute=30, second=0)
-    # )
-
-    # presupuesto10 = Presupuesto.objects.create(
-    #     estudio_id = estudio10.id_estudio,
-    #     costo_exoma = 500,
-    #     total = 500.0
-    # )
 
     # Crear 10 pacientes adicionales
     usuario10 = Usuario.objects.create(

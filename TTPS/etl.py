@@ -2,6 +2,8 @@ from enum import Enum
 import sqlite3
 from datetime import datetime
 
+import etl_inserts, etl_dimensiones
+
 class EstadoEstudio(Enum):
     INICIADO = (1, 'Iniciado')
     PRESUPUESTADO = (2, 'Presupuestado')
@@ -97,6 +99,7 @@ class ETL:
                     lugar_id INTEGER,
                     fecha_id INTEGER,
                     estado_id INTEGER,
+                    tipo_sospecha_id INTEGER,
                     patologia_id INTEGER,
                     resultado TEXT
                 )
@@ -114,36 +117,18 @@ class ETL:
                 )
             """)
 
-    def obtener_fechas(self):
-        cursor = self.origen_conn.cursor()
-        cursor.execute("""
-            SELECT DISTINCT DATE(fecha_inicio) as fecha FROM estudios_historialestudio
-            UNION
-            SELECT DISTINCT DATE(fecha_fin) as fecha FROM estudios_historialestudio
-            WHERE fecha_fin IS NOT NULL
-        """)
-        return cursor.fetchall()
-
     def transform_tiempo(self):
         """Transformar y cargar dimensión de tiempo"""
         cursor_target = self.destino_conn.cursor()
         
         # Obtener fechas únicas
-        fechas = self.obtener_fechas()
-        
-        # Insertar cada fecha con sus atributos calculados
-        for (fecha,) in enumerate(sorted(set(fechas)), 1):  # Eliminar duplicados y ordenar
-            date_obj = datetime.strptime(fecha, '%Y-%m-%d')
+        fechas = etl_dimensiones.obtener_fechas(self.origen_conn.cursor())
 
-            cursor_target.execute("""
-                INSERT OR IGNORE INTO DIM_FECHA (
-                    anio, mes, dia
-                ) VALUES (?, ?, ?)
-            """, (
-                date_obj.year,
-                date_obj.month,
-                date_obj.day
-            ))
+        # Insertar cada fecha con sus atributos calculados
+        for i, fecha_tupla in enumerate(sorted(fechas)):  # Eliminar duplicados y ordenar
+            fecha_str = fecha_tupla[0]
+            
+            etl_inserts.insert_fecha(cursor_target, fecha_str)
         
         self.destino_conn.commit()
 
@@ -154,12 +139,9 @@ class ETL:
        
         cursor_source.execute("SELECT * FROM lugares")
         lugares = cursor_source.fetchall()
-    
+
         for lugar in lugares:
-            cursor_target.execute("""
-                INSERT INTO DIM_LUGAR (ciudad, provincia, pais)
-                VALUES (?, ?, ?)
-            """, lugar)
+            etl_inserts.insert_lugar(cursor_target, lugar)
     
         self.destino_conn.commit()
         pass
@@ -229,19 +211,8 @@ class ETL:
         inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
         fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
         return (fin - inicio).days
-    
-    # TODO no se si funciona
-    # TODO # TODO # TODO
-    # TODO # TODO
-    def obtener_id_fecha(self, fecha):
-        cursor = self.destino_conn.cursor()
-        cursor.execute("""
-            SELECT fecha_id FROM DIM_FECHA
-            WHERE anio = ? AND mes = ? AND dia = ?
-        """, fecha)
-        return cursor.fetchone()[0]
 
-    def transform_hechos_demora(self):
+    def procesar_hechos_demora(self):
         """Transformar y cargar tabla de hechos"""
         cursor_source = self.origen_conn.cursor()
         cursor_target = self.destino_conn.cursor()
@@ -285,27 +256,29 @@ class ETL:
                 e.lugar_id,
                 e.fecha,
                 e.estado,
-                e.patologia,
                 e.tipo_sospecha,
-                e.resultado
+                e.resultado,
+                p.nombre
             FROM estudios e
+            JOIN enfermedad p ON e.patologia_id = p.id_enfermedad
         """)
         estudios_data = cursor_source.fetchall()
 
         # Procesar cada registro
         for estudio in estudios_data:
-            lugar_id, fecha, estado, patologia, tipo_sospecha, resultado = estudio
+            lugar_id, fecha, estado, tipo_sospecha, resultado, patologia = estudio
 
-            fecha_id = self.obtener_id_fecha(fecha)
+            fecha_id = etl_dimensiones.obtener_id_fecha(cursor_target, fecha)
+            estado_id = etl_dimensiones.obtener_id_estado(cursor_target, estado)
 
             # Insertar en tabla de hechos
             cursor_target.execute("""
-                INSERT INTO HECHO_DEMORA_ESTUDIO (
+                INSERT INTO HECHO_ESTUDIOS (
                     lugar_id, fecha_id,
-                    estado_id, patologia_id, tipo_sospecha, resultado
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    estado_id, patologia_id, tipo_sospecha_id, resultado
+                ) VALUES (?, ?, ?, ?, ?, ?)
             """, (
-                lugar_id, fecha_id, estado,
+                lugar_id, fecha_id, estado_id,
                 patologia, tipo_sospecha, resultado
             ))
         
@@ -329,13 +302,13 @@ class ETL:
         self.transform_tiempo()
         
         # print("Transformando y cargando dimensión lugar...")
-        # self.transform_lugar()
+        self.transform_lugar()
         
         print("Transformando y cargando dimensión estado...")
         self.transform_estado()
         
         print("Transformando y cargando tabla de hechos...")
-        self.transform_hechos()
+        self.procesar_hecho_estudios()
         
         print("Proceso ETL completado exitosamente!")
     
