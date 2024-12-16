@@ -280,6 +280,7 @@ class ETL:
 
             fecha_id = etl_dimensiones.obtener_id_fecha(cursor_target, fecha)
             estado_id = etl_dimensiones.obtener_id_estado(cursor_target, estado)
+            patologia_id = etl_dimensiones.obtener_id_patologia(cursor_target, patologia)
 
             # Insertar en tabla de hechos
             cursor_target.execute("""
@@ -289,7 +290,7 @@ class ETL:
                 ) VALUES (?, ?, ?, ?, ?, ?)
             """, (
                 lugar_id, fecha_id, estado_id,
-                patologia, tipo_sospecha, resultado
+                patologia_id, tipo_sospecha, resultado
             ))
         
         self.destino_conn.commit()
