@@ -27,3 +27,13 @@ def insert_lugar(cursor_target, lugar):
         lugar[2],
         lugar[3]
     ))
+
+def insert_hecho_facturacion(cursor_target, facturacion, fecha_id):
+    cursor_target.execute("""
+        INSERT INTO HECHO_FACTURACION (monto, fecha_id, lugar_id)
+        VALUES (?, ?, ?)
+    """, (
+        facturacion[0],
+        fecha_id,
+        facturacion[1]       
+    ))

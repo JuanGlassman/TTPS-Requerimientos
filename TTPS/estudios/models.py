@@ -97,7 +97,7 @@ class Estudio(models.Model):
     patologia = models.ForeignKey(Enfermedad, on_delete=models.PROTECT, null=True )
     genes = models.ManyToManyField(Gen)
     sintomas = models.ManyToManyField(Sintoma)
-    lugar = models.OneToOneField(Lugar, on_delete=models.PROTECT, null=True) 
+    lugar = models.ForeignKey(Lugar, on_delete=models.PROTECT, null=True) 
 
     def __str__(self):
         return f"{self.id_interno} - {self.paciente}"

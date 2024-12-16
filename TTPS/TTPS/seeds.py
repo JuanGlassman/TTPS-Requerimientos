@@ -475,8 +475,8 @@ def run_seeds():
         paciente_id = paciente2.id_paciente,
         medico_id = medico.id_medico,
         estado = EstadoEstudio.PRESUPUESTADO,
-        tipo_sospecha = 0,
-        lugar_id = lugar4.lugar_id
+        tipo_sospecha = 1,
+        lugar_id = lugar1.lugar_id
     )
 
     res, estudio = estudios_estado.estudio_iniciado(estudio4)
@@ -567,7 +567,7 @@ def run_seeds():
     print(estudio)
     estudio.save()
 
-    presupuesto7 = Presupuesto.objects.create(
+    presupuesto6 = Presupuesto.objects.create(
         estudio_id = estudio6.id_estudio,
         costo_exoma = 500,
         total = 500.0

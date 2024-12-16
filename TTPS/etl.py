@@ -111,9 +111,7 @@ class ETL:
                     id_facturacion INTEGER PRIMARY KEY AUTOINCREMENT,
                     monto FLOAT,
                     fecha_id INTEGER,
-                    lugar_id INTEGER,
-                    FOREIGN KEY (lugar_id) REFERENCES DIM_LUGAR (lugar_id),
-                    FOREIGN KEY (fecha_id) REFERENCES DIM_FECHA (fecha_id)
+                    lugar_id INTEGER
                 )
             """)
 
@@ -145,14 +143,14 @@ class ETL:
     
         self.destino_conn.commit()
         pass
-
-    # Se inserta de una con el id porque son enums
+    
     def transform_estado(self):
         """Transformar y cargar dimensión de estado"""
         cursor_source = self.origen_conn.cursor()
         cursor_target = self.destino_conn.cursor()           
         
         for estado in EstadoEstudio:
+            # Se inserta de una con el id porque son enums
             cursor_target.execute("""
                 INSERT INTO DIM_ESTADO (
                     estado_id, estado
@@ -164,11 +162,12 @@ class ETL:
         
         self.destino_conn.commit()
         
-    # Se inserta de una con el id porque son enums
     def transform_sospecha(self):
         """Transformar y cargar dimensión de sospecha"""
-        cursor_source = self.origen_conn.cursor()
+        #cursor_source = self.origen_conn.cursor()
         cursor_target = self.destino_conn.cursor()
+
+        # Se inserta de una con el id porque son enums
         cursor_target.execute("""
             INSERT INTO DIM_SOSPECHA (
                 sospecha_id, sospecha
@@ -199,17 +198,21 @@ class ETL:
             cursor_target.execute("""
                 INSERT INTO DIM_PATOLOGIA (patologia_id, patologia, gen)
                 VALUES (?, ?, ?)
-            """, patologia)
+            """, (
+                patologia[0],
+                patologia[1],
+                patologia[2]
+            ))
         
         self.destino_conn.commit()
 
-    def calculate_duration_days(self, fecha_inicio, fecha_fin):
+    def calcular_duracion_dias(self, fecha_inicio, fecha_fin):
         """Calcular duración en días entre dos fechas"""
         if not fecha_fin:
             return None
         
-        inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
-        fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+        inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d %H:%M:%S.%f')
+        fin = datetime.strptime(fecha_fin, '%Y-%m-%d %H:%M:%S.%f')
         return (fin - inicio).days
 
     def procesar_hechos_demora(self):
@@ -220,20 +223,27 @@ class ETL:
         # Obtener los datos necesarios de las tablas fuente
         cursor_source.execute("""
             SELECT 
-                e.lugar_id,
-                he.estado_id,
+                e.fecha,
+                l.lugar_id,
+                he.estado,
                 he.fecha_inicio,
                 he.fecha_fin
             FROM estudios e
-            JOIN estudios_historialestudio he ON e.id = he.estudio_id
+            JOIN lugares l ON e.lugar_id = l.lugar_id
+            JOIN estudios_historialestudio he ON e.id_estudio = he.estudio_id                  
         """)
+        # GROUP BY l.lugar_id, he.estado
+
         estudios_data = cursor_source.fetchall()
         
         # Procesar cada registro
         for estudio in estudios_data:
-            lugar_id, estado_id, fecha_inicio, fecha_fin = estudio            
+            fecha_estudio, lugar_id, estado, fecha_inicio, fecha_fin = estudio       
+
+            estado_id = etl_dimensiones.obtener_id_estado(cursor_target, estado)
+
             # Calcular duración
-            duracion = self.calculate_duration_days(fecha_inicio, fecha_fin)            
+            duracion = self.calcular_duracion_dias(fecha_inicio, fecha_fin)            
             
             # Insertar en tabla de hechos
             cursor_target.execute("""
@@ -284,33 +294,81 @@ class ETL:
         
         self.destino_conn.commit()
 
-    # TODO procesar hecho facturacion
     def procesar_hecho_facturacion(self):
-            ### TODO TODO TODO TODO
-            ### TODO TODO TODO TODO 
-        return None
+        cursor_source = self.origen_conn.cursor()
+        cursor_target = self.destino_conn.cursor()
+        
+        cursor_target.execute("""
+            SELECT 
+                l.lugar_id,
+                f.fecha_id,
+                f.dia
+            FROM DIM_LUGAR l
+            JOIN DIM_FECHA f
+            GROUP BY l.lugar_id, f.fecha_id                      
+        """)
+        
+        for items in cursor_target.fetchall():
+            lugar_id, fecha_id, fecha = items
 
+            fecha_partes = fecha.split('-')
+            fecha_formateada = f"{fecha_partes[2]}-{fecha_partes[1]}-{fecha_partes[0]}"
+
+            # Obtener los datos necesarios de las tablas fuente
+            cursor_source.execute("""
+                SELECT 
+                    COALESCE(SUM(p.total), 0) as total_suma,
+                    ? as lugar_id,
+                    ? as fecha
+                FROM estudios e
+                JOIN lugares l ON l.lugar_id = e.lugar_id 
+                JOIN presupuestos p ON p.estudio_id = e.id_estudio
+                WHERE e.lugar_id = ? AND e.fecha = ?
+            """, (
+                lugar_id,
+                fecha_formateada,
+                lugar_id,
+                fecha_formateada
+            ))
+
+            facturacion = cursor_source.fetchone()
+            fecha_id = etl_dimensiones.obtener_id_fecha(cursor_target, facturacion[2])
+            etl_inserts.insert_hecho_facturacion(cursor_target, facturacion, fecha_id)
+        
+        self.destino_conn.commit()
 
     def run_etl(self):
         """Ejecutar proceso ETL completo"""
-        print("Iniciando proceso ETL...")
+        print("Iniciando proceso ETL ")
         
-        print("Creando esquema estrella...")
+        print("Creando esquema estrella 🛠")
         self.crear_modelo_estrella()
         
-        print("Transformando y cargando dimensión tiempo...")
+        print("Cargando dimensión tiempo ⏳")
         self.transform_tiempo()
         
-        # print("Transformando y cargando dimensión lugar...")
+        print("Cargando dimensión lugar ⏳")
         self.transform_lugar()
         
-        print("Transformando y cargando dimensión estado...")
+        print("Cargando dimensión estado ⏳")
         self.transform_estado()
+
+        print("Cargando dimensión estado ⏳")
+        self.transform_sospecha()
+
+        print("Cargando dimensión patologia ⏳")
+        self.transform_patologia()
         
-        print("Transformando y cargando tabla de hechos...")
+        print("Cargando Hechos Estudios ⚡")
         self.procesar_hecho_estudios()
+
+        print("Cargando Hechos Facturación ⚡")
+        self.procesar_hecho_facturacion()
+
+        print("Cargando Hechos Demora Estudios ⚡")
+        self.procesar_hechos_demora()
         
-        print("Proceso ETL completado exitosamente!")
+        print("Proceso ETL completado exitosamente ✔")
     
     def close_connections(self):
         """Cerrar conexiones a las bases de datos"""
