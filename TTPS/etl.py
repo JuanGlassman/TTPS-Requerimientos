@@ -313,7 +313,7 @@ class ETL:
             lugar_id, fecha_id, fecha = items
 
             fecha_partes = fecha.split('-')
-            fecha_formateada = f"{fecha_partes[2]}-{fecha_partes[1]}-{fecha_partes[0]}"
+            fecha_formateada = f"{fecha_partes[0]}-{fecha_partes[1]}-{fecha_partes[2]}"
 
             # Obtener los datos necesarios de las tablas fuente
             cursor_source.execute("""

@@ -4,8 +4,8 @@ from datetime import datetime
 def insert_fecha(cursor_target, fecha_str):
     date_obj = datetime.strptime(fecha_str, '%Y-%m-%d')
 
-    dia_formateado = date_obj.strftime('%d-%m-%Y')
-    mes_formateado = date_obj.strftime('%m-%Y')
+    dia_formateado = date_obj.strftime('%Y-%m-%d')
+    mes_formateado = date_obj.strftime('%Y-%m')
     anio_formateado = date_obj.strftime('%Y')
 
     cursor_target.execute("""
