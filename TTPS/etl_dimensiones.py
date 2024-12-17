@@ -24,9 +24,8 @@ def obtener_id_fecha(cursor, fecha):
     fecha_id = resultado[0] if resultado else None
 
     #Insertar si no existe!!! 
-    #if fecha_id is not None:
-        #etl_inserts.insert_fecha(cursor, fecha)
-        #cursor.execute("INSERT INTO ... (fecha_id, ...) VALUES (?, ...)", [fecha_id, ...])
+    if fecha_id is None:
+        fecha_id = etl_inserts.insert_fecha(cursor, fecha)
 
     return fecha_id
 

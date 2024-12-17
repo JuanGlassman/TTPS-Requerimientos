@@ -18,6 +18,8 @@ def insert_fecha(cursor_target, fecha_str):
         dia_formateado
     ))
 
+    return cursor_target.lastrowid
+
 def insert_lugar(cursor_target, lugar):
     cursor_target.execute("""
         INSERT INTO DIM_LUGAR (ciudad, provincia, pais)

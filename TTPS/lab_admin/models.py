@@ -25,7 +25,7 @@ class Centro(models.Model):
     latitud = models.FloatField(null=True)
     telefono = models.CharField(max_length=50, blank=True)
     email = models.EmailField(max_length=150, blank=True)
-    lugar = models.OneToOneField(Lugar, on_delete=models.PROTECT, null=True) 
+    lugar = models.ForeignKey(Lugar, on_delete=models.PROTECT, null=True) 
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):

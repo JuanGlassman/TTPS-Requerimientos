@@ -211,8 +211,8 @@ class ETL:
         if not fecha_fin:
             return None
         
-        inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d %H:%M:%S.%f')
-        fin = datetime.strptime(fecha_fin, '%Y-%m-%d %H:%M:%S.%f')
+        inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+        fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
         return (fin - inicio).days
 
     def procesar_hechos_demora(self):
@@ -226,8 +226,8 @@ class ETL:
                 e.fecha,
                 l.lugar_id,
                 he.estado,
-                he.fecha_inicio,
-                he.fecha_fin
+                DATE(he.fecha_inicio),
+                DATE(he.fecha_fin)
             FROM estudios e
             JOIN lugares l ON e.lugar_id = l.lugar_id
             JOIN estudios_historialestudio he ON e.id_estudio = he.estudio_id                  
