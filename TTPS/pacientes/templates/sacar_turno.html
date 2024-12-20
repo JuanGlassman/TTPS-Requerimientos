@@ -14,7 +14,9 @@
                     <option value="{{ centro.id_centro }}">{{ centro.nombre }}</option>
                 {% endfor %}
             </select>
+            <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
         </div>
+
 
         <div class="mb-3">
             <label for="fecha" class="form-label"><strong>Fecha</strong></label>
@@ -93,6 +95,39 @@
         const dateInput = document.getElementById('fecha');
         dateInput.setAttribute('min', minDate);
         });
-    </script>
+    
+    var map = L.map('map').fitWorld();
+    map.locate({ setView: true, watch: false });
+
+    // Agregar capa base de OpenStreetMap
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    // coord de los centros
+    let centros = [
+        {% for centro in centros %}
+            { lat: {{ centro.latitud }}, lng: {{ centro.longitud }}, nombre: {{ centro.nombre }} }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    var markers = {};
+    centros.map(centro => {
+        var marker = L.marker([centro.lat, centro.lng])
+            .bindPopup(`<strong>${centro.nombre}</strong>`)
+            .addTo(map);
+        markers[centro.id_centro] = marker;
+    });
+    // Escuchar cambios en el select del centro
+    const selectCentro = document.getElementById('centro');
+    selectCentro.addEventListener('change', function () {
+        var centroId = selectCentro.value;
+        if (centroId && markers[centroId]) {
+            var marker = markers[centroId];
+            map.setView(marker.getLatLng(), 15); // Centrar y hacer zoom en el marcador seleccionado
+            marker.openPopup(); // Abrir el popup del marcador
+        }
+    });
+    });
+</script>
     
 {% endblock %}
