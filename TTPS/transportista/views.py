@@ -40,7 +40,9 @@ def crear_pedido(estudio, centro_id):
 
 def crear_hoja_de_ruta(pedido):
     transportista_id = Transportista.objects.first().id_transportista
+    ## Esta es la linea correcta
     # hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today() + timedelta(days=1), estado='pendiente')
+    ## Esta es la linea por razones de demo
     hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today(), estado='pendiente')
     hoja_de_ruta.pedidos.add(pedido)
     hoja_de_ruta.save()
@@ -63,8 +65,10 @@ def agregar_estudio_a_pedido(estudio_id):
     estudio = Estudio.objects.get(id_estudio=estudio_id)
     turno = Turno.objects.get(estudio=estudio)
     centro_id = turno.centro.id_centro
+    ## Esta es la linea correcta
     # hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today() + timedelta(days=1)).first()
-    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today()).first()
+    ## Esta es la linea por razones de demo
+    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today()).filter(estado="pendiente").first()
     if not hoja_de_ruta:
         pedido = crear_pedido(estudio, centro_id)
         hoja_de_ruta = crear_hoja_de_ruta(pedido)
@@ -148,3 +152,23 @@ def entregar_pedido(request):
     except Exception as e:
         print(f"ERROR: {e}")
         return JsonResponse({'success': False}, status=500)
+    
+@login_required
+@permission_required('transportista')
+def cancelar_pedido(request, pedido_id):
+    # Si el transportista no puede recoger el pedido, lo cancela
+    # entonces el pedido se agrega a la hoja de ruta del dia de mañana.
+    pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
+    ## Esta es la linea correcta
+    #hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today() + timedelta(days=1)).first()
+    ## Esta es la linea por razones de demo
+    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today()).filter("pendiente").first()
+    if not hoja_de_ruta:
+        hoja_de_ruta = crear_hoja_de_ruta(pedido)
+    else:
+        hoja_de_ruta.pedidos.add(pedido)
+        hoja_de_ruta.save()
+    hoja_de_ruta_hoy = buscar_hoja_de_ruta_por_fecha(date.today()).first()
+    hoja_de_ruta_hoy.pedidos.remove(pedido)
+    hoja_de_ruta_hoy.save()
+    return redirect('transportista:lista_pedidos')

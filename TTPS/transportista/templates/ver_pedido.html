@@ -47,6 +47,7 @@
               </div>
             </div>
             <a class="btn-transportista" onclick="entregarPedido()">Recoger</a>
+            <a class="btn-transportista" href="{% url 'transportista:cancelar_pedido' pedido.id_pedido %}" onclick="return confirm('El pedido se pasará para mañana. ¿Esta seguro?')">Cancelar</a>
         {% endif %}
     </div>
     {% else %}
