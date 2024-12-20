@@ -63,7 +63,7 @@ class ETL:
                 )
             """)
 
-            # Crear dimensión estado
+            # Crear dimensión patologia
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS DIM_PATOLOGIA (
                     patologia_id INTEGER PRIMARY KEY,
@@ -72,7 +72,7 @@ class ETL:
                 )
             """)
 
-            # Crear dimensión estado
+            # Crear dimensión sospecha
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS DIM_SOSPECHA (
                     sospecha_id INTEGER PRIMARY KEY,
@@ -80,11 +80,12 @@ class ETL:
                 )
             """)
             
-            # Crear tabla de hechos
+            # Crear tabla de hechos demora
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS HECHO_DEMORA_ESTUDIO (
                     id_hecho_demora INTEGER PRIMARY KEY AUTOINCREMENT,
                     lugar_id INTEGER,
+                    patologia_id INTEGER,
                     estado_id INTEGER,
                     duracion_dias INTEGER,
                     FOREIGN KEY (lugar_id) REFERENCES DIM_LUGAR (lugar_id),
@@ -224,13 +225,14 @@ class ETL:
         cursor_source.execute("""
             SELECT 
                 e.fecha,
+                e.patologia_id,
                 l.lugar_id,
                 he.estado,
                 DATE(he.fecha_inicio),
                 DATE(he.fecha_fin)
             FROM estudios e
             JOIN lugares l ON e.lugar_id = l.lugar_id
-            JOIN estudios_historialestudio he ON e.id_estudio = he.estudio_id                  
+            JOIN estudios_historialestudio he ON e.id_estudio = he.estudio_id                     
         """)
         # GROUP BY l.lugar_id, he.estado
 
@@ -238,7 +240,7 @@ class ETL:
         
         # Procesar cada registro
         for estudio in estudios_data:
-            fecha_estudio, lugar_id, estado, fecha_inicio, fecha_fin = estudio       
+            fecha_estudio, patologia_id, lugar_id, estado, fecha_inicio, fecha_fin = estudio       
 
             estado_id = etl_dimensiones.obtener_id_estado(cursor_target, estado)
 
@@ -248,10 +250,10 @@ class ETL:
             # Insertar en tabla de hechos
             cursor_target.execute("""
                 INSERT INTO HECHO_DEMORA_ESTUDIO (
-                    lugar_id, estado_id, duracion_dias
-                ) VALUES (?, ?, ?)
+                    patologia_id, lugar_id, estado_id, duracion_dias
+                ) VALUES (?, ?, ?, ?)
             """, (
-                lugar_id, estado_id, duracion
+                patologia_id, lugar_id, estado_id, duracion
             ))
         
         self.destino_conn.commit()
