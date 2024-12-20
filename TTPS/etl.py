@@ -86,6 +86,7 @@ class ETL:
                     id_hecho_demora INTEGER PRIMARY KEY AUTOINCREMENT,
                     lugar_id INTEGER,
                     patologia_id INTEGER,
+                    tipo_sospecha INTEGER,
                     estado_id INTEGER,
                     duracion_dias INTEGER,
                     FOREIGN KEY (lugar_id) REFERENCES DIM_LUGAR (lugar_id),
@@ -174,7 +175,7 @@ class ETL:
                 sospecha_id, sospecha
             ) VALUES (?, ?)
         """, (
-            1,
+            0,
             "Puntual"
         ))
         
@@ -183,7 +184,7 @@ class ETL:
                 sospecha_id, sospecha
             ) VALUES (?, ?)
         """, (
-            2,
+            1,
             "Familiar"
         ))
         self.destino_conn.commit()
@@ -226,6 +227,7 @@ class ETL:
             SELECT 
                 e.fecha,
                 e.patologia_id,
+                e.tipo_sospecha,
                 l.lugar_id,
                 he.estado,
                 DATE(he.fecha_inicio),
@@ -240,7 +242,7 @@ class ETL:
         
         # Procesar cada registro
         for estudio in estudios_data:
-            fecha_estudio, patologia_id, lugar_id, estado, fecha_inicio, fecha_fin = estudio       
+            fecha_estudio, patologia_id, tipo_sospecha, lugar_id, estado, fecha_inicio, fecha_fin = estudio       
 
             estado_id = etl_dimensiones.obtener_id_estado(cursor_target, estado)
 
@@ -250,10 +252,10 @@ class ETL:
             # Insertar en tabla de hechos
             cursor_target.execute("""
                 INSERT INTO HECHO_DEMORA_ESTUDIO (
-                    patologia_id, lugar_id, estado_id, duracion_dias
-                ) VALUES (?, ?, ?, ?)
+                    patologia_id, tipo_sospecha, lugar_id, estado_id, duracion_dias
+                ) VALUES (?, ?, ?, ?, ?)
             """, (
-                patologia_id, lugar_id, estado_id, duracion
+                patologia_id, tipo_sospecha, lugar_id, estado_id, duracion
             ))
         
         self.destino_conn.commit()
