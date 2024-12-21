@@ -103,7 +103,8 @@ class ETL:
                     estado_id INTEGER,
                     tipo_sospecha_id INTEGER,
                     patologia_id INTEGER,
-                    resultado TEXT
+                    resultado TEXT,
+                    duracion_total INTEGER
                 )
             """)
 
@@ -267,6 +268,7 @@ class ETL:
         # Obtener los datos necesarios de las tablas fuente
         cursor_source.execute("""
             SELECT
+                e.id_estudio,
                 e.lugar_id,
                 e.fecha,
                 e.estado,
@@ -274,27 +276,44 @@ class ETL:
                 e.resultado,
                 p.nombre
             FROM estudios e
+            WHERE e.estado IN ('FINALIZADO', 'CANCELADO')
             JOIN enfermedad p ON e.patologia_id = p.id_enfermedad
         """)
         estudios_data = cursor_source.fetchall()
 
         # Procesar cada registro
         for estudio in estudios_data:
-            lugar_id, fecha, estado, tipo_sospecha, resultado, patologia = estudio
+            id_estudio, lugar_id, fecha, estado, tipo_sospecha, resultado, patologia = estudio
 
             fecha_id = etl_dimensiones.obtener_id_fecha(cursor_target, fecha)
             estado_id = etl_dimensiones.obtener_id_estado(cursor_target, estado)
             patologia_id = etl_dimensiones.obtener_id_patologia(cursor_target, patologia)
 
+            cursor_source.execute("""
+                SELECT 
+                    DATE(fecha_fin) as fecha_fin
+                FROM 
+                    estudios_historialestudio
+                WHERE 
+                    estudio_id = %s AND estado IN ('FINALIZADO', 'CANCELADO')
+                LIMIT 1;
+            """, (id_estudio,))
+            result = cursor_source.fetchone()
+            if result:
+                fecha_fin = result[0]
+                duracion_total = self.calcular_duracion_dias(fecha, fecha_fin)
+            else:
+                duracion_total = None
+
             # Insertar en tabla de hechos
             cursor_target.execute("""
                 INSERT INTO HECHO_ESTUDIOS (
                     lugar_id, fecha_id,
-                    estado_id, patologia_id, tipo_sospecha_id, resultado
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                    estado_id, patologia_id, tipo_sospecha_id, resultado, duracion_total
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
                 lugar_id, fecha_id, estado_id,
-                patologia_id, tipo_sospecha, resultado
+                patologia_id, tipo_sospecha, resultado, duracion_total
             ))
         
         self.destino_conn.commit()
