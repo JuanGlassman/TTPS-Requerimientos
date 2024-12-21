@@ -276,8 +276,8 @@ class ETL:
                 e.resultado,
                 p.nombre
             FROM estudios e
-            WHERE e.estado IN ('FINALIZADO', 'CANCELADO')
             JOIN enfermedad p ON e.patologia_id = p.id_enfermedad
+            WHERE e.estado IN ('Finalizado', 'Cancelado');
         """)
         estudios_data = cursor_source.fetchall()
 
@@ -295,7 +295,7 @@ class ETL:
                 FROM 
                     estudios_historialestudio
                 WHERE 
-                    estudio_id = %s AND estado IN ('FINALIZADO', 'CANCELADO')
+                    estudio_id = ? AND estado IN ('Finalizado', 'Cancelado')
                 LIMIT 1;
             """, (id_estudio,))
             result = cursor_source.fetchone()
@@ -304,7 +304,7 @@ class ETL:
                 duracion_total = self.calcular_duracion_dias(fecha, fecha_fin)
             else:
                 duracion_total = None
-
+            
             # Insertar en tabla de hechos
             cursor_target.execute("""
                 INSERT INTO HECHO_ESTUDIOS (
