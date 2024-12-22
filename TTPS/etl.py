@@ -235,7 +235,8 @@ class ETL:
                 DATE(he.fecha_fin)
             FROM estudios e
             JOIN lugares l ON e.lugar_id = l.lugar_id
-            JOIN estudios_historialestudio he ON e.id_estudio = he.estudio_id                     
+            JOIN estudios_historialestudio he ON e.id_estudio = he.estudio_id
+            WHERE e.estado IN ('Finalizado', 'Cancelado');                 
         """)
         # GROUP BY l.lugar_id, he.estado
 
@@ -277,7 +278,6 @@ class ETL:
                 p.nombre
             FROM estudios e
             JOIN enfermedad p ON e.patologia_id = p.id_enfermedad
-            WHERE e.estado IN ('Finalizado', 'Cancelado');
         """)
         estudios_data = cursor_source.fetchall()
 
