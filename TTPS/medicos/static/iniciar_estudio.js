@@ -72,6 +72,7 @@ const gen_div = document.getElementById('gen-analizar');
 var nombrePatologia;
 
 patologiaSelect.addEventListener('change', function(e) {
+    debugger;
     nombrePatologia = patologiaSelect.querySelector(`option[value="${e.target.value}"]`).innerHTML;
     fetch(`https://api.claudioraverta.com/genes-analizar/${nombrePatologia}`)
     .then(response => {
@@ -83,11 +84,9 @@ patologiaSelect.addEventListener('change', function(e) {
         if (statusCode == 200) {
             gen_div.innerHTML = data.gen;
             gen_div.className = "badge text-bg-success"
-            console.log(data);
         }
         else {
             gen_div.innerHTML = data.error;
-            console.log(data);
         }     
     })
     .catch(error => {
@@ -99,7 +98,7 @@ patologiaSelect.addEventListener('change', function(e) {
 });
 
 sospechaId.addEventListener('change', function(e) {
-    if (sospechaId.value == '1') {
+    if (sospechaId.value == '2') {
         parentescoId.style = "display: block;"
     }
     else {
@@ -109,7 +108,6 @@ sospechaId.addEventListener('change', function(e) {
 
 document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault(); // Detiene el envío del formulario
- 
     const formData = new FormData(e.target);      
 
     if (await validarForm(formData)) {
@@ -122,9 +120,9 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         this.appendChild(inputSintomas);
 
         const inputGenes = document.createElement('input');
-        inputSintomas.type = 'hidden';
-        inputSintomas.name = 'genes';
-        inputSintomas.value = JSON.stringify(genes);
+        inputGenes.type = 'hidden';
+        inputGenes.name = 'genes';
+        inputGenes.value = JSON.stringify(genes);
         this.appendChild(inputGenes);
 
         const inputPatologia = document.createElement('input');
@@ -134,14 +132,15 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         this.appendChild(inputPatologia);
 
         this.submit(); // Envía el formulario
-    };     
+    };   
+    e.defaultPrevented()  
  });
 
 async function validarForm(formData) {
     if (!validarSintomas()) return false
     if (!validarPatologia(formData.get('patologia'))) return false
     if (!validarSospecha(formData.get('sospecha'), formData.get('parentesco'))) return false
-    if (formData.get('sospecha') === "0") {
+    if (formData.get('sospecha') === "1") {
         if (!await validarSintomasConPatologia(
             patologiaSelect.querySelector(`option[value="${formData.get('patologia')}"]`).innerHTML)) 
             return false
@@ -172,9 +171,8 @@ function validarPatologia(patologia) {
 }
 
 function validarSospecha(sospecha, parentesco) {
-    console.log(sospecha)
-    console.log(parentesco)
-    if (sospecha == '1' & !parentesco) {
+    debugger;
+    if (sospecha != '1' & !parentesco) {
         document.getElementById('parentescoInput').className = "form-control is-invalid"
         document.getElementById('error-parentesco').style = "display: block;"
         return false;
@@ -185,7 +183,6 @@ function validarSospecha(sospecha, parentesco) {
 }
 
 async function validarSintomasConPatologia(patologia) {
-    
     var sintomas = [];
     valores.forEach(e => sintomas.push(e.nombre));
 

@@ -79,6 +79,7 @@ def get_genes():
 def iniciar_estudio(request):    
     try:   
         sintomas = json.loads(request.POST.get('sintomas', '[]'))
+        print(sintomas)
         patologia = request.POST.get('patologia')
         tipo_estudio = request.POST.get('tipo_estudio')
         sospecha = request.POST.get('sospecha')
@@ -121,17 +122,18 @@ def iniciar_estudio(request):
                 estudio.sintomas.add(sintomaNuevo)
 
         # #Asignar los genes. Si no existen, se dan de alta.
-        for gen in genes:
-            try:
-                genAux = Gen.objects.get(id_gen_api=gen.get('id'))
-                print(genAux)
-                estudio.genes.add(sintomaAux)          
-            except:
-                genNuevo = Gen.objects.create(
-                    id_gen_api = gen.get('id'),
-                    nombre = gen.get('nombre')
-                )
-                estudio.genes.add(sintomaNuevo)
+        if(not genes):
+            for gen in genes:
+                try:
+                    genAux = Gen.objects.get(id_gen_api=gen.get('id'))
+                    print(genAux)
+                    estudio.genes.add(sintomaAux)          
+                except:
+                    genNuevo = Gen.objects.create(
+                        id_gen_api = gen.get('id'),
+                        nombre = gen.get('nombre')
+                    )
+                    estudio.genes.add(sintomaNuevo)
         
         estudio_views.estudio_iniciado(estudio)
         
