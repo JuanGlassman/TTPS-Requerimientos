@@ -64,7 +64,20 @@ class EstadoEstudio(models.TextChoices):
     ENVIADA_EXTERIOR = 'Enviada al Exterior'
     FINALIZADO = 'Finalizado'
     CANCELADO = 'Cancelado'
-    
+
+class Lugar(models.Model):
+    lugar_id = models.AutoField(primary_key=True)
+    ciudad = models.CharField(max_length=100, blank=True)
+    provincia = models.CharField(max_length=100)
+    pais = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.ciudad}, {self.provincia}, {self.pais}"
+
+    class Meta:
+        db_table = 'lugares'
+        unique_together = ('ciudad', 'provincia', 'pais') 
+
 class Estudio(models.Model):
     id_estudio = models.AutoField(primary_key=True)
     id_interno = models.CharField(max_length=50)  # Formato: "1234_APE_NOM"
@@ -85,6 +98,7 @@ class Estudio(models.Model):
     patologia = models.ForeignKey(Enfermedad, on_delete=models.PROTECT, null=True )
     genes = models.ManyToManyField(Gen)
     sintomas = models.ManyToManyField(Sintoma)
+    lugar = models.ForeignKey(Lugar, on_delete=models.PROTECT, null=True) 
 
     def __str__(self):
         return f"{self.id_interno} - {self.paciente}"

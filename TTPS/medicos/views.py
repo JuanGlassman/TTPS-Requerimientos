@@ -4,7 +4,7 @@ from django.urls import reverse
 from .models import Medico
 from estudios.models import Estudio, EstadoEstudio
 from django.core.paginator import Paginator
-from estudios.models import Estudio, Enfermedad, Sintoma
+from estudios.models import Estudio, Enfermedad, Sintoma, Gen, Lugar
 from lab_admin.models import Presupuesto
 from pacientes.models import Paciente
 from datetime import date
@@ -56,10 +56,13 @@ def iniciar_estudio_paciente(request, paciente_id):
 
     genes = get_genes()
     
+    lugares = Lugar.objects.all()
+    
     return render(request, "iniciar_estudio.html", {
         "paciente": paciente,
         "patologias": get_patologias(),
-        "genes": genes.get("results")
+        "genes": genes.get("results"),
+        "lugares": lugares,
         })
 
 def get_patologias():
@@ -74,8 +77,9 @@ def get_genes():
 @login_required
 @permission_required('iniciar_estudio')
 def iniciar_estudio(request):    
-    try:            
+    try:   
         sintomas = json.loads(request.POST.get('sintomas', '[]'))
+        print(sintomas)
         patologia = request.POST.get('patologia')
         tipo_estudio = request.POST.get('tipo_estudio')
         sospecha = request.POST.get('sospecha')
@@ -86,7 +90,7 @@ def iniciar_estudio(request):
         paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
 
         if not validar_inicio_estudio(request):
-            messages.wa(request, "Hubo problemas para validar el formulario. Intente de nuevo.")
+            messages.warning(request, "Hubo problemas para validar el formulario. Intente de nuevo.")
             return redirect('medicos:iniciar_estudio_paciente', int(id_paciente))
         
         medico = get_object_or_404(Medico, usuario_id=request.user)        
@@ -116,6 +120,20 @@ def iniciar_estudio(request):
                     nombre = sintoma.get('nombre')
                 )
                 estudio.sintomas.add(sintomaNuevo)
+
+        # #Asignar los genes. Si no existen, se dan de alta.
+        if(not genes):
+            for gen in genes:
+                try:
+                    genAux = Gen.objects.get(id_gen_api=gen.get('id'))
+                    print(genAux)
+                    estudio.genes.add(sintomaAux)          
+                except:
+                    genNuevo = Gen.objects.create(
+                        id_gen_api = gen.get('id'),
+                        nombre = gen.get('nombre')
+                    )
+                    estudio.genes.add(sintomaNuevo)
         
         estudio_views.estudio_iniciado(estudio)
         
@@ -131,7 +149,7 @@ def iniciar_estudio(request):
         return redirect("estudios:estudio_detalle", estudio.id_estudio)
             
     except Exception as e:
-        print(e)
+        messages.warning("Error al iniciar estudio. Intente de nuevo.")
         return redirect('home')
     
 def generar_id_interno(paciente) -> str:

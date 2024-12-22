@@ -1,6 +1,7 @@
 from django.db import models
 from inicio_sesion.models import Usuario
 
+#Sistem admin
 class SystemAdmin(models.Model):
     id_system_admin = models.AutoField(primary_key=True)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)

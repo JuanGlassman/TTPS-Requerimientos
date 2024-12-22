@@ -5,13 +5,18 @@ import requests
 
 def validar_inicio_estudio(request):
     sintomas = json.loads(request.POST.get('sintomas', '[]'))
+    print("ENTRO A VALIDAR")
     if not validar_sintomas(sintomas): return False
+    
     if not validar_patologia(request.POST.get('patologia')): return False
     if not validar_sospecha(request.POST.get('sospecha'), request.POST.get('parentesco')): return False
-    if not validar_sintomas_con_patologia(request.POST.get('patologia_nombre'), sintomas): return False
+    print("PASO LAS PRIMERAS VALIDACIONES")
+    if request.POST.get('sospecha') == '1':
+        if not validar_sintomas_con_patologia(request.POST.get('patologia_nombre'), sintomas): return False
     return True
 
 def validar_sintomas(sintomas):
+    print(sintomas)
     if not sintomas:
         return False
     return True
@@ -22,7 +27,7 @@ def validar_patologia(patologia):
         return True
 
 def validar_sospecha(sospecha, parentesco):
-    if sospecha == '1' and not parentesco:
+    if sospecha != '1' and not parentesco:
         return False
     return True
 

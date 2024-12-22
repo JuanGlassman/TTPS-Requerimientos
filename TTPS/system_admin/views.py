@@ -4,11 +4,12 @@ from inicio_sesion.models import Usuario, Rol
 from medicos.models import Medico
 from lab_admin.models import LabAdmin
 from lab_admin.models import Centro
+from estudios.models import Lugar
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from inicio_sesion.views import permission_required
-from .forms import UsuarioForm, MedicoForm, CentroForm
+from .forms import UsuarioForm, MedicoForm, CentroForm, LugarForm
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
@@ -225,27 +226,79 @@ def lista_centros(request):
 @login_required
 @permission_required('centro_create')
 def crear_centro(request):
+    lugares = Lugar.objects.all()
+
     if request.method == 'POST':
-        form = CentroForm(request.POST)
-        if form.is_valid():
-            form.save()
+        centro_form = CentroForm(request.POST)
+        use_existing_lugar = request.POST.get('use_existing_lugar', False) == 'on'
+
+        if use_existing_lugar:
+            lugar_id = request.POST.get('lugar')
+            lugar = get_object_or_404(Lugar, id_lugar=lugar_id)
+        else:
+            lugar = Lugar.objects.create(
+                ciudad=request.POST.get('ciudad'),
+                provincia=request.POST.get('provincia'),
+                pais=request.POST.get('pais')
+            )
+
+        if centro_form.is_valid():
+            centro = centro_form.save(commit=False)
+            centro.lugar = lugar
+            centro.save()
+            messages.success(request, "Centro creado exitosamente.")
             return redirect('system_admin:lista_centros')
+        else:
+            messages.error(request, "Hubo un error en el formulario. Verifica los datos ingresados.")
     else:
-        form = CentroForm()
-    return render(request, 'formulario_centro.html', {'form': form})
+        centro_form = CentroForm()
+
+    return render(request, 'formulario_centro.html', {
+        'centro_form': centro_form,
+        'lugares': lugares,
+    })
+
+
 
 @login_required
-@permission_required('centro_update')
-def editar_centro(request, pk):
-    centro = get_object_or_404(Centro, pk=pk)
+@permission_required('centro_create')
+def editar_centro(request, id_centro=None):
+    lugares = Lugar.objects.all()
+    centro = None
+
+    if id_centro:
+        centro = get_object_or_404(Centro, id_centro=id_centro)
+
     if request.method == 'POST':
-        form = CentroForm(request.POST, instance=centro)
-        if form.is_valid():
-            form.save()
+        centro_form = CentroForm(request.POST, instance=centro)
+        use_existing_lugar = request.POST.get('use_existing_lugar', False) == 'on'
+
+        if use_existing_lugar:
+            lugar_id = request.POST.get('lugar')
+            lugar = get_object_or_404(Lugar, id_lugar=lugar_id)
+        else:
+            lugar = Lugar.objects.create(
+                ciudad=request.POST.get('ciudad'),
+                provincia=request.POST.get('provincia'),
+                pais=request.POST.get('pais')
+            )
+
+        if centro_form.is_valid():
+            centro = centro_form.save(commit=False)
+            centro.lugar = lugar
+            centro.save()
+            messages.success(request, f"Centro {'actualizado' if id_centro else 'creado'} exitosamente.")
             return redirect('system_admin:lista_centros')
+        else:
+            messages.error(request, "Hubo un error en el formulario. Verifica los datos ingresados.")
     else:
-        form = CentroForm(instance=centro)
-    return render(request, 'formulario_centro.html', {'form': form})
+        centro_form = CentroForm(instance=centro)
+
+    return render(request, 'formulario_centro.html', {
+        'centro_form': centro_form,
+        'lugares': lugares,
+    })
+
 
 @login_required
 @permission_required('centro_destroy')

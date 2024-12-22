@@ -129,12 +129,14 @@ def obtener_horarios_disponibles(request):
 @login_required
 @permission_required("elegir_turno")
 def confirmacion_turno(request, turno_id):
+    print(request.user)
+    print(turno_id)
     try:
         turno = Turno.objects.get(id_turno=turno_id, usuario=request.user)
         return render(request, 'confirmar_turno.html', {'turno': turno})
     except Turno.DoesNotExist:
-        messages.error(request, "Turno no encontrado.")
-        return redirect('pacientes:sacar_turno')
+        messages.warning(request, "Turno no encontrado.")
+        return redirect('pacientes:mis_estudios')
 
 
 @login_required
