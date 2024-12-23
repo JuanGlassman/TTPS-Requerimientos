@@ -23,8 +23,7 @@ PERMISOS_POR_ROL = {
         "lista_estudios_set", "eliminar_estudios_set", "agregar_estudios_set",
         "lista_centros", "centro_create", "centro_update", "centro_destroy",
         "lista_usuarios", "usuario_create", "usuario_update", "usuario_destroy",
-        "pedido_create", "ruta_create", "pedido_update", "ruta_update",
-        "transportista", "transportista_update", "transportista_destroy", "transportista_create", "ver_historial_estados"
+        "pedido_create", "ruta_create", "pedido_update", "ruta_update", "ver_historial_estados"
     ],
     "lab_admin": [
         "lista_medicos", "medico_create", "medico_update", "medico_destroy",

@@ -680,6 +680,8 @@ def run_seeds():
         historial_medico="Bajo tratamiento sintomático"
     )    
 
+    ## ESTUDIOS
+
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
     fecha_aleatoria = fecha_random.strftime("%Y-%m-%d")
     #Crear Estudios y Presupuestos
@@ -1023,6 +1025,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio5.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(days=num_random)
@@ -1034,6 +1037,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio5)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(days=15)
@@ -1049,7 +1053,7 @@ def run_seeds():
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(days=num_random)
     estudio5.estado = EstadoEstudio.FINALIZADO
-    estudio5.resultado = "postivo"
+    estudio5.resultado = "positivo"
     estudio5.save()
     HistorialEstudio.objects.create(
         estudio_id = estudio5.id_estudio,
@@ -1194,6 +1198,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio7.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(days=num_random)
@@ -1205,6 +1210,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio7)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(days=12)
@@ -1714,6 +1720,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio15.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(days=num_random)
@@ -1725,6 +1732,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio15)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(days=15)
@@ -1740,7 +1748,7 @@ def run_seeds():
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(days=num_random)
     estudio15.estado = EstadoEstudio.FINALIZADO
-    estudio15.resultado = "postivo"
+    estudio15.resultado = "positivo"
     estudio15.save()
     HistorialEstudio.objects.create(
         estudio_id = estudio15.id_estudio,
@@ -1950,6 +1958,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio18.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(days=num_random)
@@ -1961,6 +1970,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio18)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(days=20)
@@ -1976,7 +1986,7 @@ def run_seeds():
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
     estudio18.estado = EstadoEstudio.FINALIZADO
-    estudio18.resultado = "postivo"
+    estudio18.resultado = "positivo"
     estudio18.save()
     HistorialEstudio.objects.create(
         estudio_id = estudio18.id_estudio,
@@ -2079,6 +2089,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio19.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -2090,6 +2101,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio19)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(num_random)
@@ -2273,6 +2285,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio21.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -2284,6 +2297,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio21)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(num_random)
@@ -2406,6 +2420,12 @@ def run_seeds():
         fecha_fin = fecha_fin_random
     )
 
+    presupuesto = Presupuesto.objects.create(
+        estudio_id = estudio23.id_estudio,
+        costo_exoma = 500,
+        total = 500.0
+    )
+
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
     fecha_aleatoria = fecha_random.strftime("%Y-%m-%d")
     #Crear Estudios y Presupuestos
@@ -2429,6 +2449,12 @@ def run_seeds():
         estado = EstadoEstudio.INICIADO,
         fecha_inicio = fecha_random,
         fecha_fin = fecha_fin_random
+    )
+    
+    presupuesto = Presupuesto.objects.create(
+        estudio_id = estudio24.id_estudio,
+        costo_exoma = 500,
+        total = 500.0
     )
 
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
@@ -2454,6 +2480,12 @@ def run_seeds():
         estado = EstadoEstudio.INICIADO,
         fecha_inicio = fecha_random,
         fecha_fin = fecha_fin_random
+    )
+
+    presupuesto = Presupuesto.objects.create(
+        estudio_id = estudio25.id_estudio,
+        costo_exoma = 500,
+        total = 500.0
     )
 
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
@@ -2729,6 +2761,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio30.id_estudio)
 
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
     fecha_aleatoria = fecha_random.strftime("%Y-%m-%d")
@@ -2961,6 +2994,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio33.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -2972,6 +3006,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio33)
 
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
     fecha_aleatoria = fecha_random.strftime("%Y-%m-%d")
@@ -3204,6 +3239,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio36.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -3215,6 +3251,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio36)
 
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
     fecha_aleatoria = fecha_random.strftime("%Y-%m-%d")
@@ -3310,6 +3347,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio37.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -3321,6 +3359,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio37)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(num_random)
@@ -3335,6 +3374,7 @@ def run_seeds():
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
+    estudio37.resultado = "positivo"
     estudio37.estado = EstadoEstudio.FINALIZADO
     estudio37.save()
     HistorialEstudio.objects.create(
@@ -3438,6 +3478,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio38.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -3449,6 +3490,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio38)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(num_random)
@@ -3555,6 +3597,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random,
         fecha_fin = fecha_fin_random_ex
     )
+    transportista_view.agregar_estudio_a_pedido(estudio39.id_estudio)
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_fin_random_ex + timedelta(num_random)
@@ -3566,6 +3609,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
+    estudios_estado.asignar_a_sample_set(estudio39)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(num_random)
@@ -3593,6 +3637,11 @@ def run_seeds():
         lugar_id = lugar10.lugar_id
     )
     
+    presupuesto = Presupuesto.objects.create(
+        estudio_id = estudio40.id_estudio,
+        costo_exoma = 500,
+        total = 500.0
+    )
 
     num_random = random.randint(0, 10)
     fecha_fin_random = fecha_random + timedelta(num_random)

@@ -54,6 +54,9 @@ def agregar_pedido_a_hoja_de_ruta(pedido, hoja_de_ruta_id):
     hoja_de_ruta.save()
     return hoja_de_ruta
 
+def buscar_hoja_de_ruta_pendiente_por_fecha(fecha):
+    return HojaDeRuta.objects.filter(fecha=fecha).filter(estado='pendiente')
+
 def buscar_hoja_de_ruta_por_fecha(fecha):
     return HojaDeRuta.objects.filter(fecha=fecha)
 
@@ -66,9 +69,9 @@ def agregar_estudio_a_pedido(estudio_id):
     turno = Turno.objects.get(estudio=estudio)
     centro_id = turno.centro.id_centro
     ## Esta es la linea correcta
-    # hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today() + timedelta(days=1)).first()
+    # hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today() + timedelta(days=1)).first()
     ## Esta es la linea por razones de demo
-    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today()).filter(estado="pendiente").first()
+    hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today()).first()
     if not hoja_de_ruta:
         pedido = crear_pedido(estudio, centro_id)
         hoja_de_ruta = crear_hoja_de_ruta(pedido)
@@ -160,9 +163,9 @@ def cancelar_pedido(request, pedido_id):
     # entonces el pedido se agrega a la hoja de ruta del dia de mañana.
     pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
     ## Esta es la linea correcta
-    #hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today() + timedelta(days=1)).first()
+    #hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today() + timedelta(days=1)).first()
     ## Esta es la linea por razones de demo
-    hoja_de_ruta = buscar_hoja_de_ruta_por_fecha(date.today()).filter("pendiente").first()
+    hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today()).first()
     if not hoja_de_ruta:
         hoja_de_ruta = crear_hoja_de_ruta(pedido)
     else:
