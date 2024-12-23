@@ -11,7 +11,7 @@
             <select id="centro" name="centro" class="form-select" required>
                 <option value="">Seleccione un centro</option>
                 {% for centro in centros %}
-                    <option value="{{ centro.id_centro }}">{{ centro.nombre }}</option>
+                <option value="{{ centro.id_centro }}"><b>{{ centro.nombre }}</b> - {{centro.direccion }}</option>
                 {% endfor %}
             </select>
         </div>
