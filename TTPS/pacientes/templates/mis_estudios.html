@@ -51,15 +51,16 @@
                 </td>
                 <td>
                     <div class="d-flex justify-content-end gap-2">
-                        {% if estudio.estado == estados.PAGADO and not estudio.turno_set.exists %}
+                        {% if estudio.estado == estados.PAGADO %}
                             <a href="{% url 'pacientes:sacar_turno' estudio.id_estudio %}" class="btn btn-outline-violet btn-sm">Sacar Turno</a>
-                        {% elif estudio.turno_set.exists and estudio.estado == estados.TURNO_CONFIRMADO %}
-                            <a href="{% url 'pacientes:confirmacion_turno' estudio.id_estudio %}" class="btn btn-outline-violet btn-sm">Ver Turno</a>
+                        {% elif estudio.estado == estados.TURNO_CONFIRMADO %}
+                            <a href="{% url 'pacientes:confirmacion_turno' estudio.turno.id_turno %}" class="btn btn-outline-violet btn-sm">Ver Turno</a>
                         {% endif %}
                         <a href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}"
                            class="btn btn-secondary btn-sm" title="Ver Detalles">
                             <i class="bi bi-eye-fill"></i>
                         </a>
+                        
                     </div>
                 </td>
             </tr>

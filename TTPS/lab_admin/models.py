@@ -50,7 +50,7 @@ class LabAdmin(models.Model):
 class Turno(models.Model):
     id_turno = models.AutoField(primary_key=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    estudio = models.ForeignKey('estudios.Estudio', on_delete=models.CASCADE,null=True)
+    estudio = models.OneToOneField(Estudio, on_delete=models.CASCADE,null=True)
     fecha = models.DateField(null=True, blank=True)
     centro = models.ForeignKey(Centro, on_delete=models.CASCADE)
     horario = models.TimeField()  

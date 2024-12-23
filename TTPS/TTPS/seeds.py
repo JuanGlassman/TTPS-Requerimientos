@@ -748,7 +748,8 @@ def run_seeds():
         estudio_id = estudio1.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -871,7 +872,8 @@ def run_seeds():
         estudio_id = estudio3.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -996,7 +998,8 @@ def run_seeds():
         estudio_id = estudio5.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -1166,7 +1169,8 @@ def run_seeds():
         estudio_id = estudio7.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -1453,7 +1457,8 @@ def run_seeds():
         estudio_id = estudio11.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -1684,7 +1689,8 @@ def run_seeds():
         estudio_id = estudio15.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -1919,7 +1925,8 @@ def run_seeds():
         estudio_id = estudio18.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -2047,7 +2054,8 @@ def run_seeds():
         estudio_id = estudio19.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -2240,7 +2248,8 @@ def run_seeds():
         estudio_id = estudio21.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -2356,7 +2365,8 @@ def run_seeds():
         estudio_id = estudio22.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -2694,7 +2704,8 @@ def run_seeds():
         estudio_id = estudio30.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -2841,7 +2852,8 @@ def run_seeds():
         estudio_id = estudio32.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -2924,7 +2936,8 @@ def run_seeds():
         estudio_id = estudio33.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -3029,7 +3042,8 @@ def run_seeds():
         estudio_id = estudio34.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -3165,7 +3179,8 @@ def run_seeds():
         estudio_id = estudio36.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -3270,7 +3285,8 @@ def run_seeds():
         estudio_id = estudio37.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -3397,7 +3413,8 @@ def run_seeds():
         estudio_id = estudio38.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro2.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
@@ -3513,7 +3530,8 @@ def run_seeds():
         estudio_id = estudio39.id_estudio,
         fecha = fecha_fin_random_ex + timedelta(days=5),
         centro_id = centro1.id_centro,
-        horario = time(hour=14, minute=30, second=0)
+        horario = time(hour=14, minute=30, second=0),
+        consentimiento = "consentimientos/Consentimiento_Informado.pdf"
     )
 
     num_random = random.randint(0, 10)
