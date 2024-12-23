@@ -221,7 +221,7 @@ def lista_centros(request):
     paginator = Paginator(centros, 10) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'lista_centros.html', {'object_list': page_obj})
+    return render(request, 'lista_centros.html', {'object_list': page_obj, 'activated': True})
 
 @login_required
 @permission_required('centro_create')

@@ -39,12 +39,12 @@
                     {% if centro.is_deleted %}
                         {% tiene_permiso user "centro_destroy" as puede_ver %}
                         {% if puede_ver %}
-                            <a class="btn btn-danger" href="{% url 'system_admin:eliminar_centro' centro.pk %}" onclick="return confirm('¿Estás seguro de eliminar este centro?')">Eliminar</a>
+                            <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
                         {% endif %}
                     {% else %}
                         {% tiene_permiso user "centro_update" as puede_ver %}
                         {% if puede_ver %}
-                            <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
+                            <a class="btn btn-danger" href="{% url 'system_admin:eliminar_centro' centro.pk %}" onclick="return confirm('¿Estás seguro de eliminar este centro?')">Eliminar</a>
                         {% endif %}
                     {% endif %}
                 </td>
@@ -60,9 +60,13 @@
     {% if puede_ver %}
         <a class="btn btn-primary" href="{% url 'system_admin:crear_centro' %}">Agregar nuevo centro</a>
     {% endif %}
-    {% tiene_permiso user "centro_create" as puede_ver %}
-    {% if puede_ver %}
-        <a class="btn btn-secondary" href="{% url 'system_admin:centros_desactivados' %}">Centros desactivados</a>
+    {% if activated %}
+        {% tiene_permiso user "centro_update" as puede_ver %}
+        {% if puede_ver %}
+            <a class="btn btn-secondary" href="{% url 'system_admin:centros_desactivados' %}">Centros desactivados</a>
+        {% endif %}
+    {% else %}
+        <a class="btn btn-secondary" href="{% url 'system_admin:lista_centros' %}">Centros activados</a>
     {% endif %}
     <div class="d-flex justify-content-center">
         <div class="pagination">
