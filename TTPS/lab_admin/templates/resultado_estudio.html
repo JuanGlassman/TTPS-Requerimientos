@@ -33,10 +33,6 @@
                 Debe seleccionar al menos una variante para generar el diagnóstico.
             </div>
         </div> 
-        
-        <div class="col-md-6">
-            <p><b>Pre - Diagnóstico (Este resultado no es el análisis final): </b><span id="diagnostico-analizar"></span></p>
-        </div>
 
     </div>
     </div>
@@ -52,8 +48,6 @@
     var variantesSeleccionadas = []
 
     const patologia = "{{ estudio.patologia.nombre }}"
-
-    const divDiagnostico = document.getElementById('diagnostico-analizar');
 
     varianteSelect.addEventListener('change', async function(e) {
         e.preventDefault()
@@ -77,17 +71,6 @@
         chip.appendChild(closeBtn)
         divVariantesSeleccionadas.appendChild(chip);
 
-        resultado = await analizarVariantes()
-        console.log(resultado)
-        if (resultado) {
-            divDiagnostico.innerHTML = "VÁLIDO"
-            divDiagnostico.className = "badge text-bg-success"
-        }
-        else {
-            divDiagnostico.innerHTML = "INVÁLIDO"
-            divDiagnostico.className = "badge text-bg-danger"
-        }
-
     });
 
     document.addEventListener('click', function(e) {
@@ -100,35 +83,7 @@
                 chip.remove();
             }
         }
-        if (variantesSeleccionadas.length == 0) {
-            divDiagnostico.className = "d-none"
-        }
     });
-
-    async function analizarVariantes() {
-        try {
-            var variantes = [];
-            variantesSeleccionadas.forEach(e => variantes.push(e.nombre));
-            const response = await fetch('https://api.claudioraverta.com/confirma-diagnostico/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    patologia: patologia,
-                    variantes: variantes
-                })
-            });
-            const data = await response.json();
-            if (!data.valido) {
-                return false
-            } 
-            return true
-        } catch (error) {
-            console.error('Error:', error);
-            return false;
-        }
-    };
 
     async function validarForm(formData) {
         if(variantesSeleccionadas.length == 0) {

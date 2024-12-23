@@ -27,6 +27,9 @@
                     <a class="btn btn-primary">Cargar resultados</a>
                 {% endif %}
             </div>
+            <div>   
+                <a class="btn btn-violet" href="{% url 'estudios:historial_estudio' estudio.id_estudio %}">Historial Estados</a>
+            </div>
         {% endif %}
     </div>
 </div>

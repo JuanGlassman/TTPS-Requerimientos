@@ -14,9 +14,13 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.core.paginator import Paginator
 from django.db.models import Q
-from TTPS.settings import EMAIL_HOST_PASSWORD
+from TTPS.settings import EMAIL_HOST_PASSWORD, BASE_DIR
 from django.db.models import Count
 from django.utils import timezone
+import csv
+from io import StringIO
+import os
+from datetime import datetime
 
 
 @login_required
@@ -316,6 +320,7 @@ def sample_set_detalle(request, id_sample_set):
         "estudios": estudios,
     })
 
+"""
 @login_required
 @permission_required("enviar_sample_set")
 def enviar_sample_set(request, id_sample_set):
@@ -332,7 +337,59 @@ def enviar_sample_set(request, id_sample_set):
 
     messages.success(request, f"Sample Set #{sample_set.id_sample_set} enviado con éxito.")
     return redirect("lab_admin:sample_set_list")
+"""
 
 
 
+@login_required
+@permission_required("enviar_sample_set")
+def enviar_sample_set(request, id_sample_set):
+    sample_set = get_object_or_404(SampleSet, id_sample_set=id_sample_set)
 
+    success, message = procesar_sample_set(sample_set)
+    if success:
+        messages.success(request, message)
+    else:
+        messages.error(request, message)
+
+    return redirect("lab_admin:sample_set_list")
+
+
+def procesar_sample_set(sample_set):
+    csv_buffer = StringIO()
+    csv_writer = csv.writer(csv_buffer)
+    csv_writer.writerow(['code', 'pathology'])
+
+    estudios = sample_set.estudios.all()
+    for estudio in estudios:
+        csv_writer.writerow([estudio.id_interno, estudio.patologia.nombre])
+
+    csv_buffer.seek(0)
+
+    try:
+        response = requests.post(
+            'https://api.claudioraverta.com/pdf/',
+            files={'csv_file': ('input_csv.csv', csv_buffer, 'text/csv')}
+        )
+        response.raise_for_status()  # Lanza excepción si la respuesta no es 2xx
+
+        pdf_content = response.content
+        pdf_name = f"sample_set_{sample_set.id_sample_set}.pdf"
+        pdf_path = os.path.join(BASE_DIR, 'lab_admin', 'static', 'sample_sets', pdf_name)
+
+        os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+
+        with open(pdf_path, 'wb') as pdf_file:
+            pdf_file.write(pdf_content)
+
+        for estudio in estudios:
+            res, estudio = estudio_enviado_exterior(estudio)
+            if res:
+                estudio.save()
+
+        sample_set.fecha_envio = timezone.now()
+        sample_set.save()
+
+        return True, f"Sample Set #{sample_set.id_sample_set} enviado con éxito."
+    except requests.exceptions.RequestException as e:
+        return False, f"Error al enviar Sample Set: {e}"

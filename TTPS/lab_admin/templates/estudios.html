@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-{% load static %}
 
 <div class="mb-2 d-flex justify-content-between">
     <h1>Listado de estudios</h1>
@@ -113,9 +112,14 @@
                     {% endif %}      
 
                     <div>
-                        <a class="btn btn-secondary btn-sm" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
+                        <a class="btn btn-secondary btn-sm" title="Detalle" alt="Detalle" href="{% url 'estudios:estudio_detalle' estudio.id_estudio %}">
                             <i class="bi bi-eye-fill"></i>
-                        </a>
+                        </a>                
+                        {% if not estudio.estado == estados.INICIADO and not estudio.estado == estados.PRESUPUESTADO and not estudio.estado == estados.PAGADO %}
+                            <a class="btn btn-success btn-sm" title="Descargar consentimiento informado" alt="Descargar consentimiento informado" href="{{ estudio.turno.consentimiento.url }}" download>
+                                <i class="bi bi-capslock"></i>
+                            </a>
+                        {% endif %}
                     </div>
                              
                 </div>

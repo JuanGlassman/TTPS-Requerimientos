@@ -4,11 +4,11 @@ from django.urls import reverse
 from .models import Medico
 from estudios.models import Estudio, EstadoEstudio
 from django.core.paginator import Paginator
-from estudios.models import Estudio, Enfermedad, Sintoma
+from estudios.models import Estudio, Enfermedad, Sintoma, Gen, Lugar
 from lab_admin.models import Presupuesto
 from pacientes.models import Paciente
 from datetime import date
-import requests, random, string
+import requests, random, string, secrets
 from estudios import views as estudio_views
 from .validaciones import validar_inicio_estudio
 from django.contrib import messages
@@ -21,6 +21,8 @@ from pacientes.models import Paciente
 from .forms import PacienteForm
 from django.core.paginator import Paginator
 from django.db.models import Q
+
+from system_admin.views import enviar_correo_nuevo_usuario
 
 from system_admin.forms import UsuarioForm
 from inicio_sesion.models import Usuario, Rol
@@ -54,10 +56,13 @@ def iniciar_estudio_paciente(request, paciente_id):
 
     genes = get_genes()
     
+    lugares = Lugar.objects.all()
+    
     return render(request, "iniciar_estudio.html", {
         "paciente": paciente,
         "patologias": get_patologias(),
-        "genes": genes.get("results")
+        "genes": genes.get("results"),
+        "lugares": lugares,
         })
 
 def get_patologias():
@@ -72,8 +77,9 @@ def get_genes():
 @login_required
 @permission_required('iniciar_estudio')
 def iniciar_estudio(request):    
-    try:            
+    try:   
         sintomas = json.loads(request.POST.get('sintomas', '[]'))
+        print(sintomas)
         patologia = request.POST.get('patologia')
         tipo_estudio = request.POST.get('tipo_estudio')
         sospecha = request.POST.get('sospecha')
@@ -84,7 +90,7 @@ def iniciar_estudio(request):
         paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
 
         if not validar_inicio_estudio(request):
-            messages.wa(request, "Hubo problemas para validar el formulario. Intente de nuevo.")
+            messages.warning(request, "Hubo problemas para validar el formulario. Intente de nuevo.")
             return redirect('medicos:iniciar_estudio_paciente', int(id_paciente))
         
         medico = get_object_or_404(Medico, usuario_id=request.user)        
@@ -114,6 +120,20 @@ def iniciar_estudio(request):
                     nombre = sintoma.get('nombre')
                 )
                 estudio.sintomas.add(sintomaNuevo)
+
+        # #Asignar los genes. Si no existen, se dan de alta.
+        if(not genes):
+            for gen in genes:
+                try:
+                    genAux = Gen.objects.get(id_gen_api=gen.get('id'))
+                    print(genAux)
+                    estudio.genes.add(sintomaAux)          
+                except:
+                    genNuevo = Gen.objects.create(
+                        id_gen_api = gen.get('id'),
+                        nombre = gen.get('nombre')
+                    )
+                    estudio.genes.add(sintomaNuevo)
         
         estudio_views.estudio_iniciado(estudio)
         
@@ -129,7 +149,7 @@ def iniciar_estudio(request):
         return redirect("estudios:estudio_detalle", estudio.id_estudio)
             
     except Exception as e:
-        print(e)
+        messages.warning("Error al iniciar estudio. Intente de nuevo.")
         return redirect('home')
     
 def generar_id_interno(paciente) -> str:
@@ -163,7 +183,6 @@ def estudios_paciente(request, paciente_id):
         "paciente": paciente
     })
 
-
 @login_required
 @permission_required('paciente_create')
 def crear_paciente(request):
@@ -174,8 +193,10 @@ def crear_paciente(request):
         if usuario_form.is_valid() and paciente_form.is_valid():
             try:
                 rol_paciente = Rol.objects.get(nombre='paciente') 
-                usuario = usuario_form.save(commit=False, rol=rol_paciente)
-                usuario.set_password(str(usuario.dni)) 
+                usuario, password = usuario_form.save(commit=False, rol=rol_paciente)
+                caracteres = string.ascii_letters + string.digits + string.punctuation
+                password = ''.join(secrets.choice(caracteres) for _ in range(12))
+                usuario.set_password(password)
                 usuario.save()
 
                 # Crear el paciente asociado al usuario
@@ -185,7 +206,8 @@ def crear_paciente(request):
                     historial_medico=paciente_form.cleaned_data['historial_medico']
                 )
                 paciente.save()
-
+                
+                enviar_correo_nuevo_usuario(usuario, password)
                 messages.success(request, "Paciente creado exitosamente.")
                 return redirect('medicos:listar_pacientes') 
             except Exception as e:
@@ -196,10 +218,43 @@ def crear_paciente(request):
         usuario_form = UsuarioForm()
         paciente_form = PacienteForm()
 
-    return render(request, 'crear_paciente.html', {
+    return render(request, 'form_paciente.html', {
         'usuario_form': usuario_form,
         'paciente_form': paciente_form,
+        'titulo': 'Crear Paciente',
+        'boton': 'Guardar Paciente',
     })
 
 
 
+@login_required
+@permission_required('paciente_update')
+def editar_paciente(request, id_paciente):
+    paciente = get_object_or_404(Paciente, id_paciente=id_paciente)
+    usuario = paciente.usuario 
+
+    if request.method == 'POST':
+        usuario_form = UsuarioForm(request.POST, instance=usuario)
+        paciente_form = PacienteForm(request.POST, instance=paciente)
+
+        if usuario_form.is_valid() and paciente_form.is_valid():
+            try:
+                usuario_form.save()
+                paciente_form.save()
+
+                messages.success(request, "Paciente editado exitosamente.")
+                return redirect('medicos:listar_pacientes')
+            except Exception as e:
+                messages.error(request, f"Error al editar el paciente: {e}")
+        else:
+            messages.error(request, "Formulario inválido. Por favor, verifica los datos ingresados.")
+    else:
+        usuario_form = UsuarioForm(instance=usuario)
+        paciente_form = PacienteForm(instance=paciente)
+
+    return render(request, 'form_paciente.html', {
+        'usuario_form': usuario_form,
+        'paciente_form': paciente_form,
+        'titulo': 'Editar Paciente',
+        'boton': 'Guardar Cambios',
+    })

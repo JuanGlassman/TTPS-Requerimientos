@@ -16,8 +16,8 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Longitud</th>
-                <th>Latitud</th>
+                <th>Lugar</th>
+                <th>Dirección</th>
                 <th>Teléfono</th>
                 <th>Email</th>
                 <th>Operaciones</th>
@@ -27,8 +27,8 @@
         {% for centro in object_list %}
             <tr>
                 <td>{{ centro.nombre }}</td>
-                <td>{{ centro.longitud }}</td>
-                <td>{{ centro.latitud }}</td>
+                <td>{{ centro.lugar.ciudad }}, {{ centro.lugar.provincia }}, {{ centro.lugar.pais }}</td>
+                <td>{{ centro.direccion }}</td>
                 <td>{{ centro.telefono }}</td>
                 <td>{{ centro.email }}</td>
                 <td>
@@ -39,12 +39,12 @@
                     {% if centro.is_deleted %}
                         {% tiene_permiso user "centro_destroy" as puede_ver %}
                         {% if puede_ver %}
-                            <a class="btn btn-danger" href="{% url 'system_admin:eliminar_centro' centro.pk %}" onclick="return confirm('¿Estás seguro de eliminar este centro?')">Eliminar</a>
+                            <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
                         {% endif %}
                     {% else %}
                         {% tiene_permiso user "centro_update" as puede_ver %}
                         {% if puede_ver %}
-                            <a class="btn btn-success" href="{% url 'system_admin:activar_usuario' centro.pk %}" onclick="return confirm('¿Estás seguro de activar este centro?')">Activar</a>
+                            <a class="btn btn-danger" href="{% url 'system_admin:eliminar_centro' centro.pk %}" onclick="return confirm('¿Estás seguro de eliminar este centro?')">Eliminar</a>
                         {% endif %}
                     {% endif %}
                 </td>
@@ -60,8 +60,33 @@
     {% if puede_ver %}
         <a class="btn btn-primary" href="{% url 'system_admin:crear_centro' %}">Agregar nuevo centro</a>
     {% endif %}
-    {% tiene_permiso user "centro_create" as puede_ver %}
-    {% if puede_ver %}
-        <a class="btn btn-secondary" href="{% url 'system_admin:centros_desactivados' %}">Centros desactivados</a>
+    {% if activated %}
+        {% tiene_permiso user "centro_update" as puede_ver %}
+        {% if puede_ver %}
+            <a class="btn btn-secondary" href="{% url 'system_admin:centros_desactivados' %}">Centros desactivados</a>
+        {% endif %}
+    {% else %}
+        <a class="btn btn-secondary" href="{% url 'system_admin:lista_centros' %}">Centros activados</a>
     {% endif %}
+    <div class="d-flex justify-content-center">
+        <div class="pagination">
+            <ul class="pagination">
+                {% if object_list.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ object_list.previous_page_number }}">Anterior</a>
+                </li>
+                {% endif %}
+                {% for num in object_list.paginator.page_range %}
+                <li class="page-item {% if object_list.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if object_list.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ object_list.next_page_number }}">Siguiente</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}

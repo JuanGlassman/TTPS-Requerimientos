@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load static %}
 <div class="container">
     <h1>Listado de Set de muestras (Sample set)</h1>    
 
@@ -18,13 +19,18 @@
                 <td>{{ set.id_sample_set }}</td>
                 <td>{{ set.estudios.count }}</td>
                 <td>
-                    <a href="{% url 'lab_admin:sample_set_detalle' set.id_sample_set %}" class="btn btn-secondary btn-sm">Ver detalle</a>
-                    {% if set.estudios.count == 5 and not set.fecha_envio %}
+                    <a href="{% url 'lab_admin:sample_set_detalle' set.id_sample_set %}" class="btn btn-warning btn-sm">Ver detalle</a>
+                    {% if set.estudios.count == 3 and not set.fecha_envio %}
                         <form action="{% url 'lab_admin:enviar_sample_set' set.id_sample_set %}" method="POST" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success btn-sm enviar-btn">Enviar</button>
                         </form>
+                    {% elif set.fecha_envio %}
+                        <a href="{% static 'sample_sets/sample_set_' %}{{ set.id_sample_set }}.pdf" download class="btn btn-success btn-sm">
+                            Descargar Autorización
+                        </a>
                     {% endif %}
+                    
                 </td>
             </tr>
             {% endfor %}

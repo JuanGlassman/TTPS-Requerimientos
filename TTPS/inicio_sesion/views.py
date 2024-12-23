@@ -48,14 +48,10 @@ def login_view(request):
             user = authenticate(request, dni=dni, password=password)
             if user is not None:
                 login(request, user)
-                if user.first_login:
-                    messages.info(request, "Es tu primer inicio de sesión. Cambia tu contraseña.")
-                    return redirect('inicio_sesion:cambiar_contrasena') 
-                else:
-                    messages.success(request, "Inicio de sesión exitoso.")
-                    if (user.rol.nombre == 'transportista'):
-                        return redirect('transportista:lista_pedidos')
-                    return redirect('home')
+                messages.success(request, "Inicio de sesión exitoso.")
+                if (user.rol.nombre == 'transportista'):
+                    return redirect('transportista:lista_pedidos')
+                return redirect('home')
             else:
                 messages.error(request, "DNI o contraseña incorrectos.")
     else:
@@ -95,11 +91,7 @@ def cambiar_contrasena_view(request):
     user = request.user
 
     if request.method == 'POST':
-        if user.first_login:
-            password1 = user.password
-        else:
-            password1 = request.POST.get("current_password")
-        
+        password1 = request.POST.get("current_password") if not user.first_login else None
         password2 = request.POST.get("new_password")
         password3 = request.POST.get("new_password_again")
         
@@ -110,29 +102,23 @@ def cambiar_contrasena_view(request):
             messages.warning(request, "Los campos de la nueva contraseña son obligatorios.")
             return render(request, 'change_password.html')
         
-        # Verificar la contraseña actual, excepto en el primer inicio de sesión
         if not user.first_login and not user.check_password(password1):
             messages.error(request, "La contraseña actual es incorrecta.")
             return render(request, 'change_password.html')
 
-        # Verificar que las contraseñas nuevas coincidan
         if password2 != password3:
             messages.error(request, "Las nuevas contraseñas no coinciden.")
             return render(request, 'change_password.html')
         
-        try:
-            user.first_login = False
-            user.set_password(password2)
-            user.save()
-            update_session_auth_hash(request, user) 
-            messages.success(request, "Contraseña cambiada exitosamente.")
-            if (user.rol.nombre == 'transportista'):
-                return redirect('transportista:lista_pedidos')
-            return redirect('home')  
-        except Exception as e:
-            messages.error(request, f"Error al cambiar la contraseña: {str(e)}")
-        
+        user.first_login = False
+        user.set_password(password2)
+        user.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, "Contraseña cambiada exitosamente.")
+        return redirect('home' if user.rol.nombre != 'transportista' else 'transportista:lista_pedidos')
+
     return render(request, 'change_password.html')
+
 
 
 @login_required

@@ -47,7 +47,6 @@ def sacar_turno(request, id_estudio):
     horarios_disponibles = []
 
     if request.method == 'POST':
-        # Obtener horarios disponibles según los datos enviados
         centro_id = request.POST.get('centro')
         fecha = request.POST.get('fecha')
         horarios_disponibles = generar_horarios_disponibles(centro_id, fecha)
@@ -58,6 +57,10 @@ def sacar_turno(request, id_estudio):
                 turno = form.save(commit=False)
                 turno.usuario = request.user
                 turno.estudio = estudio
+
+                if 'consentimiento' in request.FILES:
+                    turno.consentimiento = request.FILES['consentimiento']
+                    
                 turno.save()
                 res, estudio = estudio_autorizado(estudio)
                 if (res):
@@ -130,8 +133,8 @@ def confirmacion_turno(request, turno_id):
         turno = Turno.objects.get(id_turno=turno_id, usuario=request.user)
         return render(request, 'confirmar_turno.html', {'turno': turno})
     except Turno.DoesNotExist:
-        messages.error(request, "Turno no encontrado.")
-        return redirect('pacientes:sacar_turno')
+        messages.warning(request, "Turno no encontrado.")
+        return redirect('pacientes:historial_estudios_paciente')
 
 
 @login_required
