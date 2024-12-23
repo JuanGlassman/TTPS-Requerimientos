@@ -320,6 +320,7 @@ def sample_set_detalle(request, id_sample_set):
         "estudios": estudios,
     })
 
+"""
 @login_required
 @permission_required("enviar_sample_set")
 def enviar_sample_set(request, id_sample_set):
@@ -336,7 +337,7 @@ def enviar_sample_set(request, id_sample_set):
 
     messages.success(request, f"Sample Set #{sample_set.id_sample_set} enviado con éxito.")
     return redirect("lab_admin:sample_set_list")
-
+"""
 
 
 
@@ -345,9 +346,19 @@ def enviar_sample_set(request, id_sample_set):
 def enviar_sample_set(request, id_sample_set):
     sample_set = get_object_or_404(SampleSet, id_sample_set=id_sample_set)
 
+    success, message = procesar_sample_set(sample_set)
+    if success:
+        messages.success(request, message)
+    else:
+        messages.error(request, message)
+
+    return redirect("lab_admin:sample_set_list")
+
+
+def procesar_sample_set(sample_set):
     csv_buffer = StringIO()
     csv_writer = csv.writer(csv_buffer)
-    csv_writer.writerow(['code', 'pathology']) 
+    csv_writer.writerow(['code', 'pathology'])
 
     estudios = sample_set.estudios.all()
     for estudio in estudios:
@@ -370,20 +381,15 @@ def enviar_sample_set(request, id_sample_set):
 
         with open(pdf_path, 'wb') as pdf_file:
             pdf_file.write(pdf_content)
-        
 
+        for estudio in estudios:
+            res, estudio = estudio_enviado_exterior(estudio)
+            if res:
+                estudio.save()
+
+        sample_set.fecha_envio = timezone.now()
+        sample_set.save()
+
+        return True, f"Sample Set #{sample_set.id_sample_set} enviado con éxito."
     except requests.exceptions.RequestException as e:
-        messages.error(request, f"Error al enviar Sample Set: {e}")
-        return redirect("lab_admin:sample_set_list")
-
-    for estudio in estudios:
-        res, estudio = estudio_enviado_exterior(estudio)
-        if res:
-            estudio.save()
-
-    sample_set.fecha_envio = timezone.now()
-    sample_set.save()
-
-    messages.success(request, f"Sample Set #{sample_set.id_sample_set} enviado con éxito.")
-    return redirect("lab_admin:sample_set_list")
-
+        return False, f"Error al enviar Sample Set: {e}"

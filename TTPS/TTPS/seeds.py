@@ -10,9 +10,7 @@ from transportista import views as transportista_view
 from lab_admin.models import Centro, Turno
 from datetime import date, time, timedelta, datetime
 import random
-
-## Este seed si bien tiene estudios realizados, centralizados, enviados al exterior
-## y finalizados, no se crearon Sample Sets ni Hoja de Ruta con sus Pedidos.
+from lab_admin.views import procesar_sample_set
 
 def generar_fecha_aleatoria(fecha_inicio_str, fecha_fin_str):
     # Convertir las cadenas de fecha a objetos datetime
@@ -48,7 +46,6 @@ def generar_fecha_aleatoria_datetime(fecha_inicio_str, fecha_fin_str):
     return fecha_aleatoria
 
 def run_seeds():
-    
     lugar1 = Lugar.objects.create(
         ciudad = "La Plata",
         provincia = "Buenos Aires",
@@ -1037,7 +1034,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
-    estudios_estado.asignar_a_sample_set(estudio5)
+    sampleset1 = estudios_estado.asignar_a_sample_set(estudio5)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(days=15)
@@ -3006,7 +3003,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
-    estudios_estado.asignar_a_sample_set(estudio33)
+    sampleset2 = estudios_estado.asignar_a_sample_set(estudio33)
 
     fecha_random = generar_fecha_aleatoria("2024-05-01", "2024-12-31")
     fecha_aleatoria = fecha_random.strftime("%Y-%m-%d")
@@ -3609,7 +3606,7 @@ def run_seeds():
         fecha_inicio = fecha_fin_random_ex,
         fecha_fin = fecha_fin_random
     )
-    estudios_estado.asignar_a_sample_set(estudio39)
+    sampleset3 = estudios_estado.asignar_a_sample_set(estudio39)
 
     num_random = random.randint(0, 10)
     fecha_fin_random_ex = fecha_fin_random + timedelta(num_random)
@@ -3651,3 +3648,6 @@ def run_seeds():
         fecha_inicio = fecha_random,
         fecha_fin = fecha_fin_random
     )
+
+    procesar_sample_set(sampleset1)
+    procesar_sample_set(sampleset2)
