@@ -41,9 +41,9 @@ def crear_pedido(estudio, centro_id):
 def crear_hoja_de_ruta(pedido):
     transportista_id = Transportista.objects.first().id_transportista
     ## Esta es la linea correcta
-    # hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today() + timedelta(days=1), estado='pendiente')
+    hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today() + timedelta(days=1), estado='pendiente')
     ## Esta es la linea por razones de demo
-    hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today(), estado='pendiente')
+    #hoja_de_ruta = HojaDeRuta.objects.create(transportista_id=transportista_id, fecha=date.today(), estado='pendiente')
     hoja_de_ruta.pedidos.add(pedido)
     hoja_de_ruta.save()
     return hoja_de_ruta
@@ -69,9 +69,9 @@ def agregar_estudio_a_pedido(estudio_id):
     turno = Turno.objects.get(estudio=estudio)
     centro_id = turno.centro.id_centro
     ## Esta es la linea correcta
-    # hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today() + timedelta(days=1)).first()
+    hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today() + timedelta(days=1)).first()
     ## Esta es la linea por razones de demo
-    hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today()).first()
+    #hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today()).first()
     if not hoja_de_ruta:
         pedido = crear_pedido(estudio, centro_id)
         hoja_de_ruta = crear_hoja_de_ruta(pedido)
@@ -163,9 +163,9 @@ def cancelar_pedido(request, pedido_id):
     # entonces el pedido se agrega a la hoja de ruta del dia de mañana.
     pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
     ## Esta es la linea correcta
-    #hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today() + timedelta(days=1)).first()
+    hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today() + timedelta(days=1)).first()
     ## Esta es la linea por razones de demo
-    hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today()).first()
+    #hoja_de_ruta = buscar_hoja_de_ruta_pendiente_por_fecha(date.today()).first()
     if not hoja_de_ruta:
         hoja_de_ruta = crear_hoja_de_ruta(pedido)
     else:
